@@ -2,9 +2,9 @@
   "name": "golf-courses",
   "version": "0.0.0",
   "scripts": {
+    "start": "set NODE_OPTIONS=--openssl-legacy-provider && ng serve",
     "preinstall": "npx npm-force-resolutions",
     "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",

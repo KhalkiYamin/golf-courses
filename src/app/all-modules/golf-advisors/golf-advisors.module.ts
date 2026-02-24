@@ -17,6 +17,8 @@ import { AdvisorsChangePasswordComponent } from './advisors-change-password/advi
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { TagInputModule } from 'ngx-chips';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { RouterModule } from '@angular/router';
 
 
 
@@ -33,13 +35,15 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ReviewsComponent,
     AdvisorsRegisterComponent,
     SocialMediaComponent,
-    AdvisorsChangePasswordComponent
+    AdvisorsChangePasswordComponent,
+    AdminLayoutComponent
   ],
   imports: [
     CommonModule,
     GolfAdvisorsRoutingModule,
     NgxDropzoneModule,
     TagInputModule,
+    RouterModule,
     FormsModule, ReactiveFormsModule
   ]
 })

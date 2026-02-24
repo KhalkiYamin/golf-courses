@@ -1,492 +1,105 @@
-<!-- Breadcrumb -->
-<div class="breadcrumb-bar">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-12 col-12">
-                <nav aria-label="breadcrumb" class="page-breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a routerLink='/'>Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">batch</li>
-                    </ol>
-                </nav>
-                <h2 class="breadcrumb-title">Batch</h2>
-            </div>
+<div class="page-header mb-4">
+    <div class="row align-items-center">
+        <div class="col">
+            <h3 class="page-title font-weight-bold text-primary">Validation des Coachs</h3>
+        </div>
+        <div class="col-auto text-right float-right ml-auto">
+            <span class="badge badge-pill bg-warning-light px-3 py-2 shadow-sm" *ngIf="pendingCoaches.length > 0">
+                <i class="fas fa-user-clock mr-2"></i> {{ pendingCoaches.length }} Demande(s) en attente
+            </span>
         </div>
     </div>
 </div>
-<!-- /Breadcrumb -->
 
-<!-- Page Content -->
-<div class="content">
-    <div class="container">
+<div class="row">
+    <div class="col-md-12">
+        
+        <div *ngIf="isLoading" class="text-center p-5">
+            <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
+            <p class="mt-3 text-muted font-italic">Récupération des demandes...</p>
+        </div>
 
-        <div class="row">
-            <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
-            
-                <!-- Profile Sidebar -->
-                <div class="profile-sidebar">
-                    <div class="widget-profile pro-widget-content">
-                        <div class="profile-info-widget">
-                            <a href="#" class="booking-doc-img">
-                                <img src="assets/img/coaches/admin-thumb-02.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3> Toma Masters</h3>
-                                
-                                <div class="receiver-details">
-                                    <h5 class="mb-0">PGA - Head of Academy</h5>
+        <div *ngIf="!isLoading && pendingCoaches.length === 0" class="text-center p-5 card shadow-sm">
+            <div class="card-body">
+                <i class="far fa-check-circle fa-4x text-success mb-3"></i>
+                <h4 class="font-weight-bold">Tout est à jour !</h4>
+                <p class="text-muted">Aucune demande de coach en attente pour le moment.</p>
+            </div>
+        </div>
+
+        <div *ngIf="!isLoading && pendingCoaches.length > 0">
+            <div class="card mb-4 coach-card shadow-lg border-0 animated fadeInUp" *ngFor="let coach of pendingCoaches">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <div class="avatar-circle d-flex align-items-center justify-content-center bg-primary text-white shadow" style="width: 60px; height: 60px; font-size: 2rem; border-radius: 50%;">
+                                {{ coach.nom ? coach.nom.charAt(0).toUpperCase() : '?' }}&nbsp;{{ coach.prenom ? coach.prenom.charAt(0).toUpperCase() : '?' }}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h4 class="mb-1 text-dark font-weight-bold">
+                                <span *ngIf="coach.prenom">{{ coach.prenom | titlecase }}</span><span *ngIf="coach.prenom && coach.nom">&nbsp;</span><span *ngIf="coach.nom">{{ coach.nom | titlecase }}</span>
+                            </h4>
+                            <p class="text-muted mb-2">Coach</p>
+                            <div class="mb-3">
+                                <span class="badge badge-info mr-2 p-2" *ngIf="coach.specialite">
+                                    <i class="fas fa-running mr-1"></i> {{ coach.specialite }}
+                                </span>
+                                <span class="badge badge-secondary p-2" *ngIf="coach.experience">
+                                    <i class="fas fa-star mr-1"></i> {{ coach.experience }} ans d'expérience
+                                </span>
+                            </div>
+                            <div class="row text-muted small-info">
+                                <div class="col-md-6 mb-1">
+                                    <i class="fas fa-envelope text-primary mr-2"></i> <span class="font-weight-bold">{{ coach.email }}</span>
+                                </div>
+                                <div class="col-md-6 mb-1" *ngIf="coach.telephone">
+                                    <i class="fas fa-phone-alt text-success mr-2"></i> <span class="font-weight-bold">{{ coach.telephone }}</span>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="dashboard-widget">
-                        <nav class="dashboard-menu">
-                            <ul>
-                                <li>
-                                    <a routerLink='/golf-advisors/advisors-dashboard'>
-                                        <i class="fas fa-columns"></i>
-                                        <span>Dashboard</span>
-                                    </a>
-                                </li>
-                                <li class="active">
-                                    <a routerLink='/golf-advisors/batch'>
-                                        <i class="fas fa-calendar-check"></i>
-                                        <span>batch</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/golf-advisors/my-golfers'>
-                                        <i class="fas fa-user-injured"></i>
-                                        <span>My Golfers</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/golf-advisors/schedule-timings'>
-                                        <i class="fas fa-hourglass-start"></i>
-                                        <span>Schedule Timings</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/pages/invoices'>
-                                        <i class="fas fa-file-invoice"></i>
-                                        <span>Invoices</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/golf-advisors/reviews'>
-                                        <i class="fas fa-star"></i>
-                                        <span>Reviews</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/golf-advisors/chat-advisor'>
-                                        <i class="fas fa-comments"></i>
-                                        <span>Message</span>
-                                        <small class="unread-msg">23</small>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/golf-advisors/advisors-profile-settings'>
-                                        <i class="fas fa-user-cog"></i>
-                                        <span>Profile Settings</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/golf-advisors/social-media'>
-                                        <i class="fas fa-share-alt"></i>
-                                        <span>Social Media</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/golf-advisors/advisors-change-password'>
-                                        <i class="fas fa-lock"></i>
-                                        <span>Change Password</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a routerLink='/'>
-                                        <i class="fas fa-sign-out-alt"></i>
-                                        <span>Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
+                        <div class="col-md-auto col-12 mt-3 mt-md-0 text-right">
+                            <div class="action-buttons">
+                                <button (click)="openModal('accept', coach)" class="btn btn-success btn-sm mr-2 shadow-sm px-3 py-2" title="Valider">
+                                    <i class="fas fa-check"></i> Valider
+                                </button>
+                                <button (click)="openModal('reject', coach)" class="btn btn-outline-danger btn-sm shadow-sm px-3 py-2" title="Refuser">
+                                    <i class="fas fa-times"></i> Refuser
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <!-- /Profile Sidebar -->
-                
             </div>
-            
-            <div class="col-md-7 col-lg-8 col-xl-9">
-                <div class="batch">
-                
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Haley Tibbetts</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 14 Nov 2019, 10.00 AM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Newyork, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> haley@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 923 782 4575</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
+        </div>
+
+        <!-- Modal Popup -->
+        <div class="modal fade show" tabindex="-1" [ngStyle]="{display: showModal ? 'block' : 'none', background: showModal ? 'rgba(0,0,0,0.3)' : 'transparent'}" *ngIf="showModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            {{ modalAction === 'accept' ? 'Validation du Coach' : 'Refus du Coach' }}
+                        </h5>
+                        <button type="button" class="close" (click)="closeModal()">
+                            <span>&times;</span>
+                        </button>
                     </div>
-                    <!-- /Appointment List -->
-                
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client1.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Auriol Jewett </a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 12 Nov 2019, 5.00 PM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> North Carolina, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> aurioljewett@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 828 632 9170</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
+                    <div class="modal-body">
+                        <p>
+                            {{ modalAction === 'accept' ? 'Voulez-vous vraiment valider' : 'Voulez-vous vraiment refuser' }}
+                            <strong>{{ selectedCoach?.prenom }} {{ selectedCoach?.nom }}</strong> ?
+                        </p>
                     </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client2.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Ademar Tolbert</a></h3>
-                                
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 11 Nov 2019, 8.00 PM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Maine, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> ademartolbert@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 207 729 9974</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+                        <button type="button" class="btn" [ngClass]="modalAction === 'accept' ? 'btn-success' : 'btn-danger'" (click)="confirmModal()">
+                            {{ modalAction === 'accept' ? 'Valider' : 'Refuser' }}
+                        </button>
                     </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client3.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Daniel Holly</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 9 Nov 2019, 9.00 AM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Newyork, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> danielholly@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 260 724 7769</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client4.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Chandni Neill</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 9 Nov 2019, 1.00 PM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Indiana, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> chandnineill@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 504 368 6874</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client5.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Carmiya Franz</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 8 Nov 2019, 3.00 PM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Florida, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> carmiyafranz@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 954 820 7887</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client6.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Bebe Steiner</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 6 Nov 2019, 9.00 AM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Kentucky, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> bebesteiner@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 315 384 4562</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client7.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Titiana Brinkley</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 5 Nov 2019, 12.00 PM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> California, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> titianabrinkley@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 707 2202 603</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client8.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Adison Pond</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 5 Nov 2019, 7.00 PM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> New Jersey, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> adisonpond@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 973 773 9497</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client9.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Keter Guess</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 4 Nov 2019, 10.00 AM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Florida, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> keterguess@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 850 358 4445</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client10.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Cortne Salas</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 4 Nov 2019, 11.00 AM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> California, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> cortnesalas@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 858 259 5285</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
-                    <!-- Appointment List -->
-                    <div class="appointment-list">
-                        <div class="profile-info-widget">
-                            <a routerLink='/golf-advisors/golfer-profile' class="booking-doc-img">
-                                <img src="assets/img/clients/client11.jpg" alt="User Image">
-                            </a>
-                            <div class="profile-det-info">
-                                <h3><a routerLink='/golf-advisors/golfer-profile'>Schyler Eckert</a></h3>
-                                <div class="receiver-details">
-                                    <h5><i class="far fa-clock"></i> 3 Nov 2019, 6.00 PM</h5>
-                                    <h5><i class="fas fa-map-marker-alt"></i> Colorado, United States</h5>
-                                    <h5><i class="fas fa-envelope"></i> schylereckert@example.com</h5>
-                                    <h5 class="mb-0"><i class="fas fa-phone"></i> +1 303 607 7075</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="appointment-action">
-                            <a href="#" class="btn btn-sm bg-info-light" data-toggle="modal" data-target="#appt_details">
-                                <i class="far fa-eye"></i> View
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-success-light">
-                                <i class="fas fa-check"></i> Accept
-                            </a>
-                            <a href="javascript:void(0);" class="btn btn-sm bg-danger-light">
-                                <i class="fas fa-times"></i> Cancel
-                            </a>
-                        </div>
-                    </div>
-                    <!-- /Appointment List -->
-                    
                 </div>
             </div>
         </div>
 
     </div>
-
-</div>		
-<!-- /Page Content -->
+</div>

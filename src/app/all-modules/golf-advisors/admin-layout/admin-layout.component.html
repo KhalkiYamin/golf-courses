@@ -1,0 +1,42 @@
+<div class="admin-page">
+    <div class="layout">
+
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">AS</div>
+                <div>
+                    <div class="brand-name">Académie</div>
+                    <div class="brand-sub">Admin Panel</div>
+                </div>
+            </div>
+
+            <nav class="nav">
+                <a class="nav-item" routerLink="/golf-advisors/advisors-dashboard" routerLinkActive="active">Dashboard</a>
+                <a class="nav-item" routerLink="/golf-advisors/batch" routerLinkActive="active">Validation Coach</a>
+                <a class="nav-item" routerLink="/admin/users" routerLinkActive="active">Utilisateurs</a>
+                <a class="nav-item" routerLink="/admin/sports" routerLinkActive="active">Sports & Niveaux</a>
+                <a class="nav-item" routerLink="/admin/payments" routerLinkActive="active">Paiements</a>
+                <a class="nav-item" routerLink="/admin/settings" routerLinkActive="active">Paramètres</a>
+                <a class="nav-item" (click)="onLogout()" style="cursor: pointer;">Logout</a>
+            </nav>
+        </aside>
+
+        <main class="main">
+
+            <header class="topbar">
+                <div>
+                    <h1 class="title">Espace Administration</h1>
+                </div>
+                <div class="top-actions">
+                    <input class="search" type="text" placeholder="Rechercher..." />
+                    <div class="avatar">Y</div>
+                </div>
+            </header>
+
+            <div class="content-container" style="padding: 20px;">
+                <router-outlet></router-outlet> 
+            </div>
+
+        </main>
+    </div>
+</div>

@@ -75,7 +75,7 @@ export class LoginComponent implements OnInit {
         setTimeout(() => {
           const role = response.role;
           if (role === 'ADMIN') {
-            this.router.navigate(['/dashboard/admin']);
+            this.router.navigate(['/golf-advisors/advisors-dashboard']);
           } else if (role === 'COACH') {
             this.router.navigate(['/dashboard/coach']);
           } else if (role === 'ATHLETE') {

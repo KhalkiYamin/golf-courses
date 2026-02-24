@@ -12,11 +12,17 @@ import { MyGolfersComponent } from './my-golfers/my-golfers.component';
 import { ReviewsComponent } from './reviews/reviews.component';
 import { ScheduleTimingsComponent } from './schedule-timings/schedule-timings.component';
 import { SocialMediaComponent } from './social-media/social-media.component';
+import { AuthGuard } from 'src/app/guards/auth.guards';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 
 const routes: Routes = [
-  { path: '', component: GolfAdvisorsComponent,
+  { path: '', component: AdminLayoutComponent,
+    canActivate: [AuthGuard],
     children: [
-      { path: 'advisors-dashboard', component: AdvisorsDashboardComponent },
+      { 
+        path: 'advisors-dashboard', 
+        component: AdvisorsDashboardComponent,
+      },
       { path: 'batch', component: BatchComponent },
       { path: 'schedule-timings', component: ScheduleTimingsComponent },
       { path: 'my-golfers', component: MyGolfersComponent },

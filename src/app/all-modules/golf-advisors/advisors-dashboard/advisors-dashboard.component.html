@@ -1,119 +1,52 @@
-<div class="admin-page">
-
-    <div class="layout">
-
-        <!-- ================= SIDEBAR ================= -->
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="logo">AS</div>
-                <div>
-                    <div class="brand-name">Académie</div>
-                    <div class="brand-sub">Admin Panel</div>
-                </div>
-            </div>
-
-            <nav class="nav">
-                <a class="nav-item active" routerLink="/admin/dashboard">Dashboard</a>
-                <a class="nav-item" routerLink="/admin/coaches">Validation Coach</a>
-                <a class="nav-item" routerLink="/admin/users">Utilisateurs</a>
-                <a class="nav-item" routerLink="/admin/sports">Sports & Niveaux</a>
-                <a class="nav-item" routerLink="/admin/payments">Paiements</a>
-                <a class="nav-item" routerLink="/admin/settings">Paramètres</a>
-                <a class="nav-item" routerLink="/">Logout</a>
-            </nav>
-        </aside>
-
-        <!-- ================= MAIN ================= -->
-        <main class="main">
-
-            <!-- TOPBAR -->
-            <header class="topbar">
-                <div>
-                    <h1 class="title">Dashboard Admin</h1>
-                    <p class="subtitle">Gestion complète de l’académie</p>
-                </div>
-
-                <div class="top-actions">
-                    <input class="search" type="text" placeholder="Rechercher..." />
-                    <div class="avatar">Y</div>
-                </div>
-            </header>
-
-            <!-- ================= STATS ================= -->
-            <section class="stats">
-
-                <div class="card stat-card">
-                    <h4>Total Coachs</h4>
-                    <h2>38</h2>
-                    <p class="muted">Coachs inscrits</p>
-                </div>
-
-                <div class="card stat-card">
-                    <h4>Total Athlètes</h4>
-                    <h2>210</h2>
-                    <p class="muted">Utilisateurs actifs</p>
-                </div>
-
-                <div class="card stat-card">
-                    <h4>Paiements</h4>
-                    <h2>7,240 TND</h2>
-                    <p class="muted">Revenus totaux</p>
-                </div>
-
-            </section>
-
-            <!-- ================= PENDING COACHES ================= -->
-            <section class="card">
-                <div class="card-head">
-                    <h3>Coachs en attente</h3>
-                </div>
-
-                <div class="table">
-                    <div class="row head">
-                        <span>Nom</span>
-                        <span>Spécialité</span>
-                        <span>Expérience</span>
-                        <span>Statut</span>
-                        <span>Action</span>
-                    </div>
-
-                    <div class="row">
-                        <span>Amine Ben Ali</span>
-                        <span>Football</span>
-                        <span>5 ans</span>
-                        <span class="pending">En attente</span>
-                        <span class="actions">
-                            <button class="mini ok">✔</button>
-                            <button class="mini no">✖</button>
-                        </span>
-                    </div>
-
-                    <div class="row">
-                        <span>Sarra Dhaoui</span>
-                        <span>Fitness</span>
-                        <span>3 ans</span>
-                        <span class="pending">En attente</span>
-                        <span class="actions">
-                            <button class="mini ok">✔</button>
-                            <button class="mini no">✖</button>
-                        </span>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ================= QUICK ACTIONS ================= -->
-            <section class="card">
-                <div class="card-head">
-                    <h3>Actions rapides</h3>
-                </div>
-
-                <div class="quick">
-                    <button class="qbtn">+ Ajouter sport</button>
-                    <button class="qbtn">+ Ajouter niveau</button>
-                    <button class="qbtn">+ Ajouter catégorie</button>
-                </div>
-            </section>
-
-        </main>
+<section class="stats">
+    <div class="card stat-card">
+        <h4>Total Coachs</h4>
+        <h2>38</h2>
+        <p class="muted">Coachs inscrits</p>
     </div>
-</div>
+    <div class="card stat-card">
+        <h4>Total Athlètes</h4>
+        <h2>210</h2>
+        <p class="muted">Utilisateurs actifs</p>
+    </div>
+    <div class="card stat-card">
+        <h4>Paiements</h4>
+        <h2>7,240 TND</h2>
+        <p class="muted">Revenus totaux</p>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-head">
+        <h3>Coachs en attente</h3>
+    </div>
+    <div class="table">
+        <div class="row head">
+            <span>Nom</span>
+            <span>Spécialité</span>
+            <span>Expérience</span>
+            <span>Statut</span>
+            <span>Action</span>
+        </div>
+        <div class="row">
+             <span>Amine Ben Ali</span>
+             <span>Football</span>
+             <span>5 ans</span>
+             <span class="pending">En attente</span>
+             <span class="actions">
+                <button class="mini ok">✔</button>
+                <button class="mini no">✖</button>
+             </span>
+        </div>
+    </div>
+</section>
+
+<section class="card">
+    <div class="card-head">
+        <h3>Actions rapides</h3>
+    </div>
+    <div class="quick">
+        <button class="qbtn">+ Ajouter sport</button>
+        <button class="qbtn">+ Ajouter niveau</button>
+    </div>
+</section>
