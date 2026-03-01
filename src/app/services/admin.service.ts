@@ -13,7 +13,7 @@ export class AdminService {
   constructor(private http: HttpClient) { }
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
-    
+
     let headers = new HttpHeaders();
     if (token) {
       headers = headers.set('Authorization', 'Bearer ' + token);
@@ -22,20 +22,20 @@ export class AdminService {
   }
 
   getPendingCoaches(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/coaches/pending`, { 
-      headers: this.getHeaders() 
+    return this.http.get<User[]>(`${this.baseUrl}/coaches/pending`, {
+      headers: this.getHeaders()
     });
   }
 
   approveCoach(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/coaches/${id}/approve`, {}, { 
+    return this.http.put(`${this.baseUrl}/coaches/${id}/approve`, {}, {
       headers: this.getHeaders(),
-      responseType: 'text' 
+      responseType: 'text'
     });
   }
 
   rejectCoach(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/coaches/${id}/reject`, {}, { 
+    return this.http.put(`${this.baseUrl}/coaches/${id}/reject`, {}, {
       headers: this.getHeaders(),
       responseType: 'text'
     });
