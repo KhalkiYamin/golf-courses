@@ -1,0 +1,28 @@
+<div class="verify-email-container">
+  <!-- Loading -->
+  <div *ngIf="status === 'loading'" class="verify-card text-center">
+    <div class="spinner"></div>
+    <h3>Vérification en cours...</h3>
+    <p>Veuillez patienter pendant que nous vérifions votre adresse e-mail.</p>
+  </div>
+
+  <!-- Success -->
+  <div *ngIf="status === 'success'" class="verify-card text-center">
+    <div class="icon-circle success-circle">
+      <i class="fas fa-check"></i>
+    </div>
+    <h3>Email vérifié !</h3>
+    <p>{{ message }}</p>
+    <button class="btn btn-primary mt-3" (click)="goToLogin()">Se connecter</button>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="status === 'error'" class="verify-card text-center">
+    <div class="icon-circle error-circle">
+      <i class="fas fa-times"></i>
+    </div>
+    <h3>Échec de la vérification</h3>
+    <p>{{ message }}</p>
+    <button class="btn btn-secondary mt-3" (click)="goToLogin()">Retour à la connexion</button>
+  </div>
+</div>
