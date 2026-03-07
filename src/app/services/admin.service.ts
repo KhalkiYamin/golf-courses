@@ -8,9 +8,11 @@ import { User } from '../all-modules/models/user';
 })
 export class AdminService {
 
-  private baseUrl = 'http://localhost:8081/api/admin';
+  private adminBaseUrl = 'http://localhost:8081/api/admin';
+  private authBaseUrl = 'http://localhost:8081/api/auth';
 
   constructor(private http: HttpClient) { }
+
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
 
@@ -22,20 +24,20 @@ export class AdminService {
   }
 
   getPendingCoaches(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}/coaches/pending`, {
+    return this.http.get<User[]>(`${this.adminBaseUrl}/coaches/pending`, {
       headers: this.getHeaders()
     });
   }
 
   approveCoach(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/coaches/${id}/approve`, {}, {
+    return this.http.put(`${this.authBaseUrl}/approve-coach/${id}`, null, {
       headers: this.getHeaders(),
       responseType: 'text'
     });
   }
 
   rejectCoach(id: number): Observable<any> {
-    return this.http.put(`${this.baseUrl}/coaches/${id}/reject`, {}, {
+    return this.http.put(`${this.adminBaseUrl}/coaches/${id}/reject`, null, {
       headers: this.getHeaders(),
       responseType: 'text'
     });
