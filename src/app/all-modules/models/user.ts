@@ -1,3 +1,5 @@
+import { Category } from "./category";
+
 export interface User {
   id: number;
   nom: string;
@@ -5,7 +7,9 @@ export interface User {
   email: string;
   telephone?: string;
   role: string;
-  specialite?: string;
+  specialite?: Category;
   experience?: number;
   createDate?: string;
+  enabled?: boolean;
+  adminApproved?: boolean;
 }

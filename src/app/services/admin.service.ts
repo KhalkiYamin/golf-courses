@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../all-modules/models/user';
 
@@ -29,12 +29,18 @@ export class AdminService {
     });
   }
 
-  approveCoach(id: number): Observable<any> {
-    return this.http.put(`${this.authBaseUrl}/approve-coach/${id}`, null, {
-      headers: this.getHeaders(),
-      responseType: 'text'
+  getAllCoaches(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.adminBaseUrl}/coaches`, {
+      headers: this.getHeaders()
     });
   }
+
+  approveCoach(id: number): Observable<any> {
+  return this.http.put(`${this.adminBaseUrl}/coaches/${id}/approve`, null, {
+    headers: this.getHeaders(),
+    responseType: 'text'
+  });
+}
 
   rejectCoach(id: number): Observable<any> {
     return this.http.put(`${this.adminBaseUrl}/coaches/${id}/reject`, null, {

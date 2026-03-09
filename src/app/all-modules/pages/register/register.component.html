@@ -56,7 +56,7 @@
                             <div class="form-group">
                                 <label class="mb-2">Spécialité</label>
                                 <select class="form-control" [(ngModel)]="specialiteId" name="specialiteId" required>
-                                    <option [ngValue]="null">Choisir une catégorie</option>
+                                    <option [ngValue]="null">Choisir une spécialité</option>
                                     <option *ngFor="let c of categories" [ngValue]="c.id">
                                         {{ c.title }}
                                     </option>

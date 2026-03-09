@@ -43,7 +43,7 @@
         
         <div class="row" *ngFor="let coach of pendingCoaches">
             <span>{{ coach.prenom }} {{ coach.nom }}</span>
-            <span>{{ coach.specialite || 'Non spécifié' }}</span>
+            <span>{{ coach.specialite?.title || 'Non spécifié' }}</span>
             <span>{{ coach.experience ? coach.experience + ' ans' : '-' }}</span>
             <span class="pending">En attente</span>
             <span class="actions">

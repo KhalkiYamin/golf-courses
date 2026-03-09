@@ -4,10 +4,33 @@
             <h3 class="page-title font-weight-bold text-primary">Validation des Coachs</h3>
         </div>
         <div class="col-auto text-right float-right ml-auto">
-            <span class="badge badge-pill bg-warning-light px-3 py-2 shadow-sm" *ngIf="pendingCoaches.length > 0">
-                <i class="fas fa-user-clock mr-2"></i> {{ pendingCoaches.length }} Demande(s) en attente
+            <span class="badge badge-pill bg-warning-light px-3 py-2 shadow-sm" *ngIf="pendingCount > 0">
+                <i class="fas fa-user-clock mr-2"></i> {{ pendingCount }} Demande(s) en attente
             </span>
         </div>
+    </div>
+</div>
+<!-- Filter Tabs -->
+<div class="filter-tabs-wrapper mb-4">
+    <div class="filter-tab tab-all" [class.active]="currentFilter === 'ALL'" (click)="setFilter('ALL')">
+        <div class="tab-icon"><i class="fas fa-users"></i></div>
+        <div class="tab-label">Tous</div>
+        <div class="tab-count">{{ allCoaches.length }}</div>
+    </div>
+    <div class="filter-tab tab-pending" [class.active]="currentFilter === 'PENDING'" (click)="setFilter('PENDING')">
+        <div class="tab-icon"><i class="fas fa-clock"></i></div>
+        <div class="tab-label">En attente</div>
+        <div class="tab-count">{{ pendingCount }}</div>
+    </div>
+    <div class="filter-tab tab-approved" [class.active]="currentFilter === 'APPROVED'" (click)="setFilter('APPROVED')">
+        <div class="tab-icon"><i class="fas fa-check-circle"></i></div>
+        <div class="tab-label">Validé</div>
+        <div class="tab-count">{{ approvedCount }}</div>
+    </div>
+    <div class="filter-tab tab-rejected" [class.active]="currentFilter === 'REJECTED'" (click)="setFilter('REJECTED')">
+        <div class="tab-icon"><i class="fas fa-times-circle"></i></div>
+        <div class="tab-label">Refusé</div>
+        <div class="tab-count">{{ rejectedCount }}</div>
     </div>
 </div>
 
@@ -19,16 +42,16 @@
             <p class="mt-3 text-muted font-italic">Récupération des demandes...</p>
         </div>
 
-        <div *ngIf="!isLoading && pendingCoaches.length === 0" class="text-center p-5 card shadow-sm">
+        <div *ngIf="!isLoading && filteredCoaches.length === 0" class="text-center p-5 card shadow-sm">
             <div class="card-body">
                 <i class="far fa-check-circle fa-4x text-success mb-3"></i>
-                <h4 class="font-weight-bold">Tout est à jour !</h4>
-                <p class="text-muted">Aucune demande de coach en attente pour le moment.</p>
+                <h4 class="font-weight-bold">Aucun résultat</h4>
+                <p class="text-muted">Aucun coach trouvé.</p>
             </div>
         </div>
 
-        <div *ngIf="!isLoading && pendingCoaches.length > 0">
-            <div class="card mb-4 coach-card shadow-lg border-0 animated fadeInUp" *ngFor="let coach of pendingCoaches">
+        <div *ngIf="!isLoading && filteredCoaches.length > 0">
+            <div class="card mb-4 coach-card shadow-lg border-0 animated fadeInUp" *ngFor="let coach of filteredCoaches">
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-auto">
@@ -43,11 +66,21 @@
                                 <span *ngIf="coach.prenom">{{ coach.prenom | titlecase }}</span><span
                                     *ngIf="coach.prenom && coach.nom">&nbsp;</span><span *ngIf="coach.nom">{{ coach.nom
                                     | titlecase }}</span>
+                                <!-- Status Badge -->
+                                <span class="badge ml-2"
+    [ngClass]="{
+        'badge-warning': getCoachStatus(coach) === 'PENDING',
+        'badge-success': getCoachStatus(coach) === 'APPROVED',
+        'badge-danger':  getCoachStatus(coach) === 'REJECTED'
+    }">
+    {{ getCoachStatus(coach) === 'PENDING' ? 'En attente' :
+       getCoachStatus(coach) === 'APPROVED' ? 'Validé' : 'Refusé' }}
+</span>
                             </h4>
                             <p class="text-muted mb-2">Coach</p>
                             <div class="mb-3">
                                 <span class="badge badge-info mr-2 p-2" *ngIf="coach.specialite">
-                                    <i class="fas fa-running mr-1"></i> {{ coach.specialite }}
+                                    <i class="fas fa-running mr-1"></i> {{ getSpecialiteTitle(coach.specialite) }}
                                 </span>
                                 <span class="badge badge-secondary p-2" *ngIf="coach.experience">
                                     <i class="fas fa-star mr-1"></i> {{ coach.experience }} ans d'expérience
@@ -65,7 +98,7 @@
                             </div>
                         </div>
                         <div class="col-md-auto col-12 mt-3 mt-md-0 text-right">
-                            <div class="action-buttons">
+                            <div class="action-buttons" *ngIf="getCoachStatus(coach) === 'PENDING'">
                                 <button (click)="openModal('accept', coach)"
                                     class="btn btn-success btn-sm mr-2 shadow-sm px-3 py-2" title="Valider">
                                     <i class="fas fa-check"></i> Valider

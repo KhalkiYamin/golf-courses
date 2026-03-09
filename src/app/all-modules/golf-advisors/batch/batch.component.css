@@ -49,3 +49,80 @@
     background-color: #6c757d;
     color: white;
 }
+
+/* Filter Tab Cards */
+.filter-tabs-wrapper {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    flex: 1;
+    min-width: 130px;
+    background: #fff;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 1.1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    user-select: none;
+}
+
+.filter-tab:hover {
+    border-color: #adb5bd;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+}
+
+.filter-tab .tab-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 0.2rem;
+}
+
+.tab-all      .tab-icon { background-color: #6c757d; }
+.tab-pending  .tab-icon { background-color: #ffc107; }
+.tab-approved .tab-icon { background-color: #28a745; }
+.tab-rejected .tab-icon { background-color: #dc3545; }
+
+.filter-tab .tab-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.filter-tab .tab-count {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #343a40;
+    line-height: 1;
+}
+
+/* Active state per tab type */
+.filter-tab.active {
+    border-color: transparent;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.13);
+}
+
+.filter-tab.active .tab-label,
+.filter-tab.active .tab-count { color: #fff; }
+
+.tab-all.active      { background: linear-gradient(135deg, #6c757d, #adb5bd); }
+.tab-pending.active  { background: linear-gradient(135deg, #e0a800, #ffc107); }
+.tab-approved.active { background: linear-gradient(135deg, #1e7e34, #28a745); }
+.tab-rejected.active { background: linear-gradient(135deg, #bd2130, #dc3545); }

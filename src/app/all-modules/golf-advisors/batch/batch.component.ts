@@ -4,28 +4,31 @@ import { User } from '../../models/user';
 
 
 @Component({
-  selector: 'app-batch', 
-    templateUrl: './batch.component.html',
+  selector: 'app-batch',
+  templateUrl: './batch.component.html',
   styleUrls: ['./batch.component.css']
 })
 export class BatchComponent implements OnInit {
 
-  pendingCoaches: User[] = [];
+  allCoaches: User[] = [];
+  filteredCoaches: User[] = [];
   isLoading: boolean = false;
+  currentFilter: string = 'PENDING';
 
   constructor(
     private adminService: AdminService,
   ) { }
 
   ngOnInit(): void {
-    this.loadPendingCoaches();
+    this.loadAllCoaches();
   }
 
-  loadPendingCoaches() {
+  loadAllCoaches() {
     this.isLoading = true;
-    this.adminService.getPendingCoaches().subscribe({
+    this.adminService.getAllCoaches().subscribe({
       next: (data) => {
-        this.pendingCoaches = data;
+        this.allCoaches = data;
+        this.applyFilter();
         this.isLoading = false;
       },
       error: (err) => {
@@ -33,6 +36,36 @@ export class BatchComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+  applyFilter() {
+  if (this.currentFilter === 'ALL') {
+    this.filteredCoaches = this.allCoaches;
+  } else {
+    this.filteredCoaches = this.allCoaches.filter(c => this.getCoachStatus(c) === this.currentFilter);
+  }
+}
+
+  setFilter(filter: string) {
+    this.currentFilter = filter;
+    this.applyFilter();
+  }
+
+get pendingCount(): number {
+  return this.allCoaches.filter(c => this.getCoachStatus(c) === 'PENDING').length;
+}
+
+get approvedCount(): number {
+  return this.allCoaches.filter(c => this.getCoachStatus(c) === 'APPROVED').length;
+}
+
+get rejectedCount(): number {
+  return 0;
+}
+
+  getSpecialiteTitle(specialite: any): string {
+    if (!specialite) return '';
+    if (typeof specialite === 'string') return specialite;
+    return specialite.title || '';
   }
 
   // Modal logic
@@ -56,7 +89,7 @@ export class BatchComponent implements OnInit {
     if (this.modalAction === 'accept') {
       this.adminService.approveCoach(this.selectedCoach.id).subscribe({
         next: (res) => {
-          this.loadPendingCoaches();
+          this.loadAllCoaches();
           this.closeModal();
         },
         error: (err) => {
@@ -67,7 +100,7 @@ export class BatchComponent implements OnInit {
     } else {
       this.adminService.rejectCoach(this.selectedCoach.id).subscribe({
         next: (res) => {
-          this.loadPendingCoaches();
+          this.loadAllCoaches();
           this.closeModal();
         },
         error: (err) => {
@@ -77,4 +110,10 @@ export class BatchComponent implements OnInit {
       });
     }
   }
+  // Helper: dériver le statut depuis les champs boolean du backend
+getCoachStatus(coach: User): string {
+  if (coach.enabled === false) return 'PENDING';
+  if (coach.enabled === true) return 'APPROVED';
+  return 'UNKNOWN';
+}
 }
