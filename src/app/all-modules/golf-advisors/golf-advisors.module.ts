@@ -14,13 +14,13 @@ import { ReviewsComponent } from './reviews/reviews.component';
 import { AdvisorsRegisterComponent } from './advisors-register/advisors-register.component';
 import { SocialMediaComponent } from './social-media/social-media.component';
 import { AdvisorsChangePasswordComponent } from './advisors-change-password/advisors-change-password.component';
+import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { CategoriesComponent } from './categories/categories.component';
+
+import { RouterModule } from '@angular/router';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { TagInputModule } from 'ngx-chips';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
-import { RouterModule } from '@angular/router';
-
-
 
 @NgModule({
   declarations: [
@@ -36,15 +36,17 @@ import { RouterModule } from '@angular/router';
     AdvisorsRegisterComponent,
     SocialMediaComponent,
     AdvisorsChangePasswordComponent,
-    AdminLayoutComponent
+    AdminLayoutComponent,
+    CategoriesComponent
   ],
   imports: [
     CommonModule,
     GolfAdvisorsRoutingModule,
-    NgxDropzoneModule,
-    TagInputModule,
     RouterModule,
-    FormsModule, ReactiveFormsModule
+    FormsModule,
+    ReactiveFormsModule,
+    NgxDropzoneModule,
+    TagInputModule
   ]
 })
 export class GolfAdvisorsModule { }

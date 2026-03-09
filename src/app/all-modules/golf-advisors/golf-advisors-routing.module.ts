@@ -14,15 +14,15 @@ import { ScheduleTimingsComponent } from './schedule-timings/schedule-timings.co
 import { SocialMediaComponent } from './social-media/social-media.component';
 import { AuthGuard } from 'src/app/guards/auth.guards';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
+import { CategoriesComponent } from './categories/categories.component';
 
 const routes: Routes = [
-  { path: '', component: AdminLayoutComponent,
+  {
+    path: '',
+    component: AdminLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-      { 
-        path: 'advisors-dashboard', 
-        component: AdvisorsDashboardComponent,
-      },
+      { path: 'advisors-dashboard', component: AdvisorsDashboardComponent },
       { path: 'batch', component: BatchComponent },
       { path: 'schedule-timings', component: ScheduleTimingsComponent },
       { path: 'my-golfers', component: MyGolfersComponent },
@@ -31,8 +31,9 @@ const routes: Routes = [
       { path: 'advisors-profile-settings', component: AdvisorsProfileSettingsComponent },
       { path: 'reviews', component: ReviewsComponent },
       { path: 'advisors-register', component: AdvisorsRegisterComponent },
-      { path: 'social-media', component: SocialMediaComponent  },
-      { path: 'advisors-change-password', component: AdvisorsChangePasswordComponent }
+      { path: 'social-media', component: SocialMediaComponent },
+      { path: 'advisors-change-password', component: AdvisorsChangePasswordComponent },
+      { path: 'categories', component: CategoriesComponent }
     ]
   }
 ];

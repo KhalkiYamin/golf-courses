@@ -3,7 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { AllModulesComponent } from './all-modules.component';
 
 const routes: Routes = [
-  { path: '', component: AllModulesComponent,
+  {
+    path: '', component: AllModulesComponent,
     children: [
       { path: 'golf-advisors', loadChildren: () => import('./golf-advisors/golf-advisors.module').then(m => m.GolfAdvisorsModule) },
       { path: 'golfers', loadChildren: () => import('./golfers/golfers.module').then(m => m.GolfersModule) },

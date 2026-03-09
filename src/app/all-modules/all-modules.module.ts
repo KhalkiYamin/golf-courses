@@ -5,9 +5,11 @@ import { AllModulesRoutingModule } from './all-modules-routing.module';
 import { AllModulesComponent } from './all-modules.component';
 
 
+
 @NgModule({
   declarations: [
-    AllModulesComponent
+    AllModulesComponent,
+
   ],
   imports: [
     CommonModule,

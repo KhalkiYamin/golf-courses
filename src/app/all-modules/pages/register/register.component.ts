@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
+import { CategoryService } from 'src/app/services/category.service';
+import { Category } from 'src/app/all-modules/models/category';
 
 type Role = 'COACH' | 'ATHLETE' | '';
 
@@ -9,7 +11,9 @@ type Role = 'COACH' | 'ATHLETE' | '';
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css']
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
+
+  categories: Category[] = [];
 
   nom: string = '';
   prenom: string = '';
@@ -18,32 +22,51 @@ export class RegisterComponent {
   password: string = '';
   role: Role = '';
 
-  specialite: string = '';
+  specialiteId: number | null = null;
   experience: number | null = null;
 
-  sport: string = '';
+  sportId: number | null = null;
   niveau: string = '';
 
   loading: boolean = false;
   errorMsg: string = '';
-  successMsg: string = '';   // ✅ جديد
+  successMsg: string = '';
 
-  constructor(private auth: AuthService, private router: Router) { }
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    private categoryService: CategoryService
+  ) { }
 
-  onRoleChange() {
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  loadCategories(): void {
+    this.categoryService.getAllCategories().subscribe({
+      next: (data: Category[]) => {
+        this.categories = data;
+      },
+      error: (err: any) => {
+        console.error('Erreur chargement catégories', err);
+      }
+    });
+  }
+
+  onRoleChange(): void {
     this.errorMsg = '';
     this.successMsg = '';
 
     if (this.role === 'COACH') {
-      this.sport = '';
+      this.sportId = null;
       this.niveau = '';
     } else if (this.role === 'ATHLETE') {
-      this.specialite = '';
+      this.specialiteId = null;
       this.experience = null;
     }
   }
 
-  submit() {
+  submit(): void {
     this.errorMsg = '';
     this.successMsg = '';
 
@@ -51,18 +74,19 @@ export class RegisterComponent {
       this.errorMsg = 'Veuillez remplir tous les champs obligatoires.';
       return;
     }
+
     if (this.password.length < 6) {
       this.errorMsg = 'Le mot de passe doit contenir au moins 6 caractères.';
       return;
     }
 
-    if (this.role === 'COACH' && !this.specialite) {
-      this.errorMsg = 'Veuillez indiquer votre spécialité.';
+    if (this.role === 'COACH' && !this.specialiteId) {
+      this.errorMsg = 'Veuillez choisir votre spécialité.';
       return;
     }
 
-    if (this.role === 'ATHLETE' && (!this.sport || !this.niveau)) {
-      this.errorMsg = 'Veuillez compléter les informations du profil athlète (sport + niveau).';
+    if (this.role === 'ATHLETE' && (!this.sportId || !this.niveau)) {
+      this.errorMsg = 'Veuillez compléter les informations du profil athlète.';
       return;
     }
 
@@ -73,16 +97,15 @@ export class RegisterComponent {
       password: this.password,
       telephone: this.telephone,
       role: this.role
-      // ❌ ما تبعثش enabled من الفرونت
     };
 
     if (this.role === 'COACH') {
-      payload.specialite = this.specialite;
+      payload.specialiteId = this.specialiteId;
       payload.experience = this.experience ?? 0;
     }
 
     if (this.role === 'ATHLETE') {
-      payload.sport = this.sport;
+      payload.sportId = this.sportId;
       payload.niveau = this.niveau;
     }
 
@@ -91,16 +114,13 @@ export class RegisterComponent {
     this.auth.register(payload).subscribe({
       next: (res: any) => {
         this.loading = false;
-
-        // ✅ عرض رسالة النجاح اللي جاية من backend
         this.successMsg = res?.message || "Inscription réussie ✅";
 
-        // ✅ Redirect بعد شوية
         setTimeout(() => {
           this.router.navigate(['/pages/login']);
         }, 1500);
       },
-      error: (err) => {
+      error: (err: any) => {
         this.loading = false;
         console.error(err);
         this.errorMsg = err?.error?.message || "Erreur lors de l'inscription.";
