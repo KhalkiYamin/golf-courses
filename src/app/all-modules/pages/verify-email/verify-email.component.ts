@@ -17,7 +17,7 @@ export class VerifyEmailComponent implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token');
@@ -27,17 +27,17 @@ export class VerifyEmailComponent implements OnInit {
       this.message = 'Lien invalide (token manquant).';
       return;
     }
-this.http.get(`${this.apiUrl}/verify-email`, { params: { token }, responseType: 'text' }).subscribe({
-  next: () => {
-    this.status = 'success';
-    this.message = 'Votre compte a été vérifié avec succès !';
-  },
-  error: (err) => {
-    console.error('Erreur de vérification :', err);
-    this.status = 'error';
-    this.message = err?.error?.message || err?.error || 'Lien invalide, expiré ou déjà utilisé.';
-  }
-});
+
+    this.http.get(`${this.apiUrl}/verify-email`, { params: { token }, responseType: 'text' }).subscribe({
+      next: () => {
+        this.status = 'success';
+        this.message = 'Votre compte a été vérifié avec succès !';
+      },
+      error: (err) => {
+        this.status = 'error';
+        this.message = err?.error?.message || err?.error || 'Lien invalide, expiré ou déjà utilisé.';
+      }
+    });
   }
 
   goToLogin(): void {

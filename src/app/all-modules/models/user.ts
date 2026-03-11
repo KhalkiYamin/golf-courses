@@ -7,9 +7,11 @@ export interface User {
   email: string;
   telephone?: string;
   role: string;
-  specialite?: Category;
+  specialite?: Category | string | null;
+  sport?: Category | string | null;
   experience?: number;
   createDate?: string;
   enabled?: boolean;
   adminApproved?: boolean;
+  statut?: string;
 }

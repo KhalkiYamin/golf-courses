@@ -23,10 +23,7 @@ export class UsersComponent implements OnInit {
     pageSize = 4;
 
     showAddModal = false;
-    showDeleteModal = false;
     successMessage = '';
-
-    userToDelete: AdminUser | null = null;
 
     newUser: AdminUser = this.createEmptyUser();
 
@@ -58,7 +55,7 @@ export class UsersComponent implements OnInit {
                 this.refreshLists();
             },
             error: (err) => {
-                console.error('Erreur lors du chargement des utilisateurs', err);
+                console.error('Erreur chargement utilisateurs', err);
             }
         });
     }
@@ -69,7 +66,7 @@ export class UsersComponent implements OnInit {
     }
 
     get pendingCoachesCount(): number {
-        return this.coaches.filter(c => c.statut === 'EN ATTENTE').length;
+        return this.coaches.filter(c => this.getUserStatus(c) === 'EN ATTENTE').length;
     }
 
     get filteredAthletes(): AdminUser[] {
@@ -82,13 +79,15 @@ export class UsersComponent implements OnInit {
 
     get filteredCoaches(): AdminUser[] {
         return this.coaches.filter(user => {
+            const specialiteLabel = this.getSpecialiteLabel(user);
+
             const searchMatch =
-                (`${user.nom} ${user.prenom} ${user.email} ${user.specialite || ''} ${user.telephone || ''}`)
+                (`${user.nom} ${user.prenom} ${user.email} ${specialiteLabel} ${user.telephone || ''}`)
                     .toLowerCase()
                     .includes(this.searchTerm.toLowerCase());
 
             const filterMatch =
-                this.coachFilter === 'TOUS' || user.statut === this.coachFilter;
+                this.coachFilter === 'TOUS' || this.getUserStatus(user) === this.coachFilter;
 
             return searchMatch && filterMatch;
         });
@@ -138,7 +137,6 @@ export class UsersComponent implements OnInit {
     }
 
     saveUser(): void {
-        // مؤقتًا إضافة local فقط حتى نربط POST backend بعدين
         const newId =
             this.users.length > 0
                 ? Math.max(...this.users.map(u => u.id)) + 1
@@ -164,19 +162,13 @@ export class UsersComponent implements OnInit {
     }
 
     confirmDelete(user: AdminUser): void {
-        this.userToDelete = user;
-        this.showDeleteModal = true;
-    }
+        const confirmation = confirm(`هل أنت متأكد من حذف ${user.prenom} ${user.nom} ؟`);
+        if (!confirmation) return;
 
-    deleteConfirmed(): void {
-        if (!this.userToDelete) return;
-
-        this.adminUserService.deleteUser(this.userToDelete.id).subscribe({
+        this.adminUserService.deleteUser(user.id).subscribe({
             next: () => {
                 this.successMessage = 'Utilisateur supprimé avec succès';
-                this.showDeleteModal = false;
                 this.selectedUser = null;
-                this.userToDelete = null;
                 this.loadUsers();
 
                 setTimeout(() => {
@@ -203,6 +195,19 @@ export class UsersComponent implements OnInit {
                 console.error('Erreur validation coach', err);
             }
         });
+    }
+
+    getUserStatus(user: AdminUser): string {
+        return user.statut || (user.enabled ? 'VALIDÉ' : 'EN ATTENTE');
+    }
+
+    getSpecialiteLabel(user: AdminUser): string {
+        const specialite: any = user.specialite;
+
+        if (!specialite) return '-';
+        if (typeof specialite === 'string') return specialite;
+
+        return specialite?.title || '-';
     }
 
     goToPage(page: number): void {

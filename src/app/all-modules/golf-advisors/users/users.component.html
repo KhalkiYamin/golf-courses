@@ -1,19 +1,18 @@
-<div class="container-fluid">
+<div class="container-fluid p-3">
 
     <div *ngIf="successMessage" class="alert alert-success">
         {{ successMessage }}
     </div>
 
-    <h2>Gestion des utilisateurs</h2>
+    <h2 class="mb-3">Gestion des utilisateurs</h2>
 
     <button class="btn btn-primary mb-3" (click)="addUser()">
         Ajouter utilisateur
     </button>
 
-    <input class="form-control mb-3" placeholder="Recherche..." [(ngModel)]="searchTerm">
+    <input class="form-control mb-3" placeholder="Recherche..." [(ngModel)]="searchTerm" name="searchTerm">
 
     <div class="mb-3">
-
         <button class="btn btn-outline-primary me-2" (click)="switchTab('ATHLETE')">
             Athlètes
         </button>
@@ -21,23 +20,18 @@
         <button class="btn btn-outline-primary" (click)="switchTab('COACH')">
             Coachs
         </button>
-
     </div>
 
     <div *ngIf="selectedTab === 'COACH'" class="mb-3">
-
-        <select class="form-control" [(ngModel)]="coachFilter" (change)="setCoachFilter(coachFilter)">
-
+        <select class="form-control" [(ngModel)]="coachFilter" (change)="setCoachFilter(coachFilter)"
+            name="coachFilter">
             <option value="TOUS">Tous</option>
             <option value="VALIDÉ">Validé</option>
             <option value="EN ATTENTE">En attente</option>
-
         </select>
-
     </div>
 
-    <table class="table table-bordered">
-
+    <table class="table table-bordered bg-white">
         <thead>
             <tr>
                 <th>Nom</th>
@@ -50,78 +44,62 @@
         </thead>
 
         <tbody>
-
             <tr *ngFor="let user of displayedUsers" (click)="selectUser(user)">
-
-                <td>{{user.prenom}} {{user.nom}}</td>
-
-                <td>{{user.email}}</td>
-
-                <td>{{user.telephone}}</td>
+                <td>{{ user.prenom }} {{ user.nom }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.telephone }}</td>
 
                 <td *ngIf="selectedTab === 'COACH'">
-                    {{user.specialite}}
+                    {{ getSpecialiteLabel(user) }}
                 </td>
 
-                <td>{{user.statut}}</td>
+                <td>{{ getUserStatus(user) }}</td>
 
                 <td>
-
-                    <button class="btn btn-success btn-sm" *ngIf="user.role === 'COACH' && user.statut === 'EN ATTENTE'"
-                        (click)="validateCoach(user); $event.stopPropagation()">
+                    <button *ngIf="user.role === 'COACH' && getUserStatus(user) === 'EN ATTENTE'"
+                        class="btn btn-success btn-sm me-2" (click)="validateCoach(user); $event.stopPropagation()">
                         Valider
                     </button>
 
                     <button class="btn btn-danger btn-sm" (click)="confirmDelete(user); $event.stopPropagation()">
                         Supprimer
                     </button>
-
                 </td>
-
             </tr>
-
         </tbody>
-
     </table>
 
     <div class="mt-3">
-
         <button class="btn btn-secondary me-2" *ngFor="let p of [].constructor(totalPages); let i = index"
             (click)="currentPage = i + 1">
-
-            {{i+1}}
-
+            {{ i + 1 }}
         </button>
-
     </div>
 
 </div>
 
 <div class="modal" *ngIf="showAddModal">
-
     <div class="modal-box">
 
         <h4>Ajouter utilisateur</h4>
 
-        <input class="form-control mb-2" placeholder="Nom" [(ngModel)]="newUser.nom">
+        <input class="form-control mb-2" placeholder="Nom" [(ngModel)]="newUser.nom" name="nom">
 
-        <input class="form-control mb-2" placeholder="Prénom" [(ngModel)]="newUser.prenom">
+        <input class="form-control mb-2" placeholder="Prénom" [(ngModel)]="newUser.prenom" name="prenom">
 
-        <input class="form-control mb-2" placeholder="Email" [(ngModel)]="newUser.email">
+        <input class="form-control mb-2" placeholder="Email" [(ngModel)]="newUser.email" name="email">
 
-        <input class="form-control mb-2" placeholder="Téléphone" [(ngModel)]="newUser.telephone">
+        <input class="form-control mb-2" placeholder="Téléphone" [(ngModel)]="newUser.telephone" name="telephone">
 
-        <select class="form-control mb-2" [(ngModel)]="newUser.role">
-
+        <select class="form-control mb-2" [(ngModel)]="newUser.role" name="role">
             <option value="ATHLETE">Athlète</option>
             <option value="COACH">Coach</option>
-
         </select>
 
         <input class="form-control mb-2" placeholder="Spécialité" *ngIf="newUser.role === 'COACH'"
-            [(ngModel)]="newUser.specialite">
+            [(ngModel)]="newUser.specialite" name="specialite">
 
-        <button class="btn btn-success" (click)="saveUser()">
+        <button class="btn btn-success me-2" (click)="saveUser()">
             Enregistrer
         </button>
 
@@ -130,5 +108,4 @@
         </button>
 
     </div>
-
 </div>
