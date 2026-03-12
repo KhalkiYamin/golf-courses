@@ -4,14 +4,18 @@ import { AllModulesComponent } from './all-modules.component';
 
 const routes: Routes = [
   {
-    path: '', component: AllModulesComponent,
+    path: '',
+    component: AllModulesComponent,
     children: [
-      { path: 'golf-advisors', loadChildren: () => import('./golf-advisors/golf-advisors.module').then(m => m.GolfAdvisorsModule) },
       { path: 'golfers', loadChildren: () => import('./golfers/golfers.module').then(m => m.GolfersModule) },
       { path: 'pages', loadChildren: () => import('./pages/pages.module').then(m => m.PagesModule) },
       { path: 'blog', loadChildren: () => import('./blog/blog.module').then(m => m.BlogModule) }
     ]
   },
+  {
+    path: 'golf-advisors',
+    loadChildren: () => import('./golf-advisors/golf-advisors.module').then(m => m.GolfAdvisorsModule)
+  }
 ];
 
 @NgModule({

@@ -21,7 +21,7 @@ export class AdminLayoutComponent implements OnInit {
 
   onLogout(): void {
     this.showLogoutModal = false;
-    this.authService.logout(); 
-    this.router.navigate(['/login']);
+    this.authService.logout();
+    this.router.navigate(['/pages/login']);
   }
 }

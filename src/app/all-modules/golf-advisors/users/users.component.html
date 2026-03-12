@@ -1,94 +1,102 @@
-<div class="container-fluid p-3">
+<div class="users-page">
 
     <div *ngIf="successMessage" class="alert alert-success">
         {{ successMessage }}
     </div>
 
-    <h2 class="mb-3">Gestion des utilisateurs</h2>
+    <div class="users-card">
+        <div class="users-header">
+            <div class="users-title">
+                <h2>Gestion des utilisateurs</h2>
+            </div>
 
-    <button class="btn btn-primary mb-3" (click)="addUser()">
-        Ajouter utilisateur
-    </button>
+            <div class="users-actions">
+                <input type="text" class="search-input" placeholder="Recherche..." [(ngModel)]="searchTerm"
+                    name="searchTerm">
 
-    <input class="form-control mb-3" placeholder="Recherche..." [(ngModel)]="searchTerm" name="searchTerm">
+                <button class="add-btn" (click)="addUser()">
+                    + Ajouter
+                </button>
+            </div>
+        </div>
 
-    <div class="mb-3">
-        <button class="btn btn-outline-primary me-2" (click)="switchTab('ATHLETE')">
-            Athlètes
-        </button>
+        <div class="users-filters">
+            <button class="tab-btn" [class.active]="selectedTab === 'ATHLETE'" (click)="switchTab('ATHLETE')">
+                Athlètes
+            </button>
 
-        <button class="btn btn-outline-primary" (click)="switchTab('COACH')">
-            Coachs
-        </button>
+            <button class="tab-btn" [class.active]="selectedTab === 'COACH'" (click)="switchTab('COACH')">
+                Coachs
+            </button>
+
+            <select *ngIf="selectedTab === 'COACH'" class="filter-select" [(ngModel)]="coachFilter"
+                (change)="setCoachFilter(coachFilter)" name="coachFilter">
+                <option value="TOUS">Tous</option>
+                <option value="VALIDÉ">Validé</option>
+                <option value="EN ATTENTE">En attente</option>
+            </select>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th *ngIf="selectedTab === 'COACH'">Spécialité</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let user of displayedUsers" (click)="selectUser(user)">
+                        <td>{{ user.prenom }} {{ user.nom }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.telephone }}</td>
+
+                        <td *ngIf="selectedTab === 'COACH'">
+                            {{ getSpecialiteLabel(user) }}
+                        </td>
+
+                        <td>
+                            <span class="status-badge" [class.pending]="getUserStatus(user) === 'EN ATTENTE'">
+                                {{ getUserStatus(user) }}
+                            </span>
+                        </td>
+
+                        <td class="action-buttons">
+                            <button *ngIf="user.role === 'COACH' && getUserStatus(user) === 'EN ATTENTE'"
+                                class="edit-btn" (click)="validateCoach(user); $event.stopPropagation()">
+                                Valider
+                            </button>
+
+                            <button class="delete-btn" (click)="confirmDelete(user); $event.stopPropagation()">
+                                Supprimer
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination-box">
+            <button class="page-btn" *ngFor="let p of [].constructor(totalPages); let i = index"
+                (click)="goToPage(i + 1)">
+                {{ i + 1 }}
+            </button>
+        </div>
     </div>
-
-    <div *ngIf="selectedTab === 'COACH'" class="mb-3">
-        <select class="form-control" [(ngModel)]="coachFilter" (change)="setCoachFilter(coachFilter)"
-            name="coachFilter">
-            <option value="TOUS">Tous</option>
-            <option value="VALIDÉ">Validé</option>
-            <option value="EN ATTENTE">En attente</option>
-        </select>
-    </div>
-
-    <table class="table table-bordered bg-white">
-        <thead>
-            <tr>
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th *ngIf="selectedTab === 'COACH'">Spécialité</th>
-                <th>Statut</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr *ngFor="let user of displayedUsers" (click)="selectUser(user)">
-                <td>{{ user.prenom }} {{ user.nom }}</td>
-                <td>{{ user.email }}</td>
-                <td>{{ user.telephone }}</td>
-
-                <td *ngIf="selectedTab === 'COACH'">
-                    {{ getSpecialiteLabel(user) }}
-                </td>
-
-                <td>{{ getUserStatus(user) }}</td>
-
-                <td>
-                    <button *ngIf="user.role === 'COACH' && getUserStatus(user) === 'EN ATTENTE'"
-                        class="btn btn-success btn-sm me-2" (click)="validateCoach(user); $event.stopPropagation()">
-                        Valider
-                    </button>
-
-                    <button class="btn btn-danger btn-sm" (click)="confirmDelete(user); $event.stopPropagation()">
-                        Supprimer
-                    </button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <div class="mt-3">
-        <button class="btn btn-secondary me-2" *ngFor="let p of [].constructor(totalPages); let i = index"
-            (click)="currentPage = i + 1">
-            {{ i + 1 }}
-        </button>
-    </div>
-
 </div>
 
 <div class="modal" *ngIf="showAddModal">
     <div class="modal-box">
-
         <h4>Ajouter utilisateur</h4>
 
         <input class="form-control mb-2" placeholder="Nom" [(ngModel)]="newUser.nom" name="nom">
-
         <input class="form-control mb-2" placeholder="Prénom" [(ngModel)]="newUser.prenom" name="prenom">
-
         <input class="form-control mb-2" placeholder="Email" [(ngModel)]="newUser.email" name="email">
-
         <input class="form-control mb-2" placeholder="Téléphone" [(ngModel)]="newUser.telephone" name="telephone">
 
         <select class="form-control mb-2" [(ngModel)]="newUser.role" name="role">
@@ -99,13 +107,9 @@
         <input class="form-control mb-2" placeholder="Spécialité" *ngIf="newUser.role === 'COACH'"
             [(ngModel)]="newUser.specialite" name="specialite">
 
-        <button class="btn btn-success me-2" (click)="saveUser()">
-            Enregistrer
-        </button>
-
-        <button class="btn btn-secondary" (click)="closeModal()">
-            Annuler
-        </button>
-
+        <div class="modal-actions">
+            <button class="btn btn-success" (click)="saveUser()">Enregistrer</button>
+            <button class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+        </div>
     </div>
 </div>

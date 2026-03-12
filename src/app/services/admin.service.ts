@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { User } from '../all-modules/models/user';
+import { DashboardStats } from '../all-modules/models/dashboard-stats';
 
 @Injectable({
   providedIn: 'root'
@@ -59,6 +60,12 @@ export class AdminService {
     return this.http.delete(`${this.adminBaseUrl}/users/${id}`, {
       headers: this.getHeaders(),
       responseType: 'text'
+    });
+  }
+
+  getDashboardStats(): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${this.adminBaseUrl}/dashboard`, {
+      headers: this.getHeaders()
     });
   }
 }

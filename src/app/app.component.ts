@@ -30,8 +30,10 @@ export class AppComponent {
           this.activeRoute === 'batch' ||
           this.active2Route === 'batch' || this.activeRoute === 'categories' ||
           this.active2Route === 'categories' || this.activeRoute === 'users' ||
-          this.active2Route === 'users'
-
+          this.active2Route === 'users' || this.activeRoute === 'ressources-sportives' ||
+          this.active2Route === 'ressources-sportives'
+          || this.activeRoute === 'paremetres' ||
+          this.active2Route === 'parametres'
         ) {
           this.showHeader = false;
         } else {
@@ -40,7 +42,8 @@ export class AppComponent {
         if (this.active2Route === "chat-advisor" || this.active2Route === "map-grid" || this.active2Route === "map-list" || this.active2Route === "chat" || this.active2Route === "voice-call" || this.active2Route === "video-call" || this.activeRoute === 'advisors-dashboard' ||
           this.active2Route === 'advisors-dashboard' || this.activeRoute === 'batch' ||
           this.active2Route === 'batch' || this.activeRoute === 'categories' ||
-          this.active2Route === 'categories') {
+          this.active2Route === 'categories' || this.activeRoute === 'ressources-sportives' ||
+          this.active2Route === 'ressources-sportives') {
           this.hideFooter = true;
         } else {
           this.hideFooter = false;

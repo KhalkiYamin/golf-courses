@@ -1,0 +1,147 @@
+<div class="ressources-page">
+
+    <div *ngIf="successMessage" class="alert-success-box">
+        {{ successMessage }}
+    </div>
+
+    <div class="ressources-card">
+
+        <div class="ressources-header">
+            <div class="title-box">
+                <h2>Gestion des ressources sportives</h2>
+                <p>Gestion des équipements sportifs de l'académie.</p>
+            </div>
+
+            <div class="header-actions">
+                <input type="text" class="search-input" placeholder="Rechercher un équipement..."
+                    [(ngModel)]="searchTerm" (input)="applyFilters()" name="searchTerm">
+
+                <button class="add-btn" (click)="openAddModal()">
+                    + Ajouter
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <h4>Total</h4>
+                <p>{{ totalEquipements }}</p>
+            </div>
+
+            <div class="stat-card">
+                <h4>Disponibles</h4>
+                <p>{{ totalDisponibles }}</p>
+            </div>
+
+            <div class="stat-card">
+                <h4>Indisponibles</h4>
+                <p>{{ totalIndisponibles }}</p>
+            </div>
+        </div>
+
+        <div class="filters-row">
+            <button class="filter-btn" [class.active]="selectedFilter === 'TOUS'" (click)="setFilter('TOUS')">
+                Tous
+            </button>
+
+            <button class="filter-btn" [class.active]="selectedFilter === 'DISPONIBLE'"
+                (click)="setFilter('DISPONIBLE')">
+                Disponibles
+            </button>
+
+            <button class="filter-btn" [class.active]="selectedFilter === 'INDISPONIBLE'"
+                (click)="setFilter('INDISPONIBLE')">
+                Indisponibles
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="ressources-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Disponibilité</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let item of filteredEquipements">
+                        <td>
+                            <img [src]="item.image ? item.image : 'assets/img/default.png'" [alt]="item.nom"
+                                class="equipement-image">
+                        </td>
+
+                        <td>{{ item.nom }}</td>
+                        <td>{{ item.description }}</td>
+
+                        <td>
+                            <span class="status-badge" [class.available]="item.disponibilite"
+                                [class.unavailable]="!item.disponibilite">
+                                {{ getDisponibiliteLabel(item.disponibilite) }}
+                            </span>
+                        </td>
+
+                        <td class="actions-cell">
+                            <button class="edit-btn" (click)="openEditModal(item)">
+                                Modifier
+                            </button>
+                            <button class="delete-btn" (click)="deleteEquipement(item)">
+                                Supprimer
+                            </button>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="filteredEquipements.length === 0">
+                        <td colspan="5" class="empty-state">
+                            Aucun équipement trouvé.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="custom-modal" *ngIf="showModal">
+    <div class="modal-box">
+        <h3>{{ isEditMode ? 'Modifier équipement' : 'Ajouter équipement' }}</h3>
+
+        <div class="form-group">
+            <label>Nom</label>
+            <input type="text" [(ngModel)]="equipementForm.nom" name="nomEquipement">
+        </div>
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea rows="4" [(ngModel)]="equipementForm.description" name="descriptionEquipement"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Image</label>
+            <input type="text" [(ngModel)]="equipementForm.image" name="imageEquipement"
+                placeholder="assets/img/resources/football.png">
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" [(ngModel)]="equipementForm.disponibilite" name="disponibiliteEquipement">
+                Disponible
+            </label>
+        </div>
+
+        <div class="modal-actions">
+            <button class="save-btn" (click)="saveEquipement()">
+                {{ isEditMode ? 'Modifier' : 'Ajouter' }}
+            </button>
+
+            <button class="cancel-btn" (click)="closeModal()">
+                Annuler
+            </button>
+        </div>
+    </div>
+</div>

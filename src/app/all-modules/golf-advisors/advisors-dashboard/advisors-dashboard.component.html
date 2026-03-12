@@ -1,100 +1,115 @@
-<section class="stats">
-    <div class="card stat-card">
-        <h4>Total Coachs</h4>
-        <h2>38</h2>
-        <p class="muted">Coachs inscrits</p>
-    </div>
-    <div class="card stat-card">
-        <h4>Total Athlètes</h4>
-        <h2>210</h2>
-        <p class="muted">Utilisateurs actifs</p>
-    </div>
-    <div class="card stat-card">
-        <h4>Paiements</h4>
-        <h2>7,240 TND</h2>
-        <p class="muted">Revenus totaux</p>
-    </div>
-</section>
+<div class="dashboard-bg">
 
-<section class="card">
-    <div class="card-head" style="display: flex; justify-content: space-between; align-items: center;">
-        <h3>Coachs en attente</h3>
-        <span class="badge badge-warning" *ngIf="pendingCoaches.length > 0">
-            {{ pendingCoaches.length }} demande(s)
-        </span>
+    <div *ngIf="isDashboardLoading" class="text-center p-3">
+        Chargement des statistiques...
     </div>
 
-    <div *ngIf="isLoading" class="text-center p-4">
-        <p class="muted">Récupération des demandes en cours...</p>
-    </div>
-
-    <div *ngIf="!isLoading && pendingCoaches.length === 0" class="text-center p-4">
-        <p class="muted">Aucune demande de coach en attente pour le moment.</p>
-    </div>
-
-    <div class="table" *ngIf="!isLoading && pendingCoaches.length > 0">
-        <div class="row head">
-            <span>Nom</span>
-            <span>Spécialité</span>
-            <span>Expérience</span>
-            <span>Statut</span>
-            <span>Action</span>
-        </div>
-
-        <div class="row" *ngFor="let coach of pendingCoaches">
-            <span>{{ coach.prenom }} {{ coach.nom }}</span>
-            <span>{{ coach.specialite || 'Non spécifié' }}</span>
-            <span>{{ coach.experience ? coach.experience + ' ans' : '-' }}</span>
-            <span class="pending">En attente</span>
-            <span class="actions">
-                <button class="mini ok" (click)="openModal('accept', coach)" title="Valider">✔</button>
-                <button class="mini no" (click)="openModal('reject', coach)" title="Refuser">✖</button>
-            </span>
-        </div>
-    </div>
-</section>
-
-<section class="card">
-    <div class="card-head">
-        <h3>Actions rapides</h3>
-    </div>
-    <div class="quick">
-        <button class="qbtn">+ Ajouter sport</button>
-        <button class="qbtn">+ Ajouter niveau</button>
-    </div>
-</section>
-
-<div class="modal fade show" tabindex="-1"
-    [ngStyle]="{display: showModal ? 'block' : 'none', background: showModal ? 'rgba(0,0,0,0.3)' : 'transparent'}"
-    *ngIf="showModal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content"
-            style="background: white; padding: 20px; border-radius: 8px; max-width: 500px; margin: 10% auto;">
-            <div class="modal-header"
-                style="display: flex; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-                <h5 class="modal-title" style="margin: 0;">
-                    {{ modalAction === 'accept' ? 'Validation du Coach' : 'Refus du Coach' }}
-                </h5>
-                <button type="button" class="close" (click)="closeModal()"
-                    style="border: none; background: transparent; font-size: 1.5rem; cursor: pointer;">
-                    <span>&times;</span>
-                </button>
+    <section class="stats-pro" *ngIf="!isDashboardLoading">
+        <div class="stat-box gradient-blue">
+            <div class="stat-icon">
+                <i class="fas fa-user-tie"></i>
             </div>
-            <div class="modal-body" style="padding: 20px 0;">
-                <p>
-                    {{ modalAction === 'accept' ? 'Voulez-vous vraiment valider' : 'Voulez-vous vraiment refuser' }}
-                    <strong>{{ selectedCoach?.prenom }} {{ selectedCoach?.nom }}</strong> ?
-                </p>
-            </div>
-            <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
-                <button type="button" class="btn btn-secondary" (click)="closeModal()"
-                    style="padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer;">Annuler</button>
-                <button type="button" class="btn"
-                    [ngStyle]="{backgroundColor: modalAction === 'accept' ? '#28a745' : '#dc3545', color: 'white', padding: '8px 16px', border: 'none', borderRadius: '4px', cursor: 'pointer'}"
-                    (click)="confirmModal()">
-                    {{ modalAction === 'accept' ? 'Valider' : 'Refuser' }}
-                </button>
+            <div class="stat-content">
+                <span class="stat-label">Total Coachs</span>
+                <h2>{{ stats.totalCoaches }}</h2>
+                <p>Coachs inscrits dans l'académie</p>
             </div>
         </div>
-    </div>
+
+        <div class="stat-box gradient-purple">
+            <div class="stat-icon">
+                <i class="fas fa-running"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Total Athlètes</span>
+                <h2>{{ stats.totalAthletes }}</h2>
+                <p>Utilisateurs actifs</p>
+            </div>
+        </div>
+
+        <div class="stat-box gradient-green">
+            <div class="stat-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Paiements</span>
+                <h2>{{ stats.totalPayments }} TND</h2>
+                <p>Revenus totaux générés</p>
+            </div>
+        </div>
+
+        <div class="stat-box gradient-orange">
+            <div class="stat-icon">
+                <i class="fas fa-dumbbell"></i>
+            </div>
+            <div class="stat-content">
+                <span class="stat-label">Ressources sportives</span>
+                <h2>{{ stats.totalResources }}</h2>
+                <p>Équipements disponibles</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="card modern-card" *ngIf="!isDashboardLoading">
+        <div class="card-head">
+            <div>
+                <h3>Vue d’ensemble</h3>
+                <p class="section-subtitle">Résumé global de l’activité de l’académie</p>
+            </div>
+        </div>
+
+        <div class="overview-grid">
+            <div class="overview-item">
+                <span class="overview-title">Taux d’activité</span>
+                <strong>{{ stats.activityRate }}%</strong>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-title">Abonnements actifs</span>
+                <strong>{{ stats.activeSubscriptions }}</strong>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-title">Séances planifiées</span>
+                <strong>{{ stats.plannedSessions }}</strong>
+            </div>
+
+            <div class="overview-item">
+                <span class="overview-title">Satisfaction globale</span>
+                <strong>{{ stats.globalSatisfaction }}%</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="card modern-card">
+        <div class="card-head">
+            <div>
+                <h3>Actions rapides</h3>
+                <p class="section-subtitle">Accès direct aux opérations les plus utilisées</p>
+            </div>
+        </div>
+
+        <div class="quick modern-quick">
+            <button class="qbtn" routerLink="/golf-advisors/categories">
+                <i class="fas fa-plus-circle"></i>
+                <span>Ajouter sport</span>
+            </button>
+
+            <button class="qbtn" routerLink="/golf-advisors/categories">
+                <i class="fas fa-layer-group"></i>
+                <span>Ajouter niveau</span>
+            </button>
+
+            <button class="qbtn" routerLink="/golf-advisors/ressources-sportives">
+                <i class="fas fa-box-open"></i>
+                <span>Gérer ressources</span>
+            </button>
+
+            <button class="qbtn" routerLink="/golf-advisors/users">
+                <i class="fas fa-chart-line"></i>
+                <span>Voir rapports</span>
+            </button>
+        </div>
+    </section>
+
 </div>

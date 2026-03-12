@@ -1,0 +1,114 @@
+<div class="settings-page">
+
+    <div *ngIf="successMessage" class="alert-success-box">
+        {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="alert-error-box">
+        {{ errorMessage }}
+    </div>
+
+    <div class="settings-card">
+
+        <div class="settings-header">
+            <h2>Paramètres</h2>
+            <p>Gérez les informations de l’académie, les inscriptions et la sécurité.</p>
+        </div>
+
+        <!-- Paramètres académie -->
+        <div class="settings-section">
+            <h3>Paramètres académie</h3>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nom académie</label>
+                    <input type="text" [(ngModel)]="academy.nom" name="nomAcademie">
+                </div>
+
+                <div class="form-group">
+                    <label>Adresse</label>
+                    <input type="text" [(ngModel)]="academy.adresse" name="adresseAcademie">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="academy.email" name="emailAcademie">
+                </div>
+
+                <div class="form-group">
+                    <label>Téléphone</label>
+                    <input type="text" [(ngModel)]="academy.telephone" name="telephoneAcademie">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Logo</label>
+                    <input type="file" (change)="onLogoSelected($event)">
+                    <small *ngIf="academy.logo">Logo sélectionné : {{ academy.logo }}</small>
+                </div>
+            </div>
+
+            <button class="save-btn" (click)="saveAcademySettings()">
+                Enregistrer académie
+            </button>
+        </div>
+
+        <!-- Paramètres inscription -->
+        <div class="settings-section">
+            <h3>Paramètres inscription</h3>
+
+            <div class="switch-row">
+                <div class="switch-item">
+                    <label>Activation inscription</label>
+                    <input type="checkbox" [(ngModel)]="inscription.inscriptionActive" name="inscriptionActive">
+                </div>
+
+                <div class="switch-item">
+                    <label>Validation coach automatique</label>
+                    <input type="checkbox" [(ngModel)]="inscription.validationCoachAutomatique"
+                        name="validationCoachAutomatique">
+                </div>
+            </div>
+
+            <button class="save-btn" (click)="saveInscriptionSettings()">
+                Enregistrer inscription
+            </button>
+        </div>
+
+        <!-- Paramètres sécurité -->
+        <div class="settings-section">
+            <h3>Paramètres sécurité</h3>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Email admin</label>
+                    <input type="email" [(ngModel)]="securite.emailAdmin" name="emailAdmin">
+                </div>
+
+                <div class="form-group">
+                    <label>Durée session (minutes)</label>
+                    <input type="number" [(ngModel)]="securite.dureeSession" name="dureeSession">
+                </div>
+
+                <div class="form-group">
+                    <label>Ancien mot de passe</label>
+                    <input type="password" [(ngModel)]="securite.ancienMotDePasse" name="ancienMotDePasse">
+                </div>
+
+                <div class="form-group">
+                    <label>Nouveau mot de passe</label>
+                    <input type="password" [(ngModel)]="securite.nouveauMotDePasse" name="nouveauMotDePasse">
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Confirmer mot de passe</label>
+                    <input type="password" [(ngModel)]="securite.confirmerMotDePasse" name="confirmerMotDePasse">
+                </div>
+            </div>
+
+            <button class="save-btn" (click)="saveSecuritySettings()">
+                Enregistrer sécurité
+            </button>
+        </div>
+
+    </div>
+</div>

@@ -21,6 +21,8 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxDropzoneModule } from 'ngx-dropzone';
 import { TagInputModule } from 'ngx-chips';
+import { ParametresComponent } from './parametres/parametres.component';
+import { RessourcesSportivesComponent } from './ressources-sportives/ressources-sportives.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import { TagInputModule } from 'ngx-chips';
     AdvisorsChangePasswordComponent,
     AdminLayoutComponent,
     CategoriesComponent,
-    UsersComponent
+    UsersComponent,
+    ParametresComponent,
+    RessourcesSportivesComponent
   ],
   imports: [
     CommonModule,

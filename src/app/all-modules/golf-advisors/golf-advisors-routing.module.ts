@@ -15,7 +15,8 @@ import { AuthGuard } from 'src/app/guards/auth.guards';
 import { AdminLayoutComponent } from './admin-layout/admin-layout.component';
 import { CategoriesComponent } from './categories/categories.component';
 import { UsersComponent } from './users/users.component';
-
+import { ParametresComponent } from './parametres/parametres.component';
+import { RessourcesSportivesComponent } from './ressources-sportives/ressources-sportives.component';
 const routes: Routes = [
   {
     path: '',
@@ -34,7 +35,9 @@ const routes: Routes = [
       { path: 'social-media', component: SocialMediaComponent },
       { path: 'advisors-change-password', component: AdvisorsChangePasswordComponent },
       { path: 'categories', component: CategoriesComponent },
-      { path: 'users', component: UsersComponent }
+      { path: 'users', component: UsersComponent },
+      { path: 'parametres', component: ParametresComponent },
+      { path: 'ressources-sportives', component: RessourcesSportivesComponent }
     ]
   }
 ];
