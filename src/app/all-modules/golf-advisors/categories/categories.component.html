@@ -1,0 +1,83 @@
+<div class="categories-page">
+    <div class="categories-card">
+
+        <div class="categories-header">
+            <h2>Sports & Niveaux</h2>
+
+            <div class="header-actions">
+                <input type="text" class="search-input" placeholder="Rechercher une catégorie..."
+                    [(ngModel)]="searchTerm" (input)="applyFilter()" />
+
+                <button class="add-btn" (click)="openAddModal()">
+                    + Ajouter
+                </button>
+            </div>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="categories-table">
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <tr *ngFor="let category of paginatedCategories">
+                        <td>{{ category.title }}</td>
+                        <td>{{ category.description }}</td>
+                        <td>
+                            <button class="table-edit-btn" (click)="openEditModal(category)">Modifier</button>
+                            <button class="table-delete-btn" (click)="deleteCategory(category.id)">Supprimer</button>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="paginatedCategories.length === 0">
+                        <td colspan="4" class="empty-text">Aucune catégorie trouvée</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pagination" *ngIf="totalPages > 1">
+            <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+                Précédent
+            </button>
+
+            <button *ngFor="let page of pageNumbers" (click)="goToPage(page)"
+                [class.active-page]="currentPage === page">
+                {{ page }}
+            </button>
+
+            <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+                Suivant
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>{{ isEditMode ? 'Modifier Catégorie' : 'Ajouter Catégorie' }}</h3>
+            <button class="close-btn" (click)="closeModal()">×</button>
+        </div>
+
+        <div class="modal-body">
+            <input type="text" [(ngModel)]="categoryForm.title" placeholder="Titre" class="modal-input" />
+
+            <textarea [(ngModel)]="categoryForm.description" placeholder="Description"
+                class="modal-textarea"></textarea>
+        </div>
+
+        <div class="modal-footer">
+            <button class="cancel-btn" (click)="closeModal()">Annuler</button>
+            <button class="save-btn" (click)="saveCategory()">
+                {{ isEditMode ? 'Enregistrer' : 'Ajouter' }}
+            </button>
+        </div>
+    </div>
+</div>
