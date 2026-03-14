@@ -1,11 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { DashboardStats } from '../all-modules/models/dashboard-stats';
 import { User } from '../all-modules/models/user';
 
-export type CoachFilter = 'ALL' | 'PENDING' | 'APPROVED';
+export type CoachFilter = 'ALL' | 'PENDING' | 'APPROVED' | 'REJECTED';
 
 @Injectable({
   providedIn: 'root'
@@ -40,9 +39,15 @@ export class AdminService {
   }
 
   getApprovedCoaches(): Observable<User[]> {
-    return this.getAllCoaches().pipe(
-      map((coaches) => coaches.filter((coach) => this.getCoachStatus(coach) === 'APPROVED'))
-    );
+    return this.http.get<User[]>(`${this.adminBaseUrl}/coaches/approved`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  getRejectedCoaches(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.adminBaseUrl}/coaches/rejected`, {
+      headers: this.getHeaders()
+    });
   }
 
   getCoachesByFilter(filter: CoachFilter): Observable<User[]> {
@@ -52,6 +57,10 @@ export class AdminService {
 
     if (filter === 'APPROVED') {
       return this.getApprovedCoaches();
+    }
+
+    if (filter === 'REJECTED') {
+      return this.getRejectedCoaches();
     }
 
     return this.getAllCoaches();
@@ -88,13 +97,5 @@ export class AdminService {
     return this.http.get<DashboardStats>(`${this.adminBaseUrl}/dashboard`, {
       headers: this.getHeaders()
     });
-  }
-
-  private getCoachStatus(coach: User): 'PENDING' | 'APPROVED' {
-    if (coach.enabled === true || coach.adminApproved === true) {
-      return 'APPROVED';
-    }
-
-    return 'PENDING';
   }
 }

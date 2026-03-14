@@ -3,7 +3,7 @@ import { AdminService, CoachFilter } from 'src/app/services/admin.service';
 import { User } from '../../models/user';
 
 type CoachAction = 'accept' | 'reject';
-type CoachStatus = 'PENDING' | 'APPROVED';
+type CoachStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
 
 
 @Component({
@@ -68,6 +68,10 @@ export class BatchComponent implements OnInit {
     return this.allCoaches.filter(c => this.getCoachStatus(c) === 'APPROVED').length;
   }
 
+  get rejectedCount(): number {
+    return this.allCoaches.filter(c => this.getCoachStatus(c) === 'REJECTED').length;
+  }
+
   get emptyStateMessage(): string {
     if (this.currentFilter === 'PENDING') {
       return 'Aucune demande de validation en attente.';
@@ -75,6 +79,10 @@ export class BatchComponent implements OnInit {
 
     if (this.currentFilter === 'APPROVED') {
       return 'Aucun coach validé trouvé.';
+    }
+
+    if (this.currentFilter === 'REJECTED') {
+      return 'Aucun coach refusé trouvé.';
     }
 
     return 'Aucun coach trouvé.';
@@ -87,11 +95,31 @@ export class BatchComponent implements OnInit {
   }
 
   getStatusLabel(coach: User): string {
-    return this.getCoachStatus(coach) === 'APPROVED' ? 'Validé' : 'En attente';
+    const status = this.getCoachStatus(coach);
+
+    if (status === 'APPROVED') {
+      return 'Validé';
+    }
+
+    if (status === 'REJECTED') {
+      return 'Refusé';
+    }
+
+    return 'En attente';
   }
 
   getStatusBadgeClass(coach: User): string {
-    return this.getCoachStatus(coach) === 'APPROVED' ? 'badge-success' : 'badge-warning';
+    const status = this.getCoachStatus(coach);
+
+    if (status === 'APPROVED') {
+      return 'badge-success';
+    }
+
+    if (status === 'REJECTED') {
+      return 'badge-danger';
+    }
+
+    return 'badge-warning';
   }
 
   showModal = false;
@@ -150,8 +178,12 @@ export class BatchComponent implements OnInit {
   }
 
   getCoachStatus(coach: User): CoachStatus {
-    if (coach.enabled === true || coach.adminApproved === true) {
+    if (coach.enabled === true && coach.adminApproved === true) {
       return 'APPROVED';
+    }
+
+    if (coach.enabled === false && coach.adminApproved === true) {
+      return 'REJECTED';
     }
 
     return 'PENDING';
