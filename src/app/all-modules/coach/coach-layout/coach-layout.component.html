@@ -1,31 +1,35 @@
 <div class="coach-layout">
     <aside class="sidebar">
-        <div class="brand">
-            <div class="brand-logo">C</div>
-            <div class="brand-text">
-                <h2>Coach Space</h2>
-                <p>Académie Sportive</p>
+        <div class="sidebar-top">
+            <div class="brand">
+                <div class="brand-logo">C</div>
+                <div class="brand-text">
+                    <h2>Coach Space</h2>
+                    <p>Académie Sportive</p>
+                </div>
             </div>
+
+            <nav class="nav-menu">
+                <a *ngFor="let item of menuItems" class="nav-item" [routerLink]="item.path" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{ exact: true }">
+                    <span class="icon">{{ item.icon }}</span>
+                    <span>{{ item.label }}</span>
+                </a>
+            </nav>
         </div>
 
-        <nav class="nav-menu">
-            <a *ngFor="let item of menuItems" class="nav-item" [routerLink]="item.path" routerLinkActive="active"
-                [routerLinkActiveOptions]="{ exact: true }">
-                <span class="icon">{{ item.icon }}</span>
-                <span>{{ item.label }}</span>
-            </a>
-        </nav>
-
-        <div class="coach-profile-card">
-            <div class="coach-avatar">{{ coachProfile.initials }}</div>
-            <div class="coach-meta">
-                <h3>{{ coachProfile.name }}</h3>
-                <p>{{ coachProfile.specialty }}</p>
+        <div class="sidebar-bottom">
+            <div class="coach-profile-card">
+                <div class="coach-avatar">{{ coachProfile.initials }}</div>
+                <div class="coach-meta">
+                    <h3>{{ coachProfile.name }}</h3>
+                    <p>{{ coachProfile.specialty }}</p>
+                </div>
             </div>
-        </div>
 
-        <div class="sidebar-footer">
-            <button class="logout-btn" (click)="logout()">Déconnexion</button>
+            <div class="sidebar-footer">
+                <button type="button" class="logout-btn" (click)="logout()">Déconnexion</button>
+            </div>
         </div>
     </aside>
 
@@ -56,5 +60,23 @@
                 <router-outlet></router-outlet>
             </div>
         </section>
+    </div>
+</div>
+
+<div class="logout-modal-overlay" *ngIf="showLogoutModal">
+    <div class="logout-modal">
+        <div class="logout-modal-header">
+            <h2>CONFIRMATION</h2>
+            <button type="button" class="close-modal-btn" (click)="cancelLogout()">×</button>
+        </div>
+
+        <div class="logout-modal-body">
+            <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+        </div>
+
+        <div class="logout-modal-footer">
+            <button type="button" class="cancel-btn-modal" (click)="cancelLogout()">Annuler</button>
+            <button type="button" class="confirm-btn-modal" (click)="confirmLogout()">Se déconnecter</button>
+        </div>
     </div>
 </div>

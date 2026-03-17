@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 })
 export class CoachLayoutComponent {
     searchTerm: string = '';
+    showLogoutModal: boolean = false;
 
     coachProfile = {
         initials: 'SN',
@@ -29,6 +30,15 @@ export class CoachLayoutComponent {
     constructor(private router: Router) { }
 
     logout(): void {
+        this.showLogoutModal = true;
+    }
+
+    cancelLogout(): void {
+        this.showLogoutModal = false;
+    }
+
+    confirmLogout(): void {
+        this.showLogoutModal = false;
         localStorage.removeItem('token');
         localStorage.removeItem('role');
         this.router.navigate(['/pages/login']);
