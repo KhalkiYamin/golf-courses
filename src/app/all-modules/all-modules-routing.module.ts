@@ -15,6 +15,14 @@ const routes: Routes = [
   {
     path: 'golf-advisors',
     loadChildren: () => import('./golf-advisors/golf-advisors.module').then(m => m.GolfAdvisorsModule)
+  },
+  {
+    path: 'dashboard/coach',
+    loadChildren: () => import('./coach/coach.module').then(m => m.CoachModule)
+  },
+  {
+    path: 'dashboard/athlete',
+    loadChildren: () => import('./athlete/athlete.module').then(m => m.AthleteModule)
   }
 ];
 

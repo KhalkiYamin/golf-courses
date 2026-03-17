@@ -1,70 +1,71 @@
-/* Header component specific styles for cleaner look */
-
-/* Show the logo in header */
-.logo {
-    display: flex;
-    align-items: center;
-    padding-right: 16px;
-}
-
-.logo img {
-    max-height: 36px;
-    width: auto;
-}
-
-/* Shift navigation to the left for balanced look */
-.header-nav {
-    justify-content: flex-start;
-}
-
-.main-nav {
-    margin-left: 0;
-    margin-right: auto;
-}
-
-.main-menu-wrapper {
-    margin-left: auto;
-    margin-right: 0;
-}
-
-/* Remove the small purple square (cart item) */
-.cart-item {
-    display: none;
-}
-
-/* Reduce empty space below navbar */
-.header-nav {
+/* Header alignment cleanup */
+.header .header-nav {
     margin-bottom: 0;
 }
 
-/* Show the logo in header */
-.logo {
+.header .header-nav>.container {
     display: flex;
     align-items: center;
-    padding-right: 16px;
+    width: 100%;
+    padding-left: 0;
+    padding-right: 0;
 }
 
-.logo img {
-    max-height: 36px;
-    width: auto;
+.header .navbar-header {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    flex: 0 0 auto;
 }
 
-/* Remove yellow logo / development text from header */
-.header .logo,
-.header .navbar-brand,
-.header .brand-logo,
-.header .header-logo,
-.header .logo img,
-.header .logo a,
-.header .development-text,
-.header .brand-text {
-    display: none !important;
+.header .navbar-brand.logo {
+    display: flex;
+    align-items: center;
+    margin: 0 18px 0 0;
+    padding: 0;
+    width: 250px;
+    height: 60px;
+    overflow: hidden;
+    background: transparent !important;
+    border-radius: 0 !important;
 }
 
-/* Remove left spacing after hiding logo */
-.main-menu-wrapper,
-.navbar-header,
-.header-nav {
-    margin-left: 0 !important;
-    padding-left: 20px !important;
+.header .brand-logo-img {
+    display: block;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    transform: scale(3.1);
+    transform-origin: center;
+}
+
+.header .logo {
+    background: transparent !important;
+    border-radius: 0 !important;
+    color: inherit !important;
+}
+
+.header .main-menu-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+}
+
+.header .main-nav {
+    margin: 0;
+    padding: 0;
+}
+
+.header .header-navbar-rht {
+    margin-left: 16px;
+    padding: 0;
+}
+
+.header .cart-item {
+    display: none;
 }

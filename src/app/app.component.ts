@@ -15,6 +15,10 @@ export class AppComponent {
   hideFooter: boolean = false;
   showHeader: boolean = true;
 
+  private isPrivateDashboardRoute(): boolean {
+    return this.activeRoute === 'dashboard' && (this.active2Route === 'coach' || this.active2Route === 'athlete');
+  }
+
   constructor(private router: Router) {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationStart) {
@@ -33,7 +37,8 @@ export class AppComponent {
           this.active2Route === 'users' || this.activeRoute === 'ressources-sportives' ||
           this.active2Route === 'ressources-sportives'
           || this.activeRoute === 'paremetres' ||
-          this.active2Route === 'parametres'
+          this.active2Route === 'parametres' ||
+          this.isPrivateDashboardRoute()
         ) {
           this.showHeader = false;
         } else {
@@ -43,7 +48,7 @@ export class AppComponent {
           this.active2Route === 'advisors-dashboard' || this.activeRoute === 'batch' ||
           this.active2Route === 'batch' || this.activeRoute === 'categories' ||
           this.active2Route === 'categories' || this.activeRoute === 'ressources-sportives' ||
-          this.active2Route === 'ressources-sportives') {
+          this.active2Route === 'ressources-sportives' || this.isPrivateDashboardRoute()) {
           this.hideFooter = true;
         } else {
           this.hideFooter = false;

@@ -1,6 +1,18 @@
+:root {
+    --sport-black: #05070f;
+    --sport-black-deep: #080d1d;
+    --sport-white: #ffffff;
+    --sport-blue: #00a8ff;
+    --sport-blue-strong: #0078ff;
+    --sport-blue-soft: #d9f2ff;
+    --sport-line: #d6e2f1;
+    --sport-text: #0d1a35;
+}
+
 .admin-page {
     min-height: 100vh;
-    background: #f5f7fb;
+    background: radial-gradient(circle at top right, rgba(0, 168, 255, 0.13), transparent 40%),
+        linear-gradient(145deg, #eff5ff, #e9f1ff);
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -9,19 +21,20 @@
     min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
     width: 260px;
-    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-    color: white;
+    background: linear-gradient(165deg, #04060d, #0c1731 55%, #071027);
+    color: var(--sport-white);
     padding: 24px 18px;
     display: flex;
     flex-direction: column;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
-    border-radius: 0 12px 12px 0;
-    border: 1px solid #404040;
+    box-shadow: 8px 0 28px rgba(5, 7, 15, 0.35);
+    border-radius: 0 16px 16px 0;
+    border: 1px solid rgba(0, 168, 255, 0.18);
     border-left: none;
     position: relative;
+    overflow: hidden;
+    animation: slideInLeft 0.55s ease;
 }
 
 .sidebar::before {
@@ -31,7 +44,18 @@
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #007bff, #28a745, #ffc107, #dc3545);
+    background: linear-gradient(90deg, var(--sport-black), var(--sport-blue), var(--sport-white), var(--sport-blue));
+}
+
+.sidebar::after {
+    content: '';
+    position: absolute;
+    inset: 25% -40% auto auto;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0, 168, 255, 0.28), transparent 70%);
+    pointer-events: none;
 }
 
 .brand {
@@ -39,7 +63,7 @@
     align-items: center;
     gap: 16px;
     padding: 10px 10px 28px 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14);
     margin-bottom: 24px;
 }
 
@@ -62,7 +86,8 @@
     height: 55px;
     object-fit: contain;
     display: block;
-    transform: scale(1.0);
+    transform: scale(1.02);
+    filter: drop-shadow(0 0 12px rgba(0, 168, 255, 0.32));
 }
 
 .brand-text {
@@ -72,16 +97,17 @@
 
 .brand-name {
     font-size: 18px;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.2;
-    color: #ffffff;
+    color: var(--sport-white);
+    letter-spacing: 0.2px;
 }
 
 .brand-sub {
     font-size: 13px;
-    opacity: 0.85;
+    opacity: 0.88;
     margin-top: 4px;
-    color: #dbe7ea;
+    color: #b8dcff;
 }
 
 .nav {
@@ -92,83 +118,88 @@
 
 .nav-item {
     text-decoration: none;
-    color: #cccccc;
+    color: #c9d8ee;
     padding: 14px 16px;
     border-radius: 14px;
     font-size: 15px;
-    font-weight: 500;
-    transition: all 0.3s ease;
+    font-weight: 700;
+    transition: transform 0.28s ease, box-shadow 0.28s ease, background 0.28s ease, color 0.28s ease;
     cursor: pointer;
     display: block;
     position: relative;
     overflow: hidden;
+    border: 1px solid transparent;
 }
 
 .nav-item:hover {
-    background: linear-gradient(135deg, #007bff, #0056b3);
-    color: #ffffff;
-    transform: translateX(4px);
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    background: linear-gradient(135deg, #0056d6, #00a8ff);
+    color: var(--sport-white);
+    transform: translateX(5px);
+    box-shadow: 0 8px 20px rgba(0, 120, 255, 0.34);
 }
 
 .nav-item.active {
-    background: linear-gradient(135deg, #28a745, #1e7e34);
-    color: #ffffff;
-    border: 1px solid rgba(40, 167, 69, 0.5);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    background: linear-gradient(135deg, #0d1731, #0078ff);
+    color: var(--sport-white);
+    border: 1px solid rgba(0, 168, 255, 0.48);
+    box-shadow: 0 10px 22px rgba(0, 120, 255, 0.32);
+    animation: pulseGlow 1.8s ease-in-out infinite;
 }
 
 .nav-item::before {
     content: '';
     position: absolute;
     top: 0;
-    left: -100%;
-    width: 100%;
+    left: -120%;
+    width: 70%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(0, 123, 255, 0.1), transparent);
-    transition: left 0.5s;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transform: skewX(-20deg);
+    transition: left 0.55s ease;
 }
 
 .nav-item:hover::before {
-    left: 100%;
+    left: 125%;
 }
 
 .logout-link {
     margin-top: 14px;
-    color: #ffcccc;
-    transition: all 0.3s ease;
+    color: #dce7fa;
 }
 
 .logout-link:hover {
-    background: linear-gradient(135deg, #dc3545, #c82333);
-    color: white;
-    transform: translateX(4px);
-    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    background: linear-gradient(135deg, #101726, #000000);
+    color: var(--sport-white);
+    transform: translateX(5px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.34);
 }
 
-/* Main */
 .main {
     flex: 1;
     padding: 24px;
+    animation: fadeLift 0.45s ease;
 }
 
 .topbar {
-    background: white;
+    background: linear-gradient(145deg, #ffffff, #f5faff);
     border-radius: 24px;
     padding: 26px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 14px 30px rgba(5, 7, 15, 0.1);
     margin-bottom: 24px;
+    border: 1px solid rgba(0, 120, 255, 0.14);
 }
 
 .title {
     margin: 0;
     font-size: 32px;
-    font-weight: 700;
-    color: #0b1b3f;
+    font-weight: 900;
+    color: var(--sport-black-deep);
+    letter-spacing: -0.45px;
+    text-transform: uppercase;
 }
 
 .top-actions {
@@ -181,30 +212,40 @@
     width: 320px;
     max-width: 100%;
     height: 50px;
-    border: 1px solid #d7dbe7;
+    border: 1px solid var(--sport-line);
     border-radius: 16px;
     padding: 0 18px;
     font-size: 15px;
+    color: var(--sport-text);
     outline: none;
-    transition: 0.2s;
+    background: linear-gradient(145deg, #ffffff, #f6fbff);
+    transition: border-color 0.24s ease, box-shadow 0.24s ease, transform 0.24s ease;
 }
 
 .search:focus {
-    border-color: #d9ac2f;
-    box-shadow: 0 0 0 3px rgba(217, 172, 47, 0.1);
+    border-color: var(--sport-blue-strong);
+    box-shadow: 0 0 0 4px rgba(0, 168, 255, 0.18), 0 10px 18px rgba(0, 120, 255, 0.14);
+    transform: translateY(-1px);
 }
 
 .avatar {
     width: 50px;
     height: 50px;
     border-radius: 16px;
-    background: #d9ac2f;
-    color: #0b1b3f;
+    background: linear-gradient(145deg, #032459, #00a8ff);
+    color: var(--sport-white);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 800;
+    font-weight: 900;
     font-size: 20px;
+    box-shadow: 0 10px 20px rgba(0, 120, 255, 0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.avatar:hover {
+    transform: translateY(-1px) scale(1.03);
+    box-shadow: 0 14px 26px rgba(0, 120, 255, 0.36);
 }
 
 .content-container {
@@ -212,24 +253,27 @@
     padding: 0;
 }
 
-/* Modal */
 .custom-modal {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, 0.35);
+    background: rgba(3, 8, 20, 0.62);
+    backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
+    animation: fadeIn 0.24s ease;
 }
 
 .modal-box {
     width: 440px;
     max-width: 92%;
-    background: white;
+    background: linear-gradient(170deg, #ffffff, #f3f9ff);
     border-radius: 20px;
     padding: 24px;
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 24px 50px rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(0, 120, 255, 0.2);
+    animation: modalRise 0.34s ease;
 }
 
 .modal-header {
@@ -242,8 +286,10 @@
 .modal-header h5 {
     margin: 0;
     font-size: 20px;
-    font-weight: 700;
-    color: #0b1b3f;
+    font-weight: 800;
+    color: var(--sport-black-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.35px;
 }
 
 .close-btn {
@@ -252,12 +298,18 @@
     font-size: 28px;
     line-height: 1;
     cursor: pointer;
-    color: #6b7280;
+    color: #4a5f85;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.close-btn:hover {
+    color: var(--sport-blue-strong);
+    transform: rotate(90deg);
 }
 
 .modal-body p {
     margin: 0;
-    color: #374151;
+    color: #233250;
     font-size: 15px;
 }
 
@@ -268,35 +320,97 @@
     gap: 12px;
 }
 
-.cancel-btn {
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    color: #374151;
+.cancel-btn,
+.logout-btn {
     padding: 10px 18px;
     border-radius: 12px;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.cancel-btn {
+    border: 1px solid var(--sport-line);
+    background: #f7fbff;
+    color: #22304d;
 }
 
 .logout-btn {
     border: none;
-    background: #dc3545;
-    color: white;
-    padding: 10px 18px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: 600;
+    background: linear-gradient(135deg, #0c162b, #000000);
+    color: var(--sport-white);
+    box-shadow: 0 10px 20px rgba(5, 7, 15, 0.3);
 }
 
 .cancel-btn:hover {
-    background: #f3f4f6;
+    background: #eef6ff;
+    transform: translateY(-1px);
 }
 
 .logout-btn:hover {
-    background: #c82333;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 24px rgba(0, 0, 0, 0.36);
+    filter: brightness(1.06);
 }
 
-/* Responsive */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeLift {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 10px 22px rgba(0, 120, 255, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 14px 28px rgba(0, 168, 255, 0.4);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes modalRise {
+    from {
+        opacity: 0;
+        transform: translateY(16px) scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 @media (max-width: 992px) {
     .layout {
         flex-direction: column;
@@ -305,7 +419,7 @@
     .sidebar {
         width: 100%;
         border-radius: 0 0 12px 12px;
-        border: 1px solid #404040;
+        border: 1px solid rgba(0, 168, 255, 0.2);
         border-top: none;
     }
 

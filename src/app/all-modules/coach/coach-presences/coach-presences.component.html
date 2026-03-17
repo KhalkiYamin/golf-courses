@@ -1,0 +1,42 @@
+<section class="presence-page">
+    <h3 class="page-title">Présences</h3>
+
+    <div class="presence-card">
+
+        <div class="empty-state" *ngIf="isLoading">
+            Chargement des présences...
+        </div>
+
+        <div class="empty-state error-state" *ngIf="!isLoading && errorMessage">
+            {{ errorMessage }}
+        </div>
+
+        <div class="table-responsive" *ngIf="!isLoading && !errorMessage">
+            <table class="table table-sm mb-0">
+                <thead>
+                    <tr>
+                        <th>Athlète</th>
+                        <th>Séance</th>
+                        <th>Présence</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let item of presences">
+                        <td>{{ item.athlete }}</td>
+                        <td>{{ item.seance }}</td>
+                        <td>
+                            <span class="status-badge" [ngClass]="getStatusClass(item.presence)">
+                                {{ item.presence }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="presences.length === 0">
+                        <td colspan="3" class="text-center">Aucune présence trouvée.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</section>

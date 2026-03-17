@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/services/auth.service';
 export class AdminLayoutComponent implements OnInit {
 
   showLogoutModal = false;
+  searchTerm: string = '';
 
   constructor(
     private authService: AuthService,
@@ -23,5 +24,9 @@ export class AdminLayoutComponent implements OnInit {
     this.showLogoutModal = false;
     this.authService.logout();
     this.router.navigate(['/pages/login']);
+  }
+
+  onSearch(): void {
+    console.log('Recherche :', this.searchTerm);
   }
 }

@@ -12,7 +12,7 @@
 
             <div class="users-actions">
                 <input type="text" class="search-input" placeholder="Recherche..." [(ngModel)]="searchTerm"
-                    name="searchTerm">
+                    name="searchTerm" />
 
                 <button class="add-btn" (click)="addUser()">
                     + Ajouter
@@ -58,8 +58,13 @@
                         <td>{{ user.email }}</td>
                         <td>{{ user.telephone }}</td>
 
-                        <td *ngIf="selectedTab === 'ATHLETE'">{{ user.sport?.title }}</td>
-                        <td *ngIf="selectedTab === 'ATHLETE'">{{ user.niveau }}</td>
+                        <td *ngIf="selectedTab === 'ATHLETE'">
+                            {{ user.sport?.title }}
+                        </td>
+
+                        <td *ngIf="selectedTab === 'ATHLETE'">
+                            {{ user.niveau }}
+                        </td>
 
                         <td *ngIf="selectedTab === 'COACH'">
                             {{ getSpecialiteLabel(user) }}
@@ -72,9 +77,14 @@
                         </td>
 
                         <td class="action-buttons">
+                            <button class="modify-btn" (click)="editUser(user); $event.stopPropagation()">
+                                Modifier
+                            </button>
+
                             <button *ngIf="user.role === 'COACH' && getUserStatus(user) === 'EN ATTENTE'"
-                                class="edit-btn" (click)="validateCoach(user); $event.stopPropagation()">
-                                Valider
+                                class="edit-btn" (click)="validateCoach(user); $event.stopPropagation()"
+                                [disabled]="validatingCoachId === user.id">
+                                {{ validatingCoachId === user.id ? 'Validation...' : 'Valider' }}
                             </button>
 
                             <button class="delete-btn" (click)="confirmDelete(user); $event.stopPropagation()">
@@ -97,18 +107,24 @@
 
 <div class="modal" *ngIf="showAddModal">
     <div class="modal-box">
-        <h4>Ajouter utilisateur</h4>
+        <h4>{{ isEditMode ? 'Modifier utilisateur' : 'Ajouter utilisateur' }}</h4>
 
-        <input class="form-control mb-2" placeholder="Nom" [(ngModel)]="newUser.nom" name="nom">
-        <input class="form-control mb-2" placeholder="Prénom" [(ngModel)]="newUser.prenom" name="prenom">
-        <input class="form-control mb-2" placeholder="Email" [(ngModel)]="newUser.email" name="email">
-        <input type="password" class="form-control mb-2" placeholder="Mot de passe" [(ngModel)]="password" name="password">
-        <input class="form-control mb-2" placeholder="Téléphone" [(ngModel)]="newUser.telephone" name="telephone">
+        <input class="form-control mb-2" placeholder="Nom" [(ngModel)]="newUser.nom" name="nom" />
+
+        <input class="form-control mb-2" placeholder="Prénom" [(ngModel)]="newUser.prenom" name="prenom" />
+
+        <input class="form-control mb-2" placeholder="Email" [(ngModel)]="newUser.email" name="email" />
+
+        <input class="form-control mb-2" placeholder="Téléphone" [(ngModel)]="newUser.telephone" name="telephone" />
 
         <select class="form-control mb-2" [(ngModel)]="newUser.role" name="role" (change)="onRoleChange()">
             <option value="ATHLETE">Athlète</option>
             <option value="COACH">Coach</option>
         </select>
+
+        <div class="auto-password-info" *ngIf="!isEditMode">
+            Le mot de passe sera généré automatiquement et envoyé par email.
+        </div>
 
         <div *ngIf="newUser.role === 'ATHLETE'">
             <select class="form-control mb-2" [(ngModel)]="sportId" name="sportId">
@@ -134,19 +150,18 @@
                 </option>
             </select>
 
-            <input
-                type="number"
-                class="form-control mb-2"
-                placeholder="Années d'expérience"
-                [(ngModel)]="experience"
-                name="experience"
-                min="0"
-            >
+            <input type="number" class="form-control mb-2" placeholder="Années d'expérience" [(ngModel)]="experience"
+                name="experience" min="0" />
         </div>
 
         <div class="modal-actions">
-            <button class="btn btn-success" (click)="saveUser()">Enregistrer</button>
-            <button class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+            <button class="btn btn-success" (click)="saveUser()" [disabled]="isSavingUser">
+                {{ isSavingUser ? 'Enregistrement...' : (isEditMode ? 'Mettre à jour' : 'Enregistrer') }}
+            </button>
+
+            <button class="btn btn-secondary" (click)="closeModal()" [disabled]="isSavingUser">
+                Annuler
+            </button>
         </div>
     </div>
 </div>

@@ -1,0 +1,38 @@
+<div class="athlete-layout">
+    <aside class="sidebar">
+        <div>
+            <div class="brand">
+                <div class="brand-logo">A</div>
+                <div class="brand-text">
+                    <h2>Athlete Space</h2>
+                    <p>Progression et suivi</p>
+                </div>
+            </div>
+
+            <div class="athlete-profile-card">
+                <div class="athlete-avatar">{{ athleteProfile.initials }}</div>
+                <div class="athlete-meta">
+                    <h3>{{ athleteProfile.name }}</h3>
+                    <p>{{ athleteProfile.level }}</p>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active" class="nav-item">
+                    <span class="icon">{{ item.icon }}</span>
+                    <span>{{ item.label }}</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" (click)="logout()">Deconnexion</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <section class="content-card">
+            <router-outlet></router-outlet>
+        </section>
+    </main>
+</div>

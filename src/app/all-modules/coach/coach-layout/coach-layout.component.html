@@ -1,0 +1,60 @@
+<div class="coach-layout">
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-logo">C</div>
+            <div class="brand-text">
+                <h2>Coach Space</h2>
+                <p>Académie Sportive</p>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <a *ngFor="let item of menuItems" class="nav-item" [routerLink]="item.path" routerLinkActive="active"
+                [routerLinkActiveOptions]="{ exact: true }">
+                <span class="icon">{{ item.icon }}</span>
+                <span>{{ item.label }}</span>
+            </a>
+        </nav>
+
+        <div class="coach-profile-card">
+            <div class="coach-avatar">{{ coachProfile.initials }}</div>
+            <div class="coach-meta">
+                <h3>{{ coachProfile.name }}</h3>
+                <p>{{ coachProfile.specialty }}</p>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <button class="logout-btn" (click)="logout()">Déconnexion</button>
+        </div>
+    </aside>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="topbar-left">
+                <h1>Coach Dashboard</h1>
+                <p>Bienvenue dans votre espace de gestion</p>
+            </div>
+
+            <div class="topbar-right">
+                <div class="search-box">
+                    <input type="text" placeholder="Rechercher..." [(ngModel)]="searchTerm" />
+                </div>
+
+                <div class="coach-profile">
+                    <div class="coach-avatar">{{ coachProfile.initials }}</div>
+                    <div class="coach-info">
+                        <h4>{{ coachProfile.name }}</h4>
+                        <p>{{ coachProfile.specialty }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="content-section">
+            <div class="content-card">
+                <router-outlet></router-outlet>
+            </div>
+        </section>
+    </div>
+</div>

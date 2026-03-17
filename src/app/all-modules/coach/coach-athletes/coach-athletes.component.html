@@ -1,0 +1,56 @@
+<section class="coach-athletes-section">
+    <div class="section-header">
+        <div>
+            <h3 class="page-title">Mes Athlètes</h3>
+            <p class="section-subtitle">Liste des athlètes suivis par le coach</p>
+        </div>
+    </div>
+
+    <div class="athletes-card">
+
+        <div class="empty-state" *ngIf="isLoading">
+            Chargement des athlètes...
+        </div>
+
+        <div class="empty-state error-state" *ngIf="!isLoading && errorMessage">
+            {{ errorMessage }}
+        </div>
+
+        <ng-container *ngIf="!isLoading && !errorMessage">
+            <div class="athlete-row" *ngFor="let athlete of athletes">
+                <div class="athlete-left">
+                    <div class="athlete-avatar">
+                        {{ athlete.nom?.charAt(0) || 'A' }}
+                    </div>
+
+                    <div class="athlete-info">
+                        <strong>{{ athlete.nom }}</strong>
+                        <small>{{ athlete.niveau }}</small>
+                    </div>
+                </div>
+
+                <div class="athlete-center">
+                    <span class="sport-badge">{{ athlete.sport }}</span>
+                </div>
+
+                <div class="progress-wrapper">
+                    <div class="progress">
+                        <div class="progress-bar" [style.width.%]="athlete.progression"></div>
+                    </div>
+                    <small>{{ athlete.progression }}%</small>
+                </div>
+
+                <div class="athlete-actions">
+                    <button class="profile-btn" (click)="viewProfile(athlete.id)">
+                        Voir profil
+                    </button>
+                </div>
+            </div>
+
+            <div class="empty-state" *ngIf="athletes.length === 0">
+                Aucun athlète trouvé.
+            </div>
+        </ng-container>
+
+    </div>
+</section>

@@ -1,0 +1,102 @@
+.presence-page {
+    padding: 24px;
+    background: #f8fcf8;
+    min-height: 100vh;
+}
+
+.page-title {
+    margin: 0 0 20px;
+    font-size: 34px;
+    font-weight: 800;
+    color: #1f3b2f;
+}
+
+.presence-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 22px;
+    border: 1px solid #dfe7e2;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.06);
+}
+
+.table {
+    width: 100%;
+}
+
+.table thead th {
+    font-size: 17px;
+    font-weight: 800;
+    color: #1f2937;
+    padding: 16px 12px;
+    border-bottom: 1px solid #e5ece7;
+}
+
+.table tbody td {
+    padding: 14px 12px;
+    font-size: 15px;
+    color: #334155;
+    vertical-align: middle;
+    border-bottom: 1px solid #edf2ef;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr:hover {
+    background: #f8fcf8;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    min-width: 84px;
+    text-align: center;
+}
+
+.status-present {
+    background: #00d84f;
+}
+
+.status-absent {
+    background: #6b7280;
+}
+
+.status-pending {
+    background: #f59e0b;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 28px 10px;
+    color: #6b7d75;
+    font-weight: 600;
+}
+
+.error-state {
+    color: #dc2626;
+}
+
+@media (max-width: 768px) {
+    .presence-page {
+        padding: 16px;
+    }
+
+    .page-title {
+        font-size: 28px;
+    }
+
+    .presence-card {
+        padding: 16px;
+    }
+
+    .table thead th,
+    .table tbody td {
+        font-size: 14px;
+        padding: 12px 8px;
+    }
+}

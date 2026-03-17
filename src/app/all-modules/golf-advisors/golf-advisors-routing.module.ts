@@ -17,6 +17,7 @@ import { CategoriesComponent } from './categories/categories.component';
 import { UsersComponent } from './users/users.component';
 import { ParametresComponent } from './parametres/parametres.component';
 import { RessourcesSportivesComponent } from './ressources-sportives/ressources-sportives.component';
+
 const routes: Routes = [
   {
     path: '',
@@ -37,7 +38,8 @@ const routes: Routes = [
       { path: 'categories', component: CategoriesComponent },
       { path: 'users', component: UsersComponent },
       { path: 'parametres', component: ParametresComponent },
-      { path: 'ressources-sportives', component: RessourcesSportivesComponent }
+      { path: 'ressources-sportives', component: RessourcesSportivesComponent },
+      { path: '', redirectTo: 'advisors-dashboard', pathMatch: 'full' }
     ]
   }
 ];

@@ -60,4 +60,11 @@ export class AdminUserService {
             responseType: 'text'
         });
     }
+
+    updateUser(id: number, user: any): Observable<string> {
+        return this.http.put(`${this.apiUrl}/users/${id}`, user, {
+            headers: this.getHeaders(),
+            responseType: 'text'
+        });
+    }
 }

@@ -1,0 +1,12 @@
+.page-title {
+    margin-bottom: 1rem;
+}
+
+.notification-item {
+    padding: 0.75rem 0;
+    border-top: 1px solid #f1f3f5;
+}
+
+.notification-item:first-child {
+    border-top: 0;
+}

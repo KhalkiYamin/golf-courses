@@ -1,0 +1,9 @@
+<section>
+    <h3 class="page-title">Notifications</h3>
+    <div class="card p-3">
+        <div class="notification-item" *ngFor="let item of notifications">
+            <div>{{ item.message }}</div>
+            <small>{{ item.date }}</small>
+        </div>
+    </div>
+</section>

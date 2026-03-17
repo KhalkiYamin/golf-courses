@@ -56,8 +56,11 @@
                 </div>
 
                 <div class="top-actions">
-                    <input class="search" type="text" placeholder="Rechercher..." />
-                    <div class="avatar">Y</div>
+                    <input class="search" type="text" placeholder="Rechercher..." [(ngModel)]="searchTerm"
+                        (input)="onSearch()" />
+                    <div class="logo-box">
+                        <img src="assets/img/Admin.png" alt="Logo" class="logo-img">
+                    </div>
                 </div>
             </header>
 

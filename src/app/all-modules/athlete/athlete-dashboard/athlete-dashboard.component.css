@@ -1,0 +1,23 @@
+.page-title {
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    border: 1px solid #e9ecef;
+}
+
+.session-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-top: 1px solid #f1f3f5;
+}
+
+.session-row:first-child {
+    border-top: 0;
+}
+
+.session-title {
+    font-weight: 600;
+}

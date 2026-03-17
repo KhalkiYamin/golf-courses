@@ -26,15 +26,19 @@ export class UsersComponent implements OnInit {
 
     showAddModal = false;
     successMessage = '';
+    isSavingUser = false;
+    validatingCoachId: number | null = null;
 
     categories: Category[] = [];
 
     newUser: AdminUser = this.createEmptyUser();
-    password = '';
     sportId: number | null = null;
     specialiteId: number | null = null;
     experience: number | null = null;
     niveau = '';
+
+    isEditMode = false;
+    editingUserId: number | null = null;
 
     niveauOptions: string[] = ['DEBUTANT', 'INTERMEDIAIRE', 'CONFIRME', 'PROFESSIONNEL'];
 
@@ -156,13 +160,39 @@ export class UsersComponent implements OnInit {
     }
 
     addUser(): void {
+        this.isEditMode = false;
+        this.editingUserId = null;
         this.newUser = this.createEmptyUser();
-        this.password = '';
         this.sportId = null;
         this.specialiteId = null;
         this.experience = null;
         this.niveau = '';
         this.showAddModal = true;
+    }
+
+    editUser(user: AdminUser): void {
+        this.isEditMode = true;
+        this.editingUserId = user.id;
+        this.showAddModal = true;
+
+        this.newUser = {
+            ...this.createEmptyUser(),
+            ...user
+        };
+
+        if (user.role === 'ATHLETE') {
+            this.sportId = (user as any).sport?.id || null;
+            this.niveau = user.niveau || '';
+            this.specialiteId = null;
+            this.experience = null;
+        }
+
+        if (user.role === 'COACH') {
+            this.specialiteId = (user as any).specialite?.id || null;
+            this.experience = (user as any).experience ?? 0;
+            this.sportId = null;
+            this.niveau = '';
+        }
     }
 
     onRoleChange(): void {
@@ -176,17 +206,27 @@ export class UsersComponent implements OnInit {
     }
 
     closeModal(): void {
-        this.showAddModal = false;
-    }
-
-    saveUser(): void {
-        if (!this.newUser.nom || !this.newUser.prenom || !this.newUser.email || !this.newUser.role) {
-            alert('Veuillez remplir les champs obligatoires.');
+        if (this.isSavingUser) {
             return;
         }
 
-        if (!this.password || this.password.length < 6) {
-            alert('Le mot de passe est obligatoire (minimum 6 caractères).');
+        this.showAddModal = false;
+        this.isEditMode = false;
+        this.editingUserId = null;
+        this.newUser = this.createEmptyUser();
+        this.sportId = null;
+        this.specialiteId = null;
+        this.experience = null;
+        this.niveau = '';
+    }
+
+    saveUser(): void {
+        if (this.isSavingUser) {
+            return;
+        }
+
+        if (!this.newUser.nom || !this.newUser.prenom || !this.newUser.email || !this.newUser.role) {
+            alert('Veuillez remplir les champs obligatoires.');
             return;
         }
 
@@ -205,10 +245,7 @@ export class UsersComponent implements OnInit {
             prenom: this.newUser.prenom,
             email: this.newUser.email,
             telephone: this.newUser.telephone,
-            password: this.password,
-            role: this.newUser.role,
-            enabled: true,
-            adminApproved: true
+            role: this.newUser.role
         };
 
         if (this.newUser.role === 'ATHLETE') {
@@ -221,21 +258,55 @@ export class UsersComponent implements OnInit {
             payload.experience = this.experience ?? 0;
         }
 
-        this.adminUserService.addUser(payload).subscribe({
-            next: () => {
-                this.showAddModal = false;
-                this.successMessage = 'Utilisateur ajouté avec succès';
-                this.loadUsers();
+        this.isSavingUser = true;
 
-                setTimeout(() => {
-                    this.successMessage = '';
-                }, 3000);
-            },
-            error: (err) => {
-                console.error('Erreur ajout utilisateur', err);
-                alert(err?.error?.message || 'Erreur lors de l\'ajout utilisateur.');
-            }
-        });
+        if (this.isEditMode && this.editingUserId !== null) {
+            this.adminUserService.updateUser(this.editingUserId, payload).subscribe({
+                next: () => {
+                    this.isSavingUser = false;
+                    this.closeModal();
+                    this.successMessage = 'Utilisateur modifié avec succès';
+                    this.loadUsers();
+
+                    setTimeout(() => {
+                        this.successMessage = '';
+                    }, 3000);
+                },
+                error: (err) => {
+                    this.isSavingUser = false;
+                    console.error('Erreur modification utilisateur', err);
+                    console.error('Status:', err?.status);
+                    console.error('Error body:', err?.error);
+                    alert(err?.error?.message || err?.error || 'Erreur lors de la modification utilisateur.');
+                }
+            });
+        } else {
+            const addPayload: any = {
+                ...payload,
+                enabled: true,
+                adminApproved: true
+            };
+
+            this.adminUserService.addUser(addPayload).subscribe({
+                next: () => {
+                    this.isSavingUser = false;
+                    this.closeModal();
+                    this.successMessage = 'Utilisateur ajouté avec succès. Un mot de passe a été généré et envoyé par email.';
+                    this.loadUsers();
+
+                    setTimeout(() => {
+                        this.successMessage = '';
+                    }, 3000);
+                },
+                error: (err) => {
+                    this.isSavingUser = false;
+                    console.error('Erreur ajout utilisateur', err);
+                    console.error('Status:', err?.status);
+                    console.error('Error body:', err?.error);
+                    alert(err?.error?.message || err?.error || 'Erreur lors de l\'ajout utilisateur.');
+                }
+            });
+        }
     }
 
     confirmDelete(user: AdminUser): void {
@@ -259,8 +330,15 @@ export class UsersComponent implements OnInit {
     }
 
     validateCoach(user: AdminUser): void {
+        if (this.validatingCoachId === user.id) {
+            return;
+        }
+
+        this.validatingCoachId = user.id;
+
         this.adminUserService.approveCoach(user.id).subscribe({
             next: () => {
+                this.validatingCoachId = null;
                 this.successMessage = `Coach ${user.prenom} validé avec succès`;
                 this.loadUsers();
 
@@ -269,6 +347,7 @@ export class UsersComponent implements OnInit {
                 }, 3000);
             },
             error: (err) => {
+                this.validatingCoachId = null;
                 console.error('Erreur validation coach', err);
             }
         });

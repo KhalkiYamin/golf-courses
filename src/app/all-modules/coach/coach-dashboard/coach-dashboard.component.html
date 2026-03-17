@@ -1,0 +1,284 @@
+<div class="coach-dashboard">
+    <div class="dashboard-shell">
+
+        <div class="hero-card">
+            <div class="hero-left">
+                <p class="hero-welcome">{{ labels.heroWelcome }}</p>
+                <h2>{{ labels.heroTitle }}</h2>
+                <p class="hero-text">
+                    {{ labels.heroText }}
+                </p>
+
+                <div class="hero-actions">
+                    <button class="primary-btn">{{ labels.createSessionLabel }}</button>
+                    <button class="secondary-btn">{{ labels.viewPlanningLabel }}</button>
+                </div>
+            </div>
+
+            <div class="hero-right">
+                <div class="next-session-card">
+                    <span class="mini-label">{{ labels.nextSessionLabel }}</span>
+                    <h3>{{ nextSession.title }}</h3>
+                    <p>{{ nextSession.group }}</p>
+
+                    <div class="next-session-meta">
+                        <div>
+                            <strong>Heure</strong>
+                            <span>{{ nextSession.time }}</span>
+                        </div>
+                        <div>
+                            <strong>Lieu</strong>
+                            <span>{{ nextSession.location }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card" *ngFor="let stat of statsCards">
+                <div class="stat-icon" [ngClass]="stat.colorClass">
+                    {{ stat.icon }}
+                </div>
+
+                <div class="stat-content">
+                    <h3>{{ stat.value }}</h3>
+                    <h4>{{ stat.label }}</h4>
+                    <p>{{ stat.subLabel }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+
+            <div class="left-column">
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>{{ labels.sessionsTitle }}</h2>
+                            <p>{{ labels.sessionsSubtitle }}</p>
+                        </div>
+                        <a href="javascript:void(0)">{{ labels.viewAllLabel }}</a>
+                    </div>
+
+                    <div class="sessions-list">
+                        <div class="session-item" *ngFor="let session of todaySessions">
+                            <div class="session-time">
+                                {{ session.time }}
+                            </div>
+
+                            <div class="session-details">
+                                <h4>{{ session.title }}</h4>
+                                <p>{{ session.group }} • {{ session.location }}</p>
+                            </div>
+
+                            <div class="session-status-wrap">
+                                <span class="session-status" [ngClass]="session.statusClass">
+                                    {{ session.status }}
+                                </span>
+                            </div>
+
+                            <div class="session-actions">
+                                <button class="action-btn start-btn">{{ labels.startActionLabel }}</button>
+                                <button class="action-btn light-btn">{{ labels.detailsActionLabel }}</button>
+                                <button class="action-btn light-btn">{{ labels.attendanceActionLabel }}</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>{{ labels.athletesTitle }}</h2>
+                            <p>{{ labels.athletesSubtitle }}</p>
+                        </div>
+                        <a href="javascript:void(0)">{{ labels.viewAllLabel }}</a>
+                    </div>
+
+                    <div class="athletes-list">
+
+                        <div class="empty-state" *ngIf="isLoadingAthletes">
+                            <p>Chargement des athlètes...</p>
+                        </div>
+
+                        <div class="empty-state error-state" *ngIf="!isLoadingAthletes && athletesError">
+                            <p>Erreur lors du chargement des athlètes.</p>
+                        </div>
+
+                        <ng-container *ngIf="!isLoadingAthletes && !athletesError">
+                            <div class="athlete-item" *ngFor="let athlete of athletes">
+                                <div class="athlete-avatar">
+                                    {{ athlete.name ? athlete.name.charAt(0) : 'A' }}
+                                </div>
+
+                                <div class="athlete-details">
+                                    <h4>{{ athlete.name }}</h4>
+                                    <p>{{ athlete.sport }} • {{ athlete.level }}</p>
+                                </div>
+
+                                <div class="athlete-badges">
+                                    <span class="athlete-status" [ngClass]="athlete.presenceClass">
+                                        {{ athlete.presence }}
+                                    </span>
+                                </div>
+
+                                <button class="profile-btn">{{ labels.profileActionLabel }}</button>
+                            </div>
+
+                            <div class="empty-state" *ngIf="athletes.length === 0">
+                                <p>Aucun athlète trouvé pour le moment.</p>
+                            </div>
+                        </ng-container>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="right-column">
+
+                <div class="dashboard-card coach-summary-card">
+                    <div class="coach-summary-top">
+                        <div class="coach-summary-avatar">
+                            <img *ngIf="coachAvatarUrl && !isLoadingProfile" [src]="coachAvatarUrl" [alt]="coachName" />
+                            <span *ngIf="!coachAvatarUrl || isLoadingProfile">{{ coachInitial }}</span>
+                        </div>
+
+                        <label class="upload-photo-btn">
+                            Changer photo
+                            <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden>
+                        </label>
+
+                        <h3 *ngIf="isLoadingProfile">Chargement...</h3>
+                        <h3 *ngIf="!isLoadingProfile">{{ coachName }}</h3>
+
+                        <p *ngIf="isLoadingProfile">Chargement du profil...</p>
+                        <p *ngIf="!isLoadingProfile">Spécialité : {{ coachSpecialite }}</p>
+
+                        <p class="profile-error" *ngIf="profileError">
+                            Erreur lors du chargement du profil.
+                        </p>
+                    </div>
+
+                    <div class="coach-summary-details">
+                        <div class="detail-row">
+                            <span>Spécialité</span>
+                            <strong>{{ coachSpecialite }}</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Expérience</span>
+                            <strong>{{ coachExperience }}</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Total athlètes</span>
+                            <strong>{{ athletes.length }}</strong>
+                        </div>
+
+                        <div class="detail-row">
+                            <span>Note</span>
+                            <strong>{{ coachRating }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="coach-mini-stats">
+                        <div class="mini-stat-box">
+                            <h4>{{ coachForme }}</h4>
+                            <p>Forme</p>
+                        </div>
+
+                        <div class="mini-stat-box">
+                            <h4>{{ coachSessions }}</h4>
+                            <p>Séances</p>
+                        </div>
+
+                        <div class="mini-stat-box">
+                            <h4>{{ coachSuccess }}</h4>
+                            <p>Succès</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header simple-header">
+                        <div>
+                            <h2>{{ labels.planningTitle }}</h2>
+                            <p>{{ labels.planningSubtitle }}</p>
+                        </div>
+                    </div>
+
+                    <div class="planning-list">
+                        <div class="planning-item" *ngFor="let item of weeklyPlanning">
+                            <div>
+                                <h4>{{ item.day }}</h4>
+                                <p>{{ item.detail }}</p>
+                            </div>
+                            <span>{{ item.hour }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header simple-header">
+                        <div>
+                            <h2>{{ labels.notificationsTitle }}</h2>
+                            <p>{{ labels.notificationsSubtitle }}</p>
+                        </div>
+                    </div>
+
+                    <div class="notifications-list">
+                        <div class="notification-item" *ngFor="let notification of notifications">
+                            <div class="notif-dot"></div>
+                            <p>{{ notification }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header simple-header">
+                        <div>
+                            <h2>{{ labels.presenceTitle }}</h2>
+                            <p>{{ labels.presenceSubtitle }}</p>
+                        </div>
+                    </div>
+
+                    <div class="presence-summary">
+                        <div class="presence-box present-box">
+                            <h3>{{ presenceSummary.present }}</h3>
+                            <p>Présents</p>
+                        </div>
+
+                        <div class="presence-box absent-box">
+                            <h3>{{ presenceSummary.absent }}</h3>
+                            <p>Absents</p>
+                        </div>
+
+                        <div class="presence-box late-box">
+                            <h3>{{ presenceSummary.late }}</h3>
+                            <p>Retards</p>
+                        </div>
+                    </div>
+
+                    <button class="full-btn">{{ labels.markAttendanceLabel }}</button>
+                </div>
+
+                <div class="dashboard-card">
+                    <div class="card-header simple-header">
+                        <div>
+                            <h2>{{ labels.quickActionsTitle }}</h2>
+                            <p>{{ labels.quickActionsSubtitle }}</p>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button *ngFor="let action of labels.quickActions">{{ action }}</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

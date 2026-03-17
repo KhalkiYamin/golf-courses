@@ -1,0 +1,23 @@
+<section>
+    <h3 class="page-title">Séances</h3>
+    <div class="card p-3 table-responsive">
+        <table class="table table-sm mb-0">
+            <thead>
+                <tr>
+                    <th>Thème</th>
+                    <th>Date</th>
+                    <th>Heure</th>
+                    <th>Statut</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let session of sessions">
+                    <td>{{ session.theme }}</td>
+                    <td>{{ session.date }}</td>
+                    <td>{{ session.heure }}</td>
+                    <td>{{ session.statut }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>

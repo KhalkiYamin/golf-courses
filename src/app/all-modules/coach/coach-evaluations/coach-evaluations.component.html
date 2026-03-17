@@ -1,0 +1,35 @@
+<section>
+    <h3 class="page-title">Évaluations</h3>
+
+    <div class="empty-state" *ngIf="isLoading">
+        Chargement des évaluations...
+    </div>
+
+    <div class="empty-state error-state" *ngIf="!isLoading && errorMessage">
+        {{ errorMessage }}
+    </div>
+
+    <div class="card p-3 table-responsive" *ngIf="!isLoading && !errorMessage">
+        <table class="table table-sm mb-0">
+            <thead>
+                <tr>
+                    <th>Athlète</th>
+                    <th>Technique</th>
+                    <th>Physique</th>
+                    <th>Mental</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let evaluation of evaluations">
+                    <td>{{ evaluation.athlete }}</td>
+                    <td>{{ evaluation.technique }}/10</td>
+                    <td>{{ evaluation.physique }}/10</td>
+                    <td>{{ evaluation.mental }}/10</td>
+                </tr>
+                <tr *ngIf="evaluations.length === 0">
+                    <td colspan="4" class="text-center">Aucune évaluation trouvée.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
