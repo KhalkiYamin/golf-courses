@@ -1,12 +1,36 @@
-<section>
-    <h3 class="page-title">Ressources</h3>
-    <div class="row g-3">
-        <div class="col-12 col-md-6 col-xl-4" *ngFor="let resource of resources">
-            <div class="card p-3 resource-card">
-                <h6 class="mb-1">{{ resource.title }}</h6>
-                <small class="d-block">Type: {{ resource.type }}</small>
-                <small>Mis à jour: {{ resource.updated }}</small>
+<div class="resources-section">
+    <div class="section-header">
+        <div>
+            <h2>Ressources</h2>
+            <p>Accédez à vos supports d'entraînement et documents utiles</p>
+        </div>
+
+        <button class="view-all-btn">Voir tout</button>
+    </div>
+
+    <div class="resources-grid">
+        <div class="resource-card" *ngFor="let resource of resources">
+            <div class="resource-top">
+                <div class="resource-icon" [ngClass]="resource.typeClass">
+                    <span>{{ resource.icon }}</span>
+                </div>
+
+                <div class="resource-badge">{{ resource.type }}</div>
+            </div>
+
+            <div class="resource-content">
+                <h3>{{ resource.title }}</h3>
+                <p>{{ resource.description }}</p>
+            </div>
+
+            <div class="resource-meta">
+                <span>Mise à jour : {{ resource.updatedAt }}</span>
+            </div>
+
+            <div class="resource-actions">
+                <button class="open-btn">Ouvrir</button>
+                <button class="download-btn">Télécharger</button>
             </div>
         </div>
     </div>
-</section>
+</div>

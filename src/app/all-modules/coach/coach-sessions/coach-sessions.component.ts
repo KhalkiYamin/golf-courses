@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Seance } from '../../models/seance.model';
 import { CoachSeancesService } from 'src/app/services/coach-seances.service';
+import {
+    CoachDashboardService,
+    CoachAthleteResponse
+} from 'src/app/services/coach-dashboard.service';
 
 @Component({
     selector: 'app-coach-sessions',
@@ -13,21 +17,23 @@ export class CoachSessionsComponent implements OnInit {
     selectedSession: Seance | null = null;
 
     selectedStatus: string = '';
-    selectedGroup: string = '';
     selectedDate: string = '';
 
     loading = false;
+    saving = false;
     successMessage = '';
     errorMessage = '';
 
     showAddForm = false;
+
+    athletes: CoachAthleteResponse[] = [];
+    selectedAthleteId: number | null = null;
 
     newSeance: Seance = {
         theme: '',
         description: '',
         dateSeance: '',
         heureSeance: '',
-        groupe: '',
         lieu: '',
         nombreAthletes: 0,
         statut: 'Planifiée',
@@ -36,10 +42,14 @@ export class CoachSessionsComponent implements OnInit {
         coachId: 0
     };
 
-    constructor(private coachSeancesService: CoachSeancesService) { }
+    constructor(
+        private coachSeancesService: CoachSeancesService,
+        private coachDashboardService: CoachDashboardService
+    ) { }
 
     ngOnInit(): void {
         this.loadSeances();
+        this.loadAthletes();
     }
 
     loadSeances(): void {
@@ -60,13 +70,24 @@ export class CoachSessionsComponent implements OnInit {
         });
     }
 
+    loadAthletes(): void {
+        this.coachDashboardService.getMyAthletes().subscribe({
+            next: (data) => {
+                this.athletes = data;
+            },
+            error: (err) => {
+                console.error('Erreur chargement athlètes =', err);
+            }
+        });
+    }
+
     applyFilters(): void {
         this.loading = true;
         this.errorMessage = '';
 
         this.coachSeancesService.filterMySeances(
             this.selectedStatus,
-            this.selectedGroup,
+            undefined,
             this.selectedDate
         ).subscribe({
             next: (data) => {
@@ -93,27 +114,37 @@ export class CoachSessionsComponent implements OnInit {
     }
 
     closeAddForm(): void {
+        if (this.saving) {
+            return;
+        }
+
         this.showAddForm = false;
         this.resetForm();
     }
 
     saveSeance(): void {
-        console.log('saveSeance clicked');
-        console.log('newSeance =', this.newSeance);
+        if (this.saving) {
+            return;
+        }
 
         if (
             !this.newSeance.theme ||
             !this.newSeance.dateSeance ||
             !this.newSeance.heureSeance ||
-            !this.newSeance.groupe ||
             !this.newSeance.lieu
         ) {
             this.errorMessage = 'Veuillez remplir les champs obligatoires';
             return;
         }
 
+        if (!this.selectedAthleteId) {
+            this.errorMessage = 'Veuillez sélectionner un athlète';
+            return;
+        }
+
         this.successMessage = '';
         this.errorMessage = '';
+        this.saving = true;
 
         const payload: Seance = {
             ...this.newSeance,
@@ -122,15 +153,40 @@ export class CoachSessionsComponent implements OnInit {
                 : this.newSeance.heureSeance
         };
 
-        console.log('payload envoyé =', payload);
-
         this.coachSeancesService.createSeance(payload).subscribe({
             next: (res) => {
-                console.log('séance créée =', res);
-                this.successMessage = 'Séance ajoutée avec succès';
-                this.showAddForm = false;
-                this.resetForm();
-                this.loadSeances();
+                const seanceId = res?.id;
+                const athleteId = this.selectedAthleteId;
+
+                console.log('seanceId =', seanceId);
+                console.log('athleteId =', athleteId);
+
+                if (!seanceId) {
+                    this.errorMessage = 'Séance créée mais id introuvable';
+                    this.saving = false;
+                    return;
+                }
+
+                if (!athleteId) {
+                    this.errorMessage = 'Veuillez sélectionner un athlète';
+                    this.saving = false;
+                    return;
+                }
+
+                this.coachSeancesService.assignAthleteToSeance(seanceId, athleteId).subscribe({
+                    next: () => {
+                        this.successMessage = 'Séance ajoutée et affectée avec succès';
+                        this.showAddForm = false;
+                        this.resetForm();
+                        this.loadSeances();
+                        this.saving = false;
+                    },
+                    error: (err) => {
+                        console.error('Erreur affectation athlete =', err);
+                        this.errorMessage = 'Séance créée, mais erreur lors de l’affectation de l’athlète';
+                        this.saving = false;
+                    }
+                });
             },
             error: (err) => {
                 console.error('erreur ajout séance =', err);
@@ -138,6 +194,7 @@ export class CoachSessionsComponent implements OnInit {
                     err?.error?.message ||
                     err?.error ||
                     'Erreur lors de l’ajout de la séance';
+                this.saving = false;
             }
         });
     }
@@ -166,7 +223,6 @@ export class CoachSessionsComponent implements OnInit {
             description: '',
             dateSeance: '',
             heureSeance: '',
-            groupe: '',
             lieu: '',
             nombreAthletes: 0,
             statut: 'Planifiée',
@@ -174,6 +230,9 @@ export class CoachSessionsComponent implements OnInit {
             objectif: '',
             coachId: 0
         };
+
+        this.selectedAthleteId = null;
+        this.saving = false;
     }
 
     get nextSession(): Seance | null {

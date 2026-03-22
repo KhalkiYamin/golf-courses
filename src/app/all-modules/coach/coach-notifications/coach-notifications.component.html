@@ -1,9 +1,105 @@
-<section>
-    <h3 class="page-title">Notifications</h3>
-    <div class="card p-3">
-        <div class="notification-item" *ngFor="let item of notifications">
-            <div>{{ item.message }}</div>
-            <small>{{ item.date }}</small>
+<div class="coach-notifications-page">
+
+    <!-- Top Header -->
+    <div class="page-topbar">
+        <div class="page-title-block">
+            <h1>Notifications</h1>
+            <p>Consultez toutes les alertes importantes liées à vos séances et athlètes.</p>
+        </div>
+
+        <div class="topbar-actions">
+            <div class="search-box">
+                <span class="search-icon">⌕</span>
+                <input type="text" placeholder="Rechercher une notification..." [(ngModel)]="searchTerm" />
+            </div>
+
+            <button class="mark-read-btn" (click)="markAllAsRead()">
+                ✓ Tout marquer comme lu
+            </button>
         </div>
     </div>
-</section>
+
+    <!-- Coach Info -->
+    <div class="coach-mini-card">
+        <div class="coach-avatar">SN</div>
+        <div class="coach-meta">
+            <h3>Coach Nour</h3>
+            <p>Football Coach</p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="notif-stats">
+        <div class="stat-card unread">
+            <h2>{{ unreadCount }}</h2>
+            <p>Non lues</p>
+        </div>
+
+        <div class="stat-card today">
+            <h2>{{ todayCount }}</h2>
+            <p>Aujourd’hui</p>
+        </div>
+
+        <div class="stat-card total">
+            <h2>{{ filteredNotifications.length }}</h2>
+            <p>Total affiché</p>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="filter-tabs">
+        <button [class.active]="selectedFilter === 'ALL'" (click)="setFilter('ALL')">Toutes</button>
+        <button [class.active]="selectedFilter === 'SESSION'" (click)="setFilter('SESSION')">Séances</button>
+        <button [class.active]="selectedFilter === 'ATHLETE'" (click)="setFilter('ATHLETE')">Athlètes</button>
+        <button [class.active]="selectedFilter === 'REMINDER'" (click)="setFilter('REMINDER')">Rappels</button>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="notifications-wrapper">
+        <div class="notification-card" *ngFor="let notif of filteredNotifications" [class.unread-card]="!notif.read">
+
+            <div class="notif-left">
+                <div class="notif-icon" [ngClass]="notif.type.toLowerCase()">
+                    {{ notif.icon }}
+                </div>
+            </div>
+
+            <div class="notif-content">
+                <div class="notif-header">
+                    <div class="notif-title-row">
+                        <h3>{{ notif.title }}</h3>
+                        <span class="notif-badge" [ngClass]="notif.type.toLowerCase()">
+                            {{ notif.typeLabel }}
+                        </span>
+                    </div>
+
+                    <span class="notif-time">{{ notif.time }}</span>
+                </div>
+
+                <p class="notif-message">{{ notif.message }}</p>
+
+                <div class="notif-footer">
+                    <span class="notif-date">{{ notif.date }}</span>
+
+                    <div class="notif-actions">
+                        <button class="action-btn read-btn" (click)="markAsRead(notif)">
+                            Marquer comme lu
+                        </button>
+                        <button class="action-btn delete-btn" (click)="deleteNotification(notif.id)">
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="unread-dot" *ngIf="!notif.read"></div>
+        </div>
+
+        <div class="empty-state" *ngIf="filteredNotifications.length === 0">
+            <div class="empty-icon">🔔</div>
+            <h3>Aucune notification trouvée</h3>
+            <p>Il n’y a aucune notification correspondant à votre recherche.</p>
+        </div>
+    </div>
+
+</div>

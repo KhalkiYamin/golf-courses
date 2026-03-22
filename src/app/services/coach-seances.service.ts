@@ -56,6 +56,17 @@ export class CoachSeancesService {
         });
     }
 
+    assignAthleteToSeance(seanceId: number, athleteId: number): Observable<string> {
+        return this.http.put(
+            `${this.apiUrl}/${seanceId}/assign-athlete/${athleteId}`,
+            {},
+            {
+                headers: this.getHeaders(),
+                responseType: 'text'
+            }
+        );
+    }
+
     updateSeance(id: number, seance: Seance): Observable<Seance> {
         return this.http.put<Seance>(`${this.apiUrl}/${id}`, seance, {
             headers: this.getHeaders()
@@ -67,7 +78,6 @@ export class CoachSeancesService {
             headers: this.getHeaders()
         });
     }
-
 
     getById(id: number): Observable<Seance> {
         return this.http.get<Seance>(`${this.apiUrl}/details/${id}`, {

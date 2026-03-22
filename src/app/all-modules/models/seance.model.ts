@@ -4,7 +4,6 @@ export interface Seance {
     description: string;
     dateSeance: string;
     heureSeance: string;
-    groupe: string;
     lieu: string;
     nombreAthletes: number;
     statut: string;

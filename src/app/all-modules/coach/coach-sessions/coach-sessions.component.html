@@ -8,7 +8,6 @@
         {{ errorMessage }}
     </div>
 
-    <!-- Header -->
     <div class="page-header">
         <div class="header-left">
             <h1>Liste des séances</h1>
@@ -22,7 +21,6 @@
         </div>
     </div>
 
-    <!-- Form add -->
     <div class="section-card add-form-card" *ngIf="showAddForm">
         <div class="section-header">
             <div>
@@ -45,16 +43,6 @@
             <div class="form-group">
                 <label>Heure</label>
                 <input type="time" [(ngModel)]="newSeance.heureSeance">
-            </div>
-
-            <div class="form-group">
-                <label>Groupe</label>
-                <select [(ngModel)]="newSeance.groupe">
-                    <option value="">Choisir un groupe</option>
-                    <option value="U15">U15</option>
-                    <option value="U17">U17</option>
-                    <option value="Senior">Senior</option>
-                </select>
             </div>
 
             <div class="form-group">
@@ -82,6 +70,16 @@
                 <label>Durée</label>
                 <input type="text" [(ngModel)]="newSeance.duree" placeholder="Ex: 1h30">
             </div>
+
+            <div class="form-group">
+                <label>Athlète</label>
+                <select [(ngModel)]="selectedAthleteId" name="selectedAthleteId">
+                    <option [ngValue]="null">Choisir un athlète</option>
+                    <option *ngFor="let athlete of athletes" [ngValue]="athlete.id">
+                        {{ athlete.nomComplet }}
+                    </option>
+                </select>
+            </div>
         </div>
 
         <div class="form-group full-width">
@@ -95,12 +93,17 @@
         </div>
 
         <div class="form-actions">
-            <button class="save-btn" (click)="saveSeance()">Enregistrer</button>
-            <button class="cancel-btn" (click)="closeAddForm()">Annuler</button>
+            <button class="save-btn" (click)="saveSeance()" [disabled]="saving">
+                <span *ngIf="saving" class="btn-spinner"></span>
+                <span>{{ saving ? 'Enregistrement...' : 'Enregistrer' }}</span>
+            </button>
+
+            <button class="cancel-btn" (click)="closeAddForm()" [disabled]="saving">
+                Annuler
+            </button>
         </div>
     </div>
 
-    <!-- Stats -->
     <div class="stats-grid">
         <div class="stat-card green">
             <div class="stat-icon">📅</div>
@@ -135,10 +138,7 @@
         </div>
     </div>
 
-    <!-- Main content -->
     <div class="content-grid">
-
-        <!-- Left -->
         <div class="sessions-section">
             <div class="section-card">
 
@@ -149,7 +149,6 @@
                     </div>
                 </div>
 
-                <!-- Filters -->
                 <div class="filters-row">
                     <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
                         <option value="">Tous les statuts</option>
@@ -160,13 +159,6 @@
                         <option value="Annulée">Annulée</option>
                     </select>
 
-                    <select [(ngModel)]="selectedGroup" (change)="applyFilters()">
-                        <option value="">Tous les groupes</option>
-                        <option value="U15">U15</option>
-                        <option value="U17">U17</option>
-                        <option value="Senior">Senior</option>
-                    </select>
-
                     <input type="date" [(ngModel)]="selectedDate" (change)="applyFilters()">
                 </div>
 
@@ -174,7 +166,6 @@
                     Chargement des séances...
                 </div>
 
-                <!-- Table -->
                 <div class="table-wrapper" *ngIf="!loading">
                     <table>
                         <thead>
@@ -182,7 +173,6 @@
                                 <th>Thème</th>
                                 <th>Date</th>
                                 <th>Heure</th>
-                                <th>Groupe</th>
                                 <th>Lieu</th>
                                 <th>Athlètes</th>
                                 <th>Statut</th>
@@ -199,18 +189,17 @@
 
                                 <td>{{ session.dateSeance }}</td>
                                 <td>{{ session.heureSeance }}</td>
-                                <td>{{ session.groupe }}</td>
                                 <td>{{ session.lieu }}</td>
                                 <td>{{ session.nombreAthletes }}</td>
 
                                 <td>
                                     <span class="status-badge" [ngClass]="{
-                      'planned': session.statut === 'Planifiée',
-                      'confirmed': session.statut === 'Confirmée',
-                      'progress': session.statut === 'En cours',
-                      'done': session.statut === 'Terminée',
-                      'cancelled': session.statut === 'Annulée'
-                    }">
+                                        'planned': session.statut === 'Planifiée',
+                                        'confirmed': session.statut === 'Confirmée',
+                                        'progress': session.statut === 'En cours',
+                                        'done': session.statut === 'Terminée',
+                                        'cancelled': session.statut === 'Annulée'
+                                    }">
                                         {{ session.statut }}
                                     </span>
                                 </td>
@@ -225,7 +214,7 @@
                             </tr>
 
                             <tr *ngIf="seances.length === 0">
-                                <td colspan="8">
+                                <td colspan="7">
                                     <div class="empty-state">
                                         <div class="empty-icon">📂</div>
                                         <h3>Aucune séance trouvée</h3>
@@ -240,7 +229,6 @@
             </div>
         </div>
 
-        <!-- Right -->
         <div class="side-section">
 
             <div class="side-card upcoming-card" *ngIf="nextSession">
@@ -261,11 +249,6 @@
                     <div class="info-line">
                         <span>⏰</span>
                         <span>{{ nextSession.heureSeance }}</span>
-                    </div>
-
-                    <div class="info-line">
-                        <span>👥</span>
-                        <span>{{ nextSession.groupe }}</span>
                     </div>
 
                     <div class="info-line">
@@ -292,11 +275,6 @@
                     <div class="detail-item">
                         <strong>Heure :</strong>
                         <span>{{ selectedSession.heureSeance }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Groupe :</strong>
-                        <span>{{ selectedSession.groupe }}</span>
                     </div>
 
                     <div class="detail-item">

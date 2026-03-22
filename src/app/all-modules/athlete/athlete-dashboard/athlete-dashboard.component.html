@@ -1,23 +1,99 @@
-<section>
-    <h3 class="page-title">Dashboard Athlete</h3>
+<section class="athlete-dashboard">
+    <div class="dashboard-header">
+        <div>
+            <p class="dashboard-subtitle">Bienvenue de retour 👋</p>
+            <h2 class="page-title">Dashboard Athlète</h2>
+        </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-sm-6 col-xl-3" *ngFor="let stat of stats">
-            <div class="card stat-card p-3">
-                <small>{{ stat.label }}</small>
-                <h4 class="mb-0 mt-2">{{ stat.value }}</h4>
-            </div>
+        <div class="header-badge">
+            <span class="dot"></span>
+            En progression
         </div>
     </div>
 
-    <div class="card p-3">
-        <h5 class="mb-3">Prochaines seances</h5>
-        <div class="session-row" *ngFor="let session of nextSessions">
-            <div>
-                <div class="session-title">{{ session.title }}</div>
-                <small>{{ session.date }}</small>
+    <div class="stats-grid">
+        <div class="stat-card" *ngFor="let stat of stats">
+            <div class="stat-top">
+                <div class="stat-icon">{{ stat.icon }}</div>
+                <span class="stat-trend">{{ stat.trend }}</span>
             </div>
-            <span class="badge badge-light">{{ session.coach }}</span>
+
+            <small class="stat-label">{{ stat.label }}</small>
+            <h3 class="stat-value">{{ stat.value }}</h3>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="dashboard-card sessions-card">
+            <div class="card-header">
+                <div>
+                    <h5>Prochaines séances</h5>
+                    <p>Vos entraînements programmés</p>
+                </div>
+            </div>
+
+            <div *ngIf="loading" class="empty-state">
+                Chargement des séances...
+            </div>
+
+            <div *ngIf="errorMessage && !loading" class="empty-state error-state">
+                {{ errorMessage }}
+            </div>
+
+            <div *ngIf="!loading && !errorMessage && nextSessions.length === 0" class="empty-state">
+                Aucune séance programmée.
+            </div>
+
+            <div class="session-row" *ngFor="let session of nextSessions">
+                <div class="session-left">
+                    <div class="session-icon">
+                        {{ getSessionIcon(session.specialite) }}
+                    </div>
+
+                    <div class="session-info">
+                        <div class="session-title">{{ session.theme }}</div>
+                        <small class="session-date">
+                            {{ formatDate(session.dateSeance, session.heureSeance) }}
+                        </small>
+                        <div class="session-specialite">{{ session.specialite }}</div>
+                        <div class="session-lieu">📍 {{ session.lieu }}</div>
+                    </div>
+                </div>
+
+                <div class="session-right">
+                    <span class="coach-badge">{{ session.coachNomComplet }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card performance-card">
+            <div class="card-header">
+                <div>
+                    <h5>Résumé rapide</h5>
+                    <p>Votre niveau actuel</p>
+                </div>
+            </div>
+
+            <div class="performance-box">
+                <div class="progress-circle">
+                    <span>95%</span>
+                </div>
+
+                <div class="performance-details">
+                    <div class="detail-item">
+                        <span>Présence</span>
+                        <strong>Excellent</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Objectifs</span>
+                        <strong>7 atteints</strong>
+                    </div>
+                    <div class="detail-item">
+                        <span>Ressources</span>
+                        <strong>3 nouvelles</strong>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>
