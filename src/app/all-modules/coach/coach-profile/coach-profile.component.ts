@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {
-    CoachDashboardService,
-    UpdateCoachProfileRequest
-} from 'src/app/services/coach-dashboard.service';
+    CoachProfileService,
+    CoachProfileDetailsResponse,
+    UpdateCoachProfileDetailsRequest
+} from '../../../services/coach-profile.service';
 
 @Component({
     selector: 'app-coach-profile',
@@ -11,20 +12,36 @@ import {
 })
 export class CoachProfileComponent implements OnInit {
 
-    profile: any = {
+    profile: CoachProfileDetailsResponse = {
+        userId: undefined,
         nom: '',
         prenom: '',
         email: '',
         telephone: '',
-        specialite: '',
-        experience: 0,
-        totalAthletes: 0,
-        note: '',
-        forme: '',
-        seances: 0,
-        succes: '',
         imageProfil: '',
-        bio: ''
+
+        nomUtilisateur: '',
+        genre: '',
+        dateNaissance: '',
+        biographie: '',
+
+        nomClub: '',
+        adresseClub: '',
+        clubImage: '',
+
+        adresseLigne1: '',
+        adresseLigne2: '',
+        ville: '',
+        etatProvince: '',
+        pays: '',
+        codePostal: '',
+
+        services: [],
+        specialisations: [],
+
+        diplomes: [],
+        experiences: [],
+        recompenses: []
     };
 
     isLoading = true;
@@ -33,17 +50,21 @@ export class CoachProfileComponent implements OnInit {
     isSaving = false;
     saveSuccessMessage = '';
     saveErrorMessage = '';
+
     files: File[] = [];
     tagitems: string[] = [];
     tagitemsSpecialization: string[] = [];
     servicesInput = '';
     specializationInput = '';
+
     educations: Array<{ degree: string; institute: string; year: string }> = [
         { degree: '', institute: '', year: '' }
     ];
+
     experiences: Array<{ clubName: string; from: string; to: string; position: string }> = [
         { clubName: '', from: '', to: '', position: '' }
     ];
+
     awards: Array<{ title: string; year: string }> = [
         { title: '', year: '' }
     ];
@@ -53,12 +74,26 @@ export class CoachProfileComponent implements OnInit {
         nom: '',
         email: '',
         telephone: '',
-        specialite: '',
-        experience: 0,
-        bio: ''
+        imageProfil: '',
+
+        nomUtilisateur: '',
+        genre: '',
+        dateNaissance: '',
+        biographie: '',
+
+        nomClub: '',
+        adresseClub: '',
+        clubImage: '',
+
+        adresseLigne1: '',
+        adresseLigne2: '',
+        ville: '',
+        etatProvince: '',
+        pays: '',
+        codePostal: ''
     };
 
-    constructor(private coachDashboardService: CoachDashboardService) { }
+    constructor(private coachProfileService: CoachProfileService) { }
 
     ngOnInit(): void {
         this.loadProfile();
@@ -68,25 +103,24 @@ export class CoachProfileComponent implements OnInit {
         this.isLoading = true;
         this.errorMessage = '';
 
-        this.coachDashboardService.getCoachProfile().subscribe({
-            next: (data) => {
-                console.log('Coach profile:', data);
+        this.coachProfileService.getMyProfile().subscribe({
+            next: (data: CoachProfileDetailsResponse) => {
                 this.profile = {
                     ...this.profile,
-                    ...data
+                    ...data,
+                    services: data.services || [],
+                    specialisations: data.specialisations || [],
+                    diplomes: data.diplomes || [],
+                    experiences: data.experiences || [],
+                    recompenses: data.recompenses || []
                 };
-                this.editForm = {
-                    prenom: this.profile.prenom || '',
-                    nom: this.profile.nom || '',
-                    email: this.profile.email || '',
-                    telephone: this.profile.telephone || '',
-                    specialite: this.profile.specialite || '',
-                    experience: this.profile.experience || 0,
-                    bio: this.profile.bio || ''
-                };
+
+                this.patchEditFormFromProfile();
+                this.patchArraysFromProfile();
+
                 this.isLoading = false;
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error('Erreur chargement profil coach :', error);
                 this.errorMessage = 'Impossible de charger le profil du coach.';
                 this.isLoading = false;
@@ -94,54 +128,156 @@ export class CoachProfileComponent implements OnInit {
         });
     }
 
-    editProfile(): void {
-        this.isEditMode = true;
-
+    patchEditFormFromProfile(): void {
         this.editForm = {
             prenom: this.profile.prenom || '',
             nom: this.profile.nom || '',
             email: this.profile.email || '',
             telephone: this.profile.telephone || '',
-            specialite: this.profile.specialite || '',
-            experience: this.profile.experience || 0,
-            bio: this.profile.bio || ''
+            imageProfil: this.profile.imageProfil || '',
+
+            nomUtilisateur: this.profile.nomUtilisateur || '',
+            genre: this.profile.genre || '',
+            dateNaissance: this.profile.dateNaissance || '',
+            biographie: this.profile.biographie || '',
+
+            nomClub: this.profile.nomClub || '',
+            adresseClub: this.profile.adresseClub || '',
+            clubImage: this.profile.clubImage || '',
+
+            adresseLigne1: this.profile.adresseLigne1 || '',
+            adresseLigne2: this.profile.adresseLigne2 || '',
+            ville: this.profile.ville || '',
+            etatProvince: this.profile.etatProvince || '',
+            pays: this.profile.pays || '',
+            codePostal: this.profile.codePostal || ''
         };
+
+        this.tagitems = [...(this.profile.services || [])];
+        this.tagitemsSpecialization = [...(this.profile.specialisations || [])];
+    }
+
+    patchArraysFromProfile(): void {
+        this.educations = (this.profile.diplomes && this.profile.diplomes.length > 0)
+            ? this.profile.diplomes.map(d => ({
+                degree: d.diplome || '',
+                institute: d.ecoleInstitut || '',
+                year: d.anneeObtention || ''
+            }))
+            : [{ degree: '', institute: '', year: '' }];
+
+        this.experiences = (this.profile.experiences && this.profile.experiences.length > 0)
+            ? this.profile.experiences.map(e => ({
+                clubName: e.nomClub || '',
+                from: e.dateDebut || '',
+                to: e.dateFin || '',
+                position: e.poste || ''
+            }))
+            : [{ clubName: '', from: '', to: '', position: '' }];
+
+        this.awards = (this.profile.recompenses && this.profile.recompenses.length > 0)
+            ? this.profile.recompenses.map(r => ({
+                title: r.recompense || '',
+                year: r.annee || ''
+            }))
+            : [{ title: '', year: '' }];
+    }
+
+    editProfile(): void {
+        this.isEditMode = true;
+        this.saveSuccessMessage = '';
+        this.saveErrorMessage = '';
+
+        this.patchEditFormFromProfile();
+        this.patchArraysFromProfile();
     }
 
     cancelEdit(): void {
         this.isEditMode = false;
+        this.saveErrorMessage = '';
+        this.saveSuccessMessage = '';
     }
 
     saveProfile(): void {
         this.isSaving = true;
+        this.saveSuccessMessage = '';
+        this.saveErrorMessage = '';
 
-        const payload: UpdateCoachProfileRequest = {
-            prenom: this.editForm.prenom,
+        const payload: UpdateCoachProfileDetailsRequest = {
             nom: this.editForm.nom,
-            email: this.editForm.email,
+            prenom: this.editForm.prenom,
             telephone: this.editForm.telephone,
-            experience: this.editForm.experience
+            imageProfil: this.editForm.imageProfil,
+
+            nomUtilisateur: this.editForm.nomUtilisateur,
+            genre: this.editForm.genre,
+            dateNaissance: this.editForm.dateNaissance,
+            biographie: this.editForm.biographie,
+
+            nomClub: this.editForm.nomClub,
+            adresseClub: this.editForm.adresseClub,
+            clubImage: this.editForm.clubImage,
+
+            adresseLigne1: this.editForm.adresseLigne1,
+            adresseLigne2: this.editForm.adresseLigne2,
+            ville: this.editForm.ville,
+            etatProvince: this.editForm.etatProvince,
+            pays: this.editForm.pays,
+            codePostal: this.editForm.codePostal,
+
+            services: [...this.tagitems],
+            specialisations: [...this.tagitemsSpecialization],
+
+            diplomes: this.educations
+                .filter(e => e.degree || e.institute || e.year)
+                .map(e => ({
+                    diplome: e.degree,
+                    ecoleInstitut: e.institute,
+                    anneeObtention: e.year
+                })),
+
+            experiences: this.experiences
+                .filter(e => e.clubName || e.from || e.to || e.position)
+                .map(e => ({
+                    nomClub: e.clubName,
+                    dateDebut: e.from,
+                    dateFin: e.to,
+                    poste: e.position
+                })),
+
+            recompenses: this.awards
+                .filter(a => a.title || a.year)
+                .map(a => ({
+                    recompense: a.title,
+                    annee: a.year
+                }))
         };
 
-        this.coachDashboardService.updateCoachProfile(payload).subscribe({
-            next: (updatedProfile) => {
-                console.log('Profil mis à jour :', updatedProfile);
-
+        this.coachProfileService.updateMyProfile(payload).subscribe({
+            next: (updatedProfile: CoachProfileDetailsResponse) => {
                 this.profile = {
                     ...this.profile,
-                    ...updatedProfile
+                    ...updatedProfile,
+                    services: updatedProfile.services || [],
+                    specialisations: updatedProfile.specialisations || [],
+                    diplomes: updatedProfile.diplomes || [],
+                    experiences: updatedProfile.experiences || [],
+                    recompenses: updatedProfile.recompenses || []
                 };
+
+                this.patchEditFormFromProfile();
+                this.patchArraysFromProfile();
 
                 this.isEditMode = false;
                 this.isSaving = false;
                 this.saveErrorMessage = '';
-                this.saveSuccessMessage = 'Profil mis a jour avec succes.';
+                this.saveSuccessMessage = 'Profil mis à jour avec succès.';
             },
-            error: (error) => {
+            error: (error: any) => {
                 console.error('Erreur modification profil :', error);
                 this.isSaving = false;
                 this.saveSuccessMessage = '';
-                this.saveErrorMessage = 'Erreur lors de la mise a jour du profil.';
+                this.saveErrorMessage = 'Erreur lors de la mise à jour du profil.';
             }
         });
     }
@@ -197,12 +333,13 @@ export class CoachProfileComponent implements OnInit {
             return;
         }
 
-        const tags = value.split(',').map((tag) => tag.trim()).filter((tag) => !!tag);
-        tags.forEach((tag) => {
+        const tags = value.split(',').map(tag => tag.trim()).filter(tag => !!tag);
+        tags.forEach(tag => {
             if (!this.tagitems.includes(tag)) {
                 this.tagitems.push(tag);
             }
         });
+
         this.servicesInput = '';
     }
 
@@ -216,12 +353,13 @@ export class CoachProfileComponent implements OnInit {
             return;
         }
 
-        const tags = value.split(',').map((tag) => tag.trim()).filter((tag) => !!tag);
-        tags.forEach((tag) => {
+        const tags = value.split(',').map(tag => tag.trim()).filter(tag => !!tag);
+        tags.forEach(tag => {
             if (!this.tagitemsSpecialization.includes(tag)) {
                 this.tagitemsSpecialization.push(tag);
             }
         });
+
         this.specializationInput = '';
     }
 
