@@ -260,6 +260,56 @@
     color: #dc2626;
 }
 
+.input-with-action {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-with-action .form-control {
+    flex: 1;
+}
+
+.chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #e9f7ee;
+    color: #14532d;
+    border: 1px solid #bde5ca;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.chip button {
+    border: none;
+    background: transparent;
+    color: #14532d;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    padding: 0;
+}
+
+.remove-line-btn {
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.remove-line-btn[disabled] {
+    color: #9ca3af !important;
+    cursor: not-allowed;
+}
+
 @media (max-width: 768px) {
     .coach-profile-page {
         padding: 16px;

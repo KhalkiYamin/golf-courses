@@ -1,142 +1,405 @@
-<div class="coach-profile-page">
-    <h3 class="page-title">Profil Coach</h3>
-
-    <div class="profile-card" *ngIf="!isLoading && !errorMessage">
-        <div class="profile-header">
-            <div class="profile-header-left">
-                <div class="profile-avatar">
-                    <img *ngIf="profile.imageProfil" [src]="'http://localhost:8081/' + profile.imageProfil"
-                        alt="Photo coach">
-                    <span *ngIf="!profile.imageProfil">
-                        {{ profile.prenom?.charAt(0) || 'C' }}
-                    </span>
-                </div>
-
-                <div class="profile-info">
-                    <h2>{{ profile.prenom }} {{ profile.nom }}</h2>
-                    <p>{{ profile.specialite || 'Coach' }}</p>
-                    <span class="badge-experience">
-                        {{ profile.experience }} ans d’expérience
-                    </span>
-                </div>
-            </div>
-
-            <div class="profile-header-right">
-                <button class="edit-btn" (click)="editProfile()" *ngIf="!isEditMode">
-                    Modifier
-                </button>
+<!-- Breadcrumb -->
+<div class="breadcrumb-bar">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-12 col-12">
+                <nav aria-label="breadcrumb" class="page-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a routerLink="/">Accueil</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Parametres du profil</li>
+                    </ol>
+                </nav>
+                <h2 class="breadcrumb-title">Parametres du profil</h2>
             </div>
         </div>
-
-        <div class="profile-grid">
-            <div class="profile-row">
-                <span>Prénom</span>
-                <strong>{{ profile.prenom || '-' }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Nom</span>
-                <strong>{{ profile.nom || '-' }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Email</span>
-                <strong>{{ profile.email || '-' }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Téléphone</span>
-                <strong>{{ profile.telephone || '-' }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Spécialité</span>
-                <strong>{{ profile.specialite || '-' }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Expérience</span>
-                <strong>{{ profile.experience ? profile.experience + ' ans' : '-' }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Note</span>
-                <strong>{{ profile.note || '4.8/5' }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Total athlètes</span>
-                <strong>{{ profile.totalAthletes || 0 }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Séances</span>
-                <strong>{{ profile.seances || 0 }}</strong>
-            </div>
-
-            <div class="profile-row">
-                <span>Forme</span>
-                <strong>{{ profile.forme || '-' }}</strong>
-            </div>
-
-            <div class="profile-row full-width">
-                <span>Bio</span>
-                <strong>{{ profile.bio || 'Aucune bio disponible.' }}</strong>
-            </div>
-        </div>
-
-        <div class="edit-profile-card" *ngIf="isEditMode">
-            <h3>Modifier le profil</h3>
-
-            <div class="edit-grid">
-                <div class="form-group">
-                    <label>Prénom</label>
-                    <input type="text" [(ngModel)]="editForm.prenom" name="prenom">
-                </div>
-
-                <div class="form-group">
-                    <label>Nom</label>
-                    <input type="text" [(ngModel)]="editForm.nom" name="nom">
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" [(ngModel)]="editForm.email" name="email">
-                </div>
-
-                <div class="form-group">
-                    <label>Téléphone</label>
-                    <input type="text" [(ngModel)]="editForm.telephone" name="telephone">
-                </div>
-
-                <div class="form-group">
-                    <label>Spécialité</label>
-                    <input type="text" [(ngModel)]="editForm.specialite" name="specialite">
-                </div>
-
-                <div class="form-group">
-                    <label>Expérience</label>
-                    <input type="number" [(ngModel)]="editForm.experience" name="experience">
-                </div>
-
-                <div class="form-group full-width">
-                    <label>Bio</label>
-                    <textarea rows="4" [(ngModel)]="editForm.bio" name="bio"></textarea>
-                </div>
-            </div>
-
-            <div class="edit-actions">
-                <button class="save-btn" (click)="saveProfile()">Enregistrer</button>
-                <button class="cancel-btn" (click)="cancelEdit()">Annuler</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="loading-state" *ngIf="isLoading">
-        Chargement du profil...
-    </div>
-
-    <div class="error-state" *ngIf="!isLoading && errorMessage">
-        {{ errorMessage }}
     </div>
 </div>
+<!-- /Breadcrumb -->
+
+<!-- Page Content -->
+<div class="content" *ngIf="!isLoading && !errorMessage">
+    <div class="container">
+
+        <div class="row">
+            <div class="col-12">
+
+                <!-- Basic Information -->
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Informations de base</h4>
+                        <div class="row form-row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="change-avatar">
+                                        <div class="profile-img">
+                                            <img *ngIf="profile.imageProfil" [src]="'http://localhost:8081/' + profile.imageProfil"
+                                                alt="Photo utilisateur">
+                                            <img *ngIf="!profile.imageProfil" src="assets/img/coaches/admin-thumb-02.jpg"
+                                                alt="Photo utilisateur">
+                                        </div>
+                                        <div class="upload-img">
+                                            <div class="change-photo-btn">
+                                                <span><i class="fa fa-upload"></i> Televerser une photo</span>
+                                                <input type="file" class="upload">
+                                            </div>
+                                            <small class="form-text text-muted">Formats autorises: JPG, GIF ou PNG. Taille max: 2 Mo</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nom d'utilisateur <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" [value]="profile.email || ''" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Email <span class="text-danger">*</span></label>
+                                    <input type="email" class="form-control" [(ngModel)]="editForm.email" name="email">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Prenom <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="editForm.prenom" name="prenom">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nom <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" [(ngModel)]="editForm.nom" name="nom">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Numero de telephone</label>
+                                    <input type="text" class="form-control" [(ngModel)]="editForm.telephone" name="telephone">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Genre</label>
+                                    <select class="form-control select">
+                                        <option>Selectionner</option>
+                                        <option>Homme</option>
+                                        <option>Femme</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-0">
+                                    <label>Date de naissance</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Basic Information -->
+
+                <!-- About Me -->
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">A propos de moi</h4>
+                        <div class="form-group mb-0">
+                            <label>Biographie</label>
+                            <textarea class="form-control" rows="5" [(ngModel)]="editForm.bio" name="bio"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <!-- /About Me -->
+
+                <!-- Club Info -->
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Informations du club de golf</h4>
+                        <div class="row form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Nom du club</label>
+                                    <input type="text" class="form-control" [value]="profile.specialite || ''" readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Adresse du club</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Images du club</label>
+                                    <input type="file" class="form-control" multiple (change)="onSelect($event)">
+                                </div>
+                                <div class="upload-wrap">
+                                    <div class="upload-images" *ngFor="let f of files">
+                                        <span class="mr-2">{{ f.name }}</span>
+                                        <a href="javascript:void(0);" class="btn btn-icon btn-danger btn-sm"
+                                            (click)="onRemove(f)"><i class="far fa-trash-alt"></i></a>
+                                    </div>
+                                    <div class="upload-images">
+                                        <img src="assets/img/features/feature-01.jpg" alt="Image televersee">
+                                        <a href="javascript:void(0);" class="btn btn-icon btn-danger btn-sm"><i
+                                                class="far fa-trash-alt"></i></a>
+                                    </div>
+                                    <div class="upload-images">
+                                        <img src="assets/img/features/feature-02.jpg" alt="Image televersee">
+                                        <a href="javascript:void(0);" class="btn btn-icon btn-danger btn-sm"><i
+                                                class="far fa-trash-alt"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Club Info -->
+
+                <!-- Contact Details -->
+                <div class="card contact-card">
+                    <div class="card-body">
+                        <h4 class="card-title">Coordonnees</h4>
+                        <div class="row form-row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Adresse ligne 1</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Adresse ligne 2</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Ville</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Etat / Province</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Pays</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Code postal</label>
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Contact Details -->
+
+                <!-- Services and Specialization -->
+                <div class="card services-card">
+                    <div class="card-body">
+                        <h4 class="card-title">Services et specialisations</h4>
+                        <div class="form-group">
+                            <label>Services</label>
+                            <div class="tagsinput-dv input-with-action">
+                                <input type="text" class="form-control" [(ngModel)]="servicesInput"
+                                    name="servicesInput" placeholder="Saisir des services separes par une virgule"
+                                    (keydown.enter)="$event.preventDefault(); addServiceTag()">
+                                <button type="button" class="btn btn-outline-success btn-sm"
+                                    (click)="addServiceTag()">Ajouter</button>
+                            </div>
+                            <div class="chip-list" *ngIf="tagitems.length">
+                                <span class="chip" *ngFor="let tag of tagitems; let i = index">
+                                    {{ tag }}
+                                    <button type="button" (click)="removeServiceTag(i)">×</button>
+                                </span>
+                            </div>
+                            <small class="form-text text-muted">Note: Tapez puis appuyez sur Entree pour ajouter un service</small>
+                        </div>
+                        <div class="form-group mb-0">
+                            <label>Specialisation</label>
+                            <div class="tagsinput-dv input-with-action">
+                                <input type="text" class="form-control" [(ngModel)]="specializationInput"
+                                    name="specializationInput" placeholder="Saisir des specialisations separees par une virgule"
+                                    (keydown.enter)="$event.preventDefault(); addSpecializationTag()">
+                                <button type="button" class="btn btn-outline-success btn-sm"
+                                    (click)="addSpecializationTag()">Ajouter</button>
+                            </div>
+                            <div class="chip-list" *ngIf="tagitemsSpecialization.length">
+                                <span class="chip" *ngFor="let tag of tagitemsSpecialization; let i = index">
+                                    {{ tag }}
+                                    <button type="button" (click)="removeSpecializationTag(i)">×</button>
+                                </span>
+                            </div>
+                            <small class="form-text text-muted">Note: Tapez puis appuyez sur Entree pour ajouter une specialisation</small>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Services and Specialization -->
+
+                <!-- Education -->
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Formation</h4>
+                        <div class="education-info">
+                            <div class="row form-row education-cont" *ngFor="let education of educations; let i = index">
+                                <div class="col-12 col-md-10 col-lg-11">
+                                    <div class="row form-row">
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Diplome</label>
+                                                <input type="text" class="form-control" [(ngModel)]="education.degree"
+                                                    [name]="'educationDegree' + i">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Ecole / Institut</label>
+                                                <input type="text" class="form-control" [(ngModel)]="education.institute"
+                                                    [name]="'educationInstitute' + i">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Annee d'obtention</label>
+                                                <input type="text" class="form-control" [(ngModel)]="education.year"
+                                                    [name]="'educationYear' + i">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-2 col-lg-1 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn btn-link text-danger remove-line-btn"
+                                        (click)="removeEducation(i)" [disabled]="educations.length === 1">Retirer</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add-more">
+                            <a href="javascript:void(0);" class="add-education" (click)="addEducation()"><i
+                                    class="fa fa-plus-circle"></i> Ajouter</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Education -->
+
+                <!-- Experience -->
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Experience</h4>
+                        <div class="experience-info">
+                            <div class="row form-row experience-cont" *ngFor="let experience of experiences; let i = index">
+                                <div class="col-12 col-md-10 col-lg-11">
+                                    <div class="row form-row">
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Nom du club</label>
+                                                <input type="text" class="form-control" [(ngModel)]="experience.clubName"
+                                                    [name]="'experienceClubName' + i">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label>De</label>
+                                                <input type="text" class="form-control" [(ngModel)]="experience.from"
+                                                    [name]="'experienceFrom' + i">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label>A</label>
+                                                <input type="text" class="form-control" [(ngModel)]="experience.to"
+                                                    [name]="'experienceTo' + i">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label>Poste</label>
+                                                <input type="text" class="form-control" [(ngModel)]="experience.position"
+                                                    [name]="'experiencePosition' + i">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-2 col-lg-1 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn btn-link text-danger remove-line-btn"
+                                        (click)="removeExperience(i)" [disabled]="experiences.length === 1">Retirer</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add-more">
+                            <a href="javascript:void(0);" class="add-experience" (click)="addExperience()"><i
+                                    class="fa fa-plus-circle"></i> Ajouter</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Experience -->
+
+                <!-- Awards -->
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Recompenses</h4>
+                        <div class="awards-info">
+                            <div class="row form-row awards-cont" *ngFor="let award of awards; let i = index">
+                                <div class="col-12 col-md-5">
+                                    <div class="form-group">
+                                        <label>Recompense</label>
+                                        <input type="text" class="form-control" [(ngModel)]="award.title"
+                                            [name]="'awardTitle' + i">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-5">
+                                    <div class="form-group">
+                                        <label>Annee</label>
+                                        <input type="text" class="form-control" [(ngModel)]="award.year"
+                                            [name]="'awardYear' + i">
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-2 d-flex align-items-center justify-content-end">
+                                    <button type="button" class="btn btn-link text-danger remove-line-btn"
+                                        (click)="removeAward(i)" [disabled]="awards.length === 1">Retirer</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="add-more">
+                            <a href="javascript:void(0);" class="add-award" (click)="addAward()"><i
+                                    class="fa fa-plus-circle"></i> Ajouter</a>
+                        </div>
+                    </div>
+                </div>
+                <!-- /Awards -->
+
+
+                <!-- /Registrations -->
+
+                <div class="submit-section submit-btn-bottom">
+                    <div *ngIf="saveSuccessMessage" class="alert alert-success mb-2">{{ saveSuccessMessage }}</div>
+                    <div *ngIf="saveErrorMessage" class="alert alert-danger mb-2">{{ saveErrorMessage }}</div>
+                    <button type="button" class="btn btn-primary submit-btn" (click)="saveProfile()"
+                        [disabled]="isSaving">
+                        <span *ngIf="!isSaving">Enregistrer les modifications</span>
+                        <span *ngIf="isSaving">Enregistrement...</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="loading-state" *ngIf="isLoading">
+    Chargement du profil...
+</div>
+
+<div class="error-state" *ngIf="!isLoading && errorMessage">
+    {{ errorMessage }}
+</div>
+<!-- /Page Content -->

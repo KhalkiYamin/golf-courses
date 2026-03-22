@@ -15,21 +15,11 @@
                     <span class="icon">{{ item.icon }}</span>
                     <span>{{ item.label }}</span>
                 </a>
+                <button type="button" class="nav-item nav-item-logout" (click)="logout()">
+                    <span class="icon">🚪</span>
+                    <span>Déconnexion</span>
+                </button>
             </nav>
-        </div>
-
-        <div class="sidebar-bottom">
-            <div class="coach-profile-card">
-                <div class="coach-avatar">{{ coachProfile.initials }}</div>
-                <div class="coach-meta">
-                    <h3>{{ coachProfile.name }}</h3>
-                    <p>{{ coachProfile.specialty }}</p>
-                </div>
-            </div>
-
-            <div class="sidebar-footer">
-                <button type="button" class="logout-btn" (click)="logout()">Déconnexion</button>
-            </div>
         </div>
     </aside>
 

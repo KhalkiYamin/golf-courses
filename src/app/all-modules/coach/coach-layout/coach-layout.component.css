@@ -12,9 +12,10 @@ body {
 
 .coach-layout {
     display: flex;
-    min-height: 100vh;
+    align-items: flex-start;
+    height: 100vh;
     background: linear-gradient(135deg, #f3fbf6, #ebf7f0);
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 /* Sidebar */
@@ -24,23 +25,20 @@ body {
     color: #fff;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 20px 14px;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
     flex-shrink: 0;
+    position: static !important;
+    overflow-y: hidden !important;
+    max-height: none !important;
+    height: 100vh !important;
 }
 
 .sidebar-top {
     display: flex;
     flex-direction: column;
     gap: 14px;
-}
-
-.sidebar-bottom {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
 }
 
 .brand {
@@ -93,6 +91,13 @@ body {
     font-weight: 600;
     font-size: 14px;
     transition: all 0.25s ease;
+}
+
+.nav-item-logout {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
 }
 
 .nav-item:hover {
@@ -149,35 +154,17 @@ body {
     color: rgba(255, 255, 255, 0.8);
 }
 
-.sidebar-footer {
-    margin-top: 0;
-}
-
-.logout-btn {
-    width: 100%;
-    border: none;
-    padding: 11px;
-    border-radius: 12px;
-    background: #fff;
-    color: #14532d;
-    font-weight: 700;
-    cursor: pointer;
-    transition: 0.25s ease;
-}
-
-.logout-btn:hover {
-    background: #dcfce7;
-    transform: translateY(-1px);
-}
-
 /* Main content */
 .main-content {
     flex: 1;
     min-width: 0;
+    min-height: 0;
+    height: 100vh;
     padding: 18px 20px;
     display: flex;
     flex-direction: column;
     gap: 14px;
+    overflow: hidden;
 }
 
 /* Topbar */
@@ -259,6 +246,9 @@ body {
 /* Content */
 .content-section {
     flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .content-card {
@@ -408,12 +398,26 @@ body {
 @media (max-width: 991px) {
     .coach-layout {
         flex-direction: column;
+        height: auto;
+        overflow: visible;
     }
 
     .sidebar {
         width: 100%;
         min-height: auto;
+        height: auto !important;
+        overflow: visible !important;
         border-radius: 0 0 16px 16px;
+    }
+
+    .main-content {
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+    }
+
+    .content-section {
+        overflow: visible;
     }
 
     .topbar {
