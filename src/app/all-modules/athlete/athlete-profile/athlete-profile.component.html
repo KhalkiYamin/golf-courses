@@ -1,10 +1,93 @@
-<section>
-    <h3 class="page-title">Mon Profil</h3>
-    <div class="card p-3 profile-card">
-        <div class="profile-row"><span>Nom</span><strong>{{ profile.nom }}</strong></div>
-        <div class="profile-row"><span>Email</span><strong>{{ profile.email }}</strong></div>
-        <div class="profile-row"><span>Sport</span><strong>{{ profile.sport }}</strong></div>
-        <div class="profile-row"><span>Niveau</span><strong>{{ profile.niveau }}</strong></div>
-        <div class="profile-row"><span>Telephone</span><strong>{{ profile.telephone }}</strong></div>
+<section class="profile-page">
+    <h2 class="page-title">Mon Profil</h2>
+
+    <div *ngIf="loading" class="state-box">
+        Chargement du profil...
+    </div>
+
+    <div *ngIf="errorMessage && !loading" class="state-box error-box">
+        {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage && !loading" class="state-box success-box">
+        {{ successMessage }}
+    </div>
+
+    <div class="profile-card" *ngIf="!loading">
+
+        <div class="profile-actions">
+            <button *ngIf="!isEditing" class="edit-btn" (click)="startEdit()">
+                Modifier
+            </button>
+        </div>
+
+        <ng-container *ngIf="!isEditing">
+            <div class="profile-row">
+                <span>Nom</span>
+                <strong>{{ profile.nom }}</strong>
+            </div>
+            <div class="profile-row">
+                <span>Prénom</span>
+                <strong>{{ profile.prenom }}</strong>
+            </div>
+            <div class="profile-row">
+                <span>Email</span>
+                <strong>{{ profile.email }}</strong>
+            </div>
+
+            <div class="profile-row">
+                <span>Sport</span>
+                <strong>{{ profile.sport }}</strong>
+            </div>
+
+            <div class="profile-row">
+                <span>Niveau</span>
+                <strong>{{ profile.niveau }}</strong>
+            </div>
+
+            <div class="profile-row">
+                <span>Téléphone</span>
+                <strong>{{ profile.telephone }}</strong>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="isEditing">
+            <div class="profile-row">
+                <span>Nom</span>
+                <input type="text" [(ngModel)]="editProfile.nom">
+            </div>
+            <div class="profile-row">
+                <span>Prénom</span>
+                <input type="text" [(ngModel)]="editProfile.prenom">
+            </div>
+            <div class="profile-row">
+                <span>Email</span>
+                <strong>{{ profile.email }}</strong>
+            </div>
+
+            <div class="profile-row">
+                <span>Sport</span>
+                <strong>{{ profile.sport }}</strong>
+            </div>
+
+            <div class="profile-row">
+                <span>Niveau</span>
+                <input type="text" [(ngModel)]="editProfile.niveau">
+            </div>
+
+            <div class="profile-row">
+                <span>Téléphone</span>
+                <input type="text" [(ngModel)]="editProfile.telephone">
+            </div>
+
+            <div class="form-actions">
+                <button class="cancel-btn" (click)="cancelEdit()" [disabled]="saving">
+                    Annuler
+                </button>
+                <button class="save-btn" (click)="saveProfile()" [disabled]="saving">
+                    {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+                </button>
+            </div>
+        </ng-container>
     </div>
 </section>

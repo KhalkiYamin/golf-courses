@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { AthleteRoutingModule } from './athlete-routing.module';
 import { AthleteShellLayoutComponent } from './athlete-layout/athlete-layout.component';
@@ -22,6 +23,7 @@ import { AthleteNotificationsComponent } from './athlete-notifications/athlete-n
     imports: [
         CommonModule,
         RouterModule,
+        FormsModule,
         AthleteRoutingModule
     ]
 })

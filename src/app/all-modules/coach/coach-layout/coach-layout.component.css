@@ -49,17 +49,21 @@ body {
 }
 
 .brand-logo {
-    width: 52px;
-    height: 52px;
+    width: 112px;
+    height: 112px;
     border-radius: 16px;
-    background: linear-gradient(135deg, #22c55e, #4ade80);
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    font-weight: 800;
-    color: #fff;
     box-shadow: 0 10px 25px rgba(22, 163, 74, 0.35);
+    overflow: hidden;
+}
+
+.brand-logo-image {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
 }
 
 .brand-text h2 {

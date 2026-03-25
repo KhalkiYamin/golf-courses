@@ -6,10 +6,11 @@ import { CoachDashboardComponent } from './coach-dashboard/coach-dashboard.compo
 import { CoachProfileComponent } from './coach-profile/coach-profile.component';
 import { CoachAthletesComponent } from './coach-athletes/coach-athletes.component';
 import { CoachSessionsComponent } from './coach-sessions/coach-sessions.component';
-import { CoachPresencesComponent } from './coach-presences/coach-presences.component';
+import { CoachPresenceComponent } from './coach-presences/coach-presences.component';
 import { CoachEvaluationsComponent } from './coach-evaluations/coach-evaluations.component';
 import { CoachNotificationsComponent } from './coach-notifications/coach-notifications.component';
 import { CoachResourcesComponent } from './coach-resources/coach-resources.component';
+import { CoachReservationsComponent } from './coach-reservations/coach-reservations.component';
 
 const routes: Routes = [
     {
@@ -20,10 +21,15 @@ const routes: Routes = [
             { path: 'profile', component: CoachProfileComponent },
             { path: 'athletes', component: CoachAthletesComponent },
             { path: 'sessions', component: CoachSessionsComponent },
-            { path: 'presences', component: CoachPresencesComponent },
+            { path: 'presences/:seanceId', component: CoachPresenceComponent },
+            { path: 'presences', component: CoachPresenceComponent },
             { path: 'evaluations', component: CoachEvaluationsComponent },
             { path: 'notifications', component: CoachNotificationsComponent },
+            { path: 'dashboard/coach/presences/:seanceId', component: CoachPresenceComponent },
+            { path: 'dashboard/coach/presences/:seanceId', component: CoachPresenceComponent },
+
             { path: 'resources', component: CoachResourcesComponent },
+            { path: 'reservations/:seanceId', component: CoachReservationsComponent },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     }

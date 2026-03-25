@@ -1,6 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { AthleteDashboardService } from '../../../services/athlete-dashboard.service';
-import { AthleteSeance } from '../../models/athlete-seance.model';
+import {
+    ReservationSeanceDto,
+    ReservationSeanceService
+} from 'src/app/services/reservation-seance.service';
+
+interface AthletePresenceSummary {
+    presenceRate: number;
+    presenceLabel: string;
+    presentCount: number;
+    absentCount: number;
+    retardCount: number;
+    totalSeances: number;
+}
 
 @Component({
     selector: 'app-athlete-dashboard',
@@ -11,73 +23,188 @@ export class AthleteDashboardComponent implements OnInit {
 
     stats = [
         {
-            label: 'Séances cette semaine',
-            value: 4,
+            label: 'Séances disponibles',
+            value: 0,
             icon: '📅',
-            trend: '+1'
+            trend: ''
         },
         {
             label: 'Présence',
-            value: '95%',
+            value: '0%',
             icon: '✅',
-            trend: '+5%'
+            trend: ''
         },
         {
-            label: 'Objectifs atteints',
-            value: 7,
+            label: 'Réservations',
+            value: 0,
+            icon: '📝',
+            trend: ''
+        },
+        {
+            label: 'Acceptées',
+            value: 0,
             icon: '🎯',
-            trend: '+2'
-        },
-        {
-            label: 'Ressources nouvelles',
-            value: 3,
-            icon: '📘',
-            trend: 'Nouveau'
+            trend: ''
         }
     ];
 
-    nextSessions: AthleteSeance[] = [];
-    loading = false;
-    errorMessage = '';
+    availableSeances: ReservationSeanceDto[] = [];
+    myReservations: ReservationSeanceDto[] = [];
 
-    constructor(private athleteDashboardService: AthleteDashboardService) { }
+    loading = false;
+    reservationsLoading = false;
+    errorMessage = '';
+    successMessage = '';
+
+    presenceRate = 0;
+    presenceLabel = 'Aucune donnée';
+    presentCount = 0;
+    absentCount = 0;
+    retardCount = 0;
+    totalPresenceSeances = 0;
+
+    constructor(
+        private athleteDashboardService: AthleteDashboardService,
+        private reservationSeanceService: ReservationSeanceService
+    ) { }
 
     ngOnInit(): void {
-        this.loadAthleteSeances();
+        this.loadAvailableSeances();
+        this.loadMyReservations();
+        this.loadPresenceSummary();
     }
 
-    loadAthleteSeances(): void {
+    get availableSeancesToReserve(): ReservationSeanceDto[] {
+        return this.availableSeances.filter((session) => this.isAvailableStatus(session.statut));
+    }
+
+    loadAvailableSeances(): void {
         this.loading = true;
         this.errorMessage = '';
 
-        this.athleteDashboardService.getAthleteSeances().subscribe({
-            next: (data: AthleteSeance[]) => {
-                console.log('Séances athlete:', data);
-                this.nextSessions = data;
+        this.reservationSeanceService.getSeancesDisponiblesPourAthlete().subscribe({
+            next: (data: ReservationSeanceDto[]) => {
+                this.availableSeances = data || [];
+                this.stats[0].value = this.availableSeancesToReserve.length;
                 this.loading = false;
             },
             error: (error: any) => {
-                console.error('Erreur chargement séances athlete', error);
-                this.errorMessage = 'Impossible de charger les séances.';
+                console.error('Erreur chargement séances disponibles', error);
+                this.errorMessage = error?.error?.message || 'Impossible de charger les séances disponibles.';
                 this.loading = false;
             }
         });
     }
 
-    formatDate(date: string, heure: string): string {
-        return `${date} à ${heure}`;
+    loadMyReservations(): void {
+        this.reservationsLoading = true;
+
+        this.reservationSeanceService.getMesReservations().subscribe({
+            next: (data: ReservationSeanceDto[]) => {
+                this.myReservations = data || [];
+                this.stats[2].value = this.myReservations.length;
+                this.stats[3].value = this.myReservations.filter(r => this.normalizeStatus(r.statut) === 'ACCEPTEE').length;
+                this.reservationsLoading = false;
+            },
+            error: (error: any) => {
+                console.error('Erreur chargement réservations', error);
+                this.reservationsLoading = false;
+            }
+        });
     }
 
-    getSessionIcon(specialite: string): string {
-        const s = (specialite || '').toLowerCase();
+    loadPresenceSummary(): void {
+        this.athleteDashboardService.getPresenceSummary().subscribe({
+            next: (data: AthletePresenceSummary) => {
+                this.presenceRate = data.presenceRate || 0;
+                this.presenceLabel = data.presenceLabel || 'Aucune donnée';
+                this.presentCount = data.presentCount || 0;
+                this.absentCount = data.absentCount || 0;
+                this.retardCount = data.retardCount || 0;
+                this.totalPresenceSeances = data.totalSeances || 0;
 
-        if (s.includes('football')) return '⚽';
-        if (s.includes('basket')) return '🏀';
-        if (s.includes('tennis')) return '🎾';
-        if (s.includes('natation')) return '🏊';
-        if (s.includes('musculation')) return '💪';
-        if (s.includes('préparation physique')) return '🏋️';
+                this.stats[1].value = `${this.presenceRate}%`;
+                this.stats[1].trend = this.presenceLabel;
+            },
+            error: (error: any) => {
+                console.error('Erreur chargement résumé présence athlete', error);
+            }
+        });
+    }
+
+    reserverSeance(seanceId: number): void {
+        if (!seanceId || seanceId <= 0) {
+            this.errorMessage = 'Identifiant de séance invalide.';
+            return;
+        }
+
+        this.successMessage = '';
+        this.errorMessage = '';
+
+        this.reservationSeanceService.reserverSeance(seanceId).subscribe({
+            next: () => {
+                this.successMessage = 'Réservation envoyée avec succès.';
+                this.loadAvailableSeances();
+                this.loadMyReservations();
+            },
+            error: (error: any) => {
+                console.error('Erreur réservation séance', error);
+                this.errorMessage = error?.error?.message || 'Impossible d’effectuer la réservation.';
+            }
+        });
+    }
+
+    getReservationBadgeLabel(statut: string): string {
+        switch (this.normalizeStatus(statut)) {
+            case 'NON_RESERVEE':
+                return 'Disponible';
+            case 'EN_ATTENTE':
+                return 'En attente';
+            case 'ACCEPTEE':
+                return 'Acceptée';
+            case 'REFUSEE':
+                return 'Refusée';
+            default:
+                return statut;
+        }
+    }
+
+    getSeanceId(session: ReservationSeanceDto): number {
+        return Number(session.seanceId || session.id || 0);
+    }
+
+    getCoachDisplayName(session: ReservationSeanceDto): string {
+        return session.coachNomComplet || session.coachNom || session.coachName || '';
+    }
+
+    private isAvailableStatus(statut: string): boolean {
+        const normalized = this.normalizeStatus(statut);
+        return normalized === 'NON_RESERVEE' || normalized === 'DISPONIBLE';
+    }
+
+    private normalizeStatus(statut: string): string {
+        return (statut || '')
+            .toString()
+            .trim()
+            .toUpperCase()
+            .replace(/\s+/g, '_')
+            .replace(/-/g, '_')
+            .replace(/É/g, 'E');
+    }
+
+    getSessionIcon(theme: string): string {
+        const value = (theme || '').toLowerCase();
+
+        if (value.includes('football')) return '⚽';
+        if (value.includes('basket')) return '🏀';
+        if (value.includes('tennis')) return '🎾';
+        if (value.includes('natation')) return '🏊';
+        if (value.includes('musculation')) return '💪';
 
         return '🏅';
+    }
+
+    formatDate(date: string, heure: string): string {
+        return `${date} à ${heure}`;
     }
 }

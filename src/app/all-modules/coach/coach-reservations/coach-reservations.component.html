@@ -1,0 +1,92 @@
+<section class="reservations-page">
+
+    <div class="page-header">
+        <div class="header-left">
+            <button class="back-btn" (click)="goBack()">← Retour</button>
+            <div>
+                <h2>Réservations de la séance #{{ seanceId }}</h2>
+                <p>Gérez les demandes de réservation des athlètes</p>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+    <div *ngIf="errorMessage" class="alert alert-error">{{ errorMessage }}</div>
+
+    <div class="stats-grid">
+        <div class="stat-card total">
+            <div class="stat-value">{{ totalReservations }}</div>
+            <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card pending">
+            <div class="stat-value">{{ pendingCount }}</div>
+            <div class="stat-label">En attente</div>
+        </div>
+        <div class="stat-card accepted">
+            <div class="stat-value">{{ acceptedCount }}</div>
+            <div class="stat-label">Acceptées</div>
+        </div>
+        <div class="stat-card refused">
+            <div class="stat-value">{{ refusedCount }}</div>
+            <div class="stat-label">Refusées</div>
+        </div>
+    </div>
+
+    <div class="reservations-card">
+        <div class="card-header">
+            <h3>Liste des athlètes</h3>
+            <p>{{ totalReservations }} demande(s) reçue(s)</p>
+        </div>
+
+        <div *ngIf="loading" class="loading-box">Chargement des réservations...</div>
+
+        <div *ngIf="!loading && reservations.length === 0" class="empty-box">
+            Aucune réservation pour cette séance.
+        </div>
+
+        <div class="reservations-list" *ngIf="!loading && reservations.length > 0">
+            <div class="reservation-row" *ngFor="let res of reservations">
+
+                <div class="athlete-info">
+                    <div class="avatar">{{ (res.athleteNomComplet || 'A')[0].toUpperCase() }}</div>
+                    <div class="athlete-details">
+                        <span class="athlete-name">{{ res.athleteNomComplet || 'Athlète' }}</span>
+                        <span class="athlete-email">{{ res.athleteEmail || '-' }}</span>
+                    </div>
+                </div>
+
+                <div class="reservation-meta">
+                    <span class="meta-label">Réservé le</span>
+                    <span class="meta-value">{{ res.dateReservation ? (res.dateReservation | date: 'dd/MM/yyyy') : '-'
+                        }}</span>
+                </div>
+
+                <div class="status-col">
+                    <span class="status-badge" [class.badge-pending]="res.statut === 'EN_ATTENTE'"
+                        [class.badge-accepted]="res.statut === 'ACCEPTEE'"
+                        [class.badge-refused]="res.statut === 'REFUSEE'">
+                        {{ res.statut === 'EN_ATTENTE' ? 'En attente' :
+                        res.statut === 'ACCEPTEE' ? 'Acceptée' : 'Refusée' }}
+                    </span>
+                </div>
+
+                <div class="action-col">
+                    <ng-container *ngIf="res.statut === 'EN_ATTENTE'">
+                        <button class="btn-accept" [disabled]="processingId === res.id" (click)="accepter(res)">
+                            {{ processingId === res.id ? '...' : 'Accepter' }}
+                        </button>
+                        <button class="btn-refuse" [disabled]="processingId === res.id" (click)="refuser(res)">
+                            {{ processingId === res.id ? '...' : 'Refuser' }}
+                        </button>
+                    </ng-container>
+
+                    <ng-container *ngIf="res.statut !== 'EN_ATTENTE'">
+                        <span class="action-done">—</span>
+                    </ng-container>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</section>

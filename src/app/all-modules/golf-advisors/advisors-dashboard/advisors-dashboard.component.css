@@ -1,15 +1,15 @@
 :host {
-    --sport-ink: #05070d;
-    --sport-blue-950: #06122f;
-    --sport-blue-900: #081a43;
-    --sport-blue-700: #0f4dff;
-    --sport-blue-600: #2167ff;
-    --sport-blue-500: #4a83ff;
-    --sport-line: #d9e2ff;
+    --sport-ink: #03262a;
+    --sport-blue-950: #03363d;
+    --sport-blue-900: #044d56;
+    --sport-blue-700: #00d9f5;
+    --sport-blue-600: #22ecff;
+    --sport-blue-500: #6bf5ff;
+    --sport-line: #b8f7ff;
     --sport-surface: #ffffff;
-    --sport-surface-soft: #f4f7ff;
-    --sport-shadow-soft: 0 14px 34px rgba(8, 26, 67, 0.1);
-    --sport-shadow-strong: 0 20px 46px rgba(8, 26, 67, 0.18);
+    --sport-surface-soft: #f3ffff;
+    --sport-shadow-soft: 0 14px 34px rgba(3, 54, 61, 0.12);
+    --sport-shadow-strong: 0 20px 46px rgba(3, 54, 61, 0.2);
 
     display: block;
     font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
@@ -60,15 +60,15 @@
 }
 
 .gradient-purple {
-    background: linear-gradient(135deg, #1f4cff, #0a2b8f);
+    background: linear-gradient(135deg, #00bfd6, #047f8d);
 }
 
 .gradient-green {
-    background: linear-gradient(135deg, #1768ff, #0b3ca8);
+    background: linear-gradient(135deg, #00d4cf, #0b8f9a);
 }
 
 .gradient-orange {
-    background: linear-gradient(135deg, #2d6fff, #112c79);
+    background: linear-gradient(135deg, #27e9ff, #0a7e9f);
 }
 
 .stat-icon {
@@ -213,8 +213,8 @@
 
 .qbtn:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 22px rgba(15, 77, 255, 0.18);
-    background: linear-gradient(135deg, #f8fbff, #e7f0ff);
+    box-shadow: 0 12px 22px rgba(0, 204, 231, 0.24);
+    background: linear-gradient(135deg, #f5ffff, #e5fcff);
 }
 
 @keyframes sectionFade {

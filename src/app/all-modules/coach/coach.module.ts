@@ -9,10 +9,11 @@ import { CoachDashboardComponent } from './coach-dashboard/coach-dashboard.compo
 import { CoachProfileComponent } from './coach-profile/coach-profile.component';
 import { CoachAthletesComponent } from './coach-athletes/coach-athletes.component';
 import { CoachSessionsComponent } from './coach-sessions/coach-sessions.component';
-import { CoachPresencesComponent } from './coach-presences/coach-presences.component';
+import { CoachPresenceComponent } from './coach-presences/coach-presences.component';
 import { CoachEvaluationsComponent } from './coach-evaluations/coach-evaluations.component';
 import { CoachNotificationsComponent } from './coach-notifications/coach-notifications.component';
 import { CoachResourcesComponent } from './coach-resources/coach-resources.component';
+import { CoachReservationsComponent } from './coach-reservations/coach-reservations.component';
 
 @NgModule({
     declarations: [
@@ -21,10 +22,11 @@ import { CoachResourcesComponent } from './coach-resources/coach-resources.compo
         CoachProfileComponent,
         CoachAthletesComponent,
         CoachSessionsComponent,
-        CoachPresencesComponent,
+        CoachPresenceComponent,
         CoachEvaluationsComponent,
         CoachNotificationsComponent,
-        CoachResourcesComponent
+        CoachResourcesComponent,
+        CoachReservationsComponent
     ],
     imports: [
         CommonModule,

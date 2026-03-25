@@ -1,14 +1,17 @@
 <section class="athlete-dashboard">
     <div class="dashboard-header">
         <div>
-            <p class="dashboard-subtitle">Bienvenue de retour 👋</p>
+            <p class="dashboard-subtitle">Bienvenue 👋</p>
             <h2 class="page-title">Dashboard Athlète</h2>
         </div>
+    </div>
 
-        <div class="header-badge">
-            <span class="dot"></span>
-            En progression
-        </div>
+    <div *ngIf="successMessage" class="success-alert">
+        {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="error-alert">
+        {{ errorMessage }}
     </div>
 
     <div class="stats-grid">
@@ -17,7 +20,6 @@
                 <div class="stat-icon">{{ stat.icon }}</div>
                 <span class="stat-trend">{{ stat.trend }}</span>
             </div>
-
             <small class="stat-label">{{ stat.label }}</small>
             <h3 class="stat-value">{{ stat.value }}</h3>
         </div>
@@ -27,41 +29,44 @@
         <div class="dashboard-card sessions-card">
             <div class="card-header">
                 <div>
-                    <h5>Prochaines séances</h5>
-                    <p>Vos entraînements programmés</p>
+                    <h5>Séances disponibles</h5>
+                    <p>Réservez votre place dans les séances ouvertes</p>
                 </div>
             </div>
 
-            <div *ngIf="loading" class="empty-state">
+            <div *ngIf="loading" class="loading-state">
                 Chargement des séances...
             </div>
 
-            <div *ngIf="errorMessage && !loading" class="empty-state error-state">
-                {{ errorMessage }}
+            <div *ngIf="!loading && !errorMessage && availableSeancesToReserve.length === 0" class="empty-state">
+                <div class="empty-icon">📅</div>
+                <h4>Aucune séance à réserver</h4>
+                <p>Aucune nouvelle séance disponible pour le moment.</p>
             </div>
 
-            <div *ngIf="!loading && !errorMessage && nextSessions.length === 0" class="empty-state">
-                Aucune séance programmée.
-            </div>
+            <div *ngIf="!loading && !errorMessage && availableSeancesToReserve.length > 0" class="sessions-list">
 
-            <div class="session-row" *ngFor="let session of nextSessions">
-                <div class="session-left">
-                    <div class="session-icon">
-                        {{ getSessionIcon(session.specialite) }}
+                <div class="session-item" *ngFor="let session of availableSeancesToReserve">
+                    <div class="session-left">
+                        <div class="session-date">
+                            <span class="day">{{ session.dateSeance | date:'dd' }}</span>
+                            <span class="month">{{ session.dateSeance | date:'MMM' }}</span>
+                        </div>
+
+                        <div class="session-info">
+                            <h4>{{ session.theme }}</h4>
+                            <p *ngIf="getCoachDisplayName(session)">👨‍🏫 {{ getCoachDisplayName(session) }}</p>
+                            <p>📍 {{ session.lieu }}</p>
+                            <p>🕒 {{ session.heureSeance }}</p>
+                        </div>
                     </div>
 
-                    <div class="session-info">
-                        <div class="session-title">{{ session.theme }}</div>
-                        <small class="session-date">
-                            {{ formatDate(session.dateSeance, session.heureSeance) }}
-                        </small>
-                        <div class="session-specialite">{{ session.specialite }}</div>
-                        <div class="session-lieu">📍 {{ session.lieu }}</div>
+                    <div class="session-right athlete-actions">
+                        <span class="reservation-badge non_reservee">Disponible</span>
+                        <button class="reserve-btn" (click)="reserverSeance(getSeanceId(session))">
+                            Réserver
+                        </button>
                     </div>
-                </div>
-
-                <div class="session-right">
-                    <span class="coach-badge">{{ session.coachNomComplet }}</span>
                 </div>
             </div>
         </div>
@@ -75,23 +80,85 @@
             </div>
 
             <div class="performance-box">
-                <div class="progress-circle">
-                    <span>95%</span>
+                <div class="progress-circle" [style.--progress]="presenceRate">
+                    <span>{{ presenceRate }}%</span>
                 </div>
 
                 <div class="performance-details">
                     <div class="detail-item">
                         <span>Présence</span>
-                        <strong>Excellent</strong>
+                        <strong>{{ presenceLabel }}</strong>
                     </div>
+
                     <div class="detail-item">
-                        <span>Objectifs</span>
-                        <strong>7 atteints</strong>
+                        <span>Présents</span>
+                        <strong>{{ presentCount }}</strong>
                     </div>
+
                     <div class="detail-item">
-                        <span>Ressources</span>
-                        <strong>3 nouvelles</strong>
+                        <span>Absences</span>
+                        <strong>{{ absentCount }}</strong>
                     </div>
+
+                    <div class="detail-item">
+                        <span>Retards</span>
+                        <strong>{{ retardCount }}</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Total séances</span>
+                        <strong>{{ totalPresenceSeances }}</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Réservations</span>
+                        <strong>{{ myReservations.length }}</strong>
+                    </div>
+
+                    <div class="detail-item">
+                        <span>Acceptées</span>
+                        <strong>{{ stats[3].value }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-card reservations-card">
+        <div class="card-header">
+            <div>
+                <h5>Mes réservations</h5>
+                <p>Suivez l’état de vos demandes</p>
+            </div>
+        </div>
+
+        <div *ngIf="reservationsLoading" class="loading-state">
+            Chargement des réservations...
+        </div>
+
+        <div *ngIf="!reservationsLoading && myReservations.length === 0" class="empty-state">
+            Aucune réservation pour le moment.
+        </div>
+
+        <div *ngIf="!reservationsLoading && myReservations.length > 0" class="sessions-list">
+            <div class="session-item" *ngFor="let item of myReservations">
+                <div class="session-left">
+                    <div class="session-date">
+                        <span class="day">{{ item.dateSeance | date:'dd' }}</span>
+                        <span class="month">{{ item.dateSeance | date:'MMM' }}</span>
+                    </div>
+
+                    <div class="session-info">
+                        <h4>{{ item.theme }}</h4>
+                        <p>📍 {{ item.lieu }}</p>
+                        <p>🕒 {{ item.heureSeance }}</p>
+                    </div>
+                </div>
+
+                <div class="session-right athlete-actions">
+                    <span class="reservation-badge" [ngClass]="item.statut.toLowerCase()">
+                        {{ getReservationBadgeLabel(item.statut) }}
+                    </span>
                 </div>
             </div>
         </div>

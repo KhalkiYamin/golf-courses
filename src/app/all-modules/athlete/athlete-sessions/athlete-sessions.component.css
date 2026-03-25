@@ -1,7 +1,82 @@
-.page-title {
-    margin-bottom: 1rem;
+:host {
+    display: block;
 }
 
-th {
-    font-weight: 600;
+section {
+    padding: 20px;
+}
+
+.page-title {
+    margin: 0 0 16px;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #0f172a;
+}
+
+.card {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+}
+
+.table {
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.table thead th {
+    background: #f1f5f9;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #dbe4ee;
+    padding: 14px 16px;
+    white-space: nowrap;
+}
+
+.table tbody td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #eef2f7;
+    color: #334155;
+    font-weight: 500;
+    vertical-align: middle;
+}
+
+.table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.table tbody tr:nth-child(even) td {
+    background: #fbfdff;
+}
+
+.table tbody tr:hover td {
+    background: #f0f7ff;
+}
+
+.table tbody td:last-child {
+    color: #1d4ed8;
+    font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    section {
+        padding: 12px;
+    }
+
+    .page-title {
+        font-size: 28px;
+    }
+
+    .table thead th,
+    .table tbody td {
+        padding: 12px 10px;
+        font-size: 13px;
+    }
 }

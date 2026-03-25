@@ -1,42 +1,118 @@
-<section class="presence-page">
-    <h3 class="page-title">Présences</h3>
+<section class="coach-presence-page">
+    <div class="presence-header">
+        <div class="presence-header-left">
+            <h2>Gestion des présences</h2>
+            <p>Marquez la présence des athlètes pour chaque séance.</p>
+        </div>
 
-    <div class="presence-card">
+        <div class="presence-header-right">
+            <label for="seanceSelect">Séance</label>
+            <select id="seanceSelect" [ngModel]="selectedSeanceId" (ngModelChange)="onSeanceChange($event)">
+                <option [ngValue]="null">Choisir une séance</option>
+                <option *ngFor="let seance of seances" [ngValue]="seance.id">
+                    {{ seance.theme }} - {{ seance.dateSeance }} - {{ seance.heureSeance }}
+                </option>
+            </select>
+        </div>
+    </div>
 
-        <div class="empty-state" *ngIf="isLoading">
+    <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+    </div>
+
+    <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card present">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+                <h3>Présents</h3>
+                <p>Athlètes marqués présents</p>
+            </div>
+            <div class="stat-value">{{ presentsCount }}</div>
+        </div>
+
+        <div class="stat-card absent">
+            <div class="stat-icon">❌</div>
+            <div class="stat-content">
+                <h3>Absents</h3>
+                <p>Athlètes absents aujourd’hui</p>
+            </div>
+            <div class="stat-value">{{ absentsCount }}</div>
+        </div>
+
+        <div class="stat-card retard">
+            <div class="stat-icon">⏰</div>
+            <div class="stat-content">
+                <h3>Retards</h3>
+                <p>Athlètes arrivés en retard</p>
+            </div>
+            <div class="stat-value">{{ retardsCount }}</div>
+        </div>
+
+        <div class="stat-card attente">
+            <div class="stat-icon">🕒</div>
+            <div class="stat-content">
+                <h3>En attente</h3>
+                <p>Présence non encore marquée</p>
+            </div>
+            <div class="stat-value">{{ attenteCount }}</div>
+        </div>
+    </div>
+
+    <div class="presence-table-card">
+        <div class="card-top">
+            <div>
+                <h3>Liste des athlètes</h3>
+                <p>Marquez la présence de chaque athlète</p>
+            </div>
+            <div class="total-badge">
+                Total : {{ athletes.length }}
+            </div>
+        </div>
+
+        <div *ngIf="isLoading" class="loading-box">
             Chargement des présences...
         </div>
 
-        <div class="empty-state error-state" *ngIf="!isLoading && errorMessage">
-            {{ errorMessage }}
+        <div *ngIf="!isLoading && athletes.length === 0" class="empty-box">
+            Aucun athlète trouvé pour cette séance.
         </div>
 
-        <div class="table-responsive" *ngIf="!isLoading && !errorMessage">
-            <table class="table table-sm mb-0">
-                <thead>
-                    <tr>
-                        <th>Athlète</th>
-                        <th>Séance</th>
-                        <th>Présence</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let item of presences">
-                        <td>{{ item.athlete }}</td>
-                        <td>{{ item.seance }}</td>
-                        <td>
-                            <span class="status-badge" [ngClass]="getStatusClass(item.presence)">
-                                {{ item.presence }}
-                            </span>
-                        </td>
-                    </tr>
+        <div class="athletes-list" *ngIf="!isLoading && athletes.length > 0">
+            <div class="athlete-row" *ngFor="let athlete of athletes">
+                <div class="athlete-left">
+                    <div class="athlete-avatar">
+                        {{ getInitials(athlete.nomComplet) }}
+                    </div>
 
-                    <tr *ngIf="presences.length === 0">
-                        <td colspan="3" class="text-center">Aucune présence trouvée.</td>
-                    </tr>
-                </tbody>
-            </table>
+                    <div class="athlete-info">
+                        <h4>{{ athlete.nomComplet }}</h4>
+                        <span class="status-badge" [ngClass]="athlete.statut.toLowerCase()">
+                            {{ getStatusLabel(athlete.statut) }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="athlete-actions">
+                    <button class="btn-action btn-present" [disabled]="athlete.isSaving"
+                        (click)="setPresenceStatus(athlete, 'PRESENT')">
+                        Présent
+                    </button>
+
+                    <button class="btn-action btn-retard" [disabled]="athlete.isSaving"
+                        (click)="setPresenceStatus(athlete, 'RETARD')">
+                        Retard
+                    </button>
+
+                    <button class="btn-action btn-absent" [disabled]="athlete.isSaving"
+                        (click)="setPresenceStatus(athlete, 'ABSENT')">
+                        Absent
+                    </button>
+                </div>
+            </div>
         </div>
-
     </div>
 </section>

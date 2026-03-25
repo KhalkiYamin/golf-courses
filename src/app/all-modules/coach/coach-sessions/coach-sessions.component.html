@@ -1,63 +1,53 @@
-<div class="coach-sessions-page">
-
-    <div *ngIf="successMessage" class="alert success-alert">
-        {{ successMessage }}
-    </div>
-
-    <div *ngIf="errorMessage" class="alert error-alert">
-        {{ errorMessage }}
-    </div>
-
-    <div class="page-header">
+<section class="coach-sessions-page">
+    <div class="sessions-header">
         <div class="header-left">
-            <h1>Liste des séances</h1>
-            <p>Vue d’ensemble de vos entraînements programmés</p>
+            <h2>Gestion des séances</h2>
+            <p>Consultez, filtrez et gérez vos séances programmées.</p>
         </div>
 
         <div class="header-right">
             <button class="add-btn" (click)="openAddForm()">
-                + Nouvelle séance
+                + Ajouter une séance
             </button>
         </div>
     </div>
 
-    <div class="section-card add-form-card" *ngIf="showAddForm">
-        <div class="section-header">
-            <div>
-                <h2>Ajouter une séance</h2>
-                <p>Remplissez les informations de la séance</p>
-            </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+    </div>
+
+    <div *ngIf="errorMessage" class="alert alert-error">
+        {{ errorMessage }}
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card total">
+            <div class="stat-value">{{ totalSessions }}</div>
+            <div class="stat-label">Total séances</div>
         </div>
 
-        <div class="form-grid">
-            <div class="form-group">
-                <label>Thème</label>
-                <input type="text" [(ngModel)]="newSeance.theme" placeholder="Ex: Putting">
-            </div>
+        <div class="stat-card completed">
+            <div class="stat-value">{{ completedSessions }}</div>
+            <div class="stat-label">Séances terminées</div>
+        </div>
 
-            <div class="form-group">
-                <label>Date</label>
-                <input type="date" [(ngModel)]="newSeance.dateSeance">
-            </div>
+        <div class="stat-card today">
+            <div class="stat-value">{{ todaySessions }}</div>
+            <div class="stat-label">Séances aujourd’hui</div>
+        </div>
 
-            <div class="form-group">
-                <label>Heure</label>
-                <input type="time" [(ngModel)]="newSeance.heureSeance">
-            </div>
+        <div class="stat-card athletes">
+            <div class="stat-value">{{ totalAthletes }}</div>
+            <div class="stat-label">Total athlètes</div>
+        </div>
+    </div>
 
-            <div class="form-group">
-                <label>Lieu</label>
-                <input type="text" [(ngModel)]="newSeance.lieu" placeholder="Ex: Terrain A">
-            </div>
-
-            <div class="form-group">
-                <label>Nombre d’athlètes</label>
-                <input type="number" [(ngModel)]="newSeance.nombreAthletes" placeholder="Ex: 12">
-            </div>
-
-            <div class="form-group">
+    <div class="filter-card">
+        <div class="filter-row">
+            <div class="filter-group">
                 <label>Statut</label>
-                <select [(ngModel)]="newSeance.statut">
+                <select [(ngModel)]="selectedStatus">
+                    <option value="">Tous</option>
                     <option value="Planifiée">Planifiée</option>
                     <option value="Confirmée">Confirmée</option>
                     <option value="En cours">En cours</option>
@@ -66,239 +56,274 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label>Durée</label>
-                <input type="text" [(ngModel)]="newSeance.duree" placeholder="Ex: 1h30">
-            </div>
-
-            <div class="form-group">
-                <label>Athlète</label>
-                <select [(ngModel)]="selectedAthleteId" name="selectedAthleteId">
-                    <option [ngValue]="null">Choisir un athlète</option>
-                    <option *ngFor="let athlete of athletes" [ngValue]="athlete.id">
-                        {{ athlete.nomComplet }}
+            <div class="filter-group">
+                <label>Groupe</label>
+                <select [(ngModel)]="selectedGroup">
+                    <option value="">Tous</option>
+                    <option *ngFor="let groupe of groupes" [value]="groupe">
+                        {{ groupe }}
                     </option>
                 </select>
             </div>
+
+            <div class="filter-group">
+                <label>Date</label>
+                <input type="date" [(ngModel)]="selectedDate" />
+            </div>
         </div>
 
-        <div class="form-group full-width">
-            <label>Description</label>
-            <textarea [(ngModel)]="newSeance.description" rows="3" placeholder="Description de la séance"></textarea>
-        </div>
-
-        <div class="form-group full-width">
-            <label>Objectif</label>
-            <textarea [(ngModel)]="newSeance.objectif" rows="3" placeholder="Objectif de la séance"></textarea>
-        </div>
-
-        <div class="form-actions">
-            <button class="save-btn" (click)="saveSeance()" [disabled]="saving">
-                <span *ngIf="saving" class="btn-spinner"></span>
-                <span>{{ saving ? 'Enregistrement...' : 'Enregistrer' }}</span>
-            </button>
-
-            <button class="cancel-btn" (click)="closeAddForm()" [disabled]="saving">
-                Annuler
-            </button>
+        <div class="filter-actions">
+            <button class="btn-filter" (click)="applyFilters()">Filtrer</button>
+            <button class="btn-reset" (click)="resetFilters()">Réinitialiser</button>
         </div>
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card green">
-            <div class="stat-icon">📅</div>
-            <div class="stat-content">
-                <h2>{{ totalSessions }}</h2>
-                <p>Total séances</p>
+    <div class="sessions-content">
+        <div class="sessions-list-card">
+            <div class="card-header">
+                <div>
+                    <h3>Liste des séances</h3>
+                    <p>Consultez et gérez vos séances programmées</p>
+                </div>
+            </div>
+
+            <div *ngIf="loading" class="loading-box">
+                Chargement des séances...
+            </div>
+
+            <div *ngIf="!loading && seances.length === 0" class="empty-box">
+                Aucune séance trouvée.
+            </div>
+
+            <div class="sessions-table-wrapper" *ngIf="!loading && seances.length > 0">
+                <table class="sessions-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Thème</th>
+                            <th>Date</th>
+                            <th>Heure</th>
+                            <th>Lieu</th>
+                            <th>Groupe</th>
+                            <th>Statut</th>
+                            <th>Nombre athlètes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr *ngFor="let session of seances" [class.active-row]="selectedSession?.id === session.id">
+                            <td>#{{ session.id }}</td>
+                            <td>{{ session.theme }}</td>
+                            <td>{{ session.dateSeance }}</td>
+                            <td>{{ session.heureSeance }}</td>
+                            <td>{{ session.lieu }}</td>
+                            <td>{{ session.groupe }}</td>
+                            <td>
+                                <span class="status-badge" [ngClass]="session.statut.toLowerCase().replace(' ', '-')">
+                                    {{ session.statut }}
+                                </span>
+                            </td>
+                            <td>{{ session.nombreAthletes || 0 }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="view-btn" (click)="selectSession(session)">
+                                        Voir
+                                    </button>
+
+                                    <button class="reservation-btn" (click)="goToReservations(session.id)">
+                                        Réservations
+                                    </button>
+
+                                    <button class="presence-btn" (click)="goToPresences(session.id)">
+                                        Présences
+                                    </button>
+
+                                    <button class="delete-btn" (click)="deleteSession(session.id)"
+                                        [disabled]="deletingSessionId === session.id">
+                                        {{ deletingSessionId === session.id ? 'Suppression...' : 'Supprimer' }}
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <div class="stat-card blue">
-            <div class="stat-icon">⏰</div>
-            <div class="stat-content">
-                <h2>{{ todaySessions }}</h2>
-                <p>Aujourd’hui</p>
+        <div class="session-details-card" *ngIf="selectedSession">
+            <div class="card-header">
+                <div>
+                    <h3>Détails de la séance</h3>
+                    <p>Informations complètes de la séance sélectionnée</p>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Thème</span>
+                    <span class="detail-value">{{ selectedSession.theme }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Description</span>
+                    <span class="detail-value">{{ selectedSession.description || '-' }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value">{{ selectedSession.dateSeance }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Heure</span>
+                    <span class="detail-value">{{ selectedSession.heureSeance }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Lieu</span>
+                    <span class="detail-value">{{ selectedSession.lieu }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Groupe</span>
+                    <span class="detail-value">{{ selectedSession.groupe }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Durée</span>
+                    <span class="detail-value">{{ selectedSession.duree || '-' }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Objectif</span>
+                    <span class="detail-value">{{ selectedSession.objectif || '-' }}</span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Statut</span>
+                    <span class="detail-value">
+                        <span class="status-badge" [ngClass]="selectedSession.statut.toLowerCase().replace(' ', '-')">
+                            {{ selectedSession.statut }}
+                        </span>
+                    </span>
+                </div>
+
+                <div class="detail-item">
+                    <span class="detail-label">Athlètes</span>
+                    <span class="detail-value">{{ selectedSession.nombreAthletes || 0 }}</span>
+                </div>
+            </div>
+
+            <div class="details-actions">
+                <button class="reservation-btn" (click)="goToReservations(selectedSession.id)">
+                    Voir les réservations
+                </button>
+
+                <button class="presence-btn" (click)="goToPresences(selectedSession.id)">
+                    Gérer les présences
+                </button>
             </div>
         </div>
+    </div>
 
-        <div class="stat-card orange">
-            <div class="stat-icon">👥</div>
-            <div class="stat-content">
-                <h2>{{ totalAthletes }}</h2>
-                <p>Athlètes inscrits</p>
+    <div class="modal-backdrop" *ngIf="showAddForm">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Ajouter une séance</h3>
+                <button class="close-btn" (click)="closeAddForm()">×</button>
             </div>
-        </div>
 
-        <div class="stat-card purple">
-            <div class="stat-icon">✅</div>
-            <div class="stat-content">
-                <h2>{{ completedSessions }}</h2>
-                <p>Séances terminées</p>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Thème *</label>
+                        <input type="text" [(ngModel)]="newSeance.theme" placeholder="Thème de la séance" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" [(ngModel)]="newSeance.dateSeance" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Heure *</label>
+                        <input type="time" [(ngModel)]="newSeance.heureSeance" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lieu *</label>
+                        <input type="text" [(ngModel)]="newSeance.lieu" placeholder="Lieu" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Durée</label>
+                        <input type="text" [(ngModel)]="newSeance.duree" placeholder="Ex: 01:30" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Statut</label>
+                        <select [(ngModel)]="newSeance.statut">
+                            <option value="Planifiée">Planifiée</option>
+                            <option value="Confirmée">Confirmée</option>
+                            <option value="En cours">En cours</option>
+                            <option value="Terminée">Terminée</option>
+                            <option value="Annulée">Annulée</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Sport *</label>
+                        <select [(ngModel)]="newSeance.sportId" (ngModelChange)="onSportChange($event)">
+                            <option [ngValue]="null">Sélectionner un sport</option>
+                            <option *ngFor="let sport of sports" [ngValue]="sport.id">
+                                {{ sport.title }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Groupe</label>
+                        <select [(ngModel)]="newSeance.groupe" (ngModelChange)="onGroupChange($event)">
+                            <option value="">Sélectionner un groupe</option>
+                            <option *ngFor="let groupe of groupes" [value]="groupe">
+                                {{ groupe }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Description</label>
+                        <textarea [(ngModel)]="newSeance.description" rows="3" placeholder="Description"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Objectif</label>
+                        <textarea [(ngModel)]="newSeance.objectif" rows="3"
+                            placeholder="Objectif de la séance"></textarea>
+                    </div>
+
+                    <div class="form-group full-width" *ngIf="ressources.length > 0">
+                        <label>Ressources sportives</label>
+                        <div class="ressources-checkboxes">
+                            <label class="ressource-item" *ngFor="let r of ressources">
+                                <input type="checkbox" [checked]="isRessourceSelected(r.id!)"
+                                    (change)="toggleRessource(r.id!)" />
+                                <span>{{ r.nom }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" (click)="closeAddForm()" [disabled]="saving">
+                    Annuler
+                </button>
+                <button class="btn-save" (click)="saveSeance()" [disabled]="saving">
+                    {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+                </button>
             </div>
         </div>
     </div>
-
-    <div class="content-grid">
-        <div class="sessions-section">
-            <div class="section-card">
-
-                <div class="section-header">
-                    <div>
-                        <h2>Liste des séances</h2>
-                        <p>Vue d’ensemble de vos entraînements programmés</p>
-                    </div>
-                </div>
-
-                <div class="filters-row">
-                    <select [(ngModel)]="selectedStatus" (change)="applyFilters()">
-                        <option value="">Tous les statuts</option>
-                        <option value="Planifiée">Planifiée</option>
-                        <option value="Confirmée">Confirmée</option>
-                        <option value="En cours">En cours</option>
-                        <option value="Terminée">Terminée</option>
-                        <option value="Annulée">Annulée</option>
-                    </select>
-
-                    <input type="date" [(ngModel)]="selectedDate" (change)="applyFilters()">
-                </div>
-
-                <div *ngIf="loading" class="loading-box">
-                    Chargement des séances...
-                </div>
-
-                <div class="table-wrapper" *ngIf="!loading">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Thème</th>
-                                <th>Date</th>
-                                <th>Heure</th>
-                                <th>Lieu</th>
-                                <th>Athlètes</th>
-                                <th>Statut</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            <tr *ngFor="let session of seances">
-                                <td class="theme-cell">
-                                    <div class="theme-title">{{ session.theme }}</div>
-                                    <div class="theme-desc">{{ session.description }}</div>
-                                </td>
-
-                                <td>{{ session.dateSeance }}</td>
-                                <td>{{ session.heureSeance }}</td>
-                                <td>{{ session.lieu }}</td>
-                                <td>{{ session.nombreAthletes }}</td>
-
-                                <td>
-                                    <span class="status-badge" [ngClass]="{
-                                        'planned': session.statut === 'Planifiée',
-                                        'confirmed': session.statut === 'Confirmée',
-                                        'progress': session.statut === 'En cours',
-                                        'done': session.statut === 'Terminée',
-                                        'cancelled': session.statut === 'Annulée'
-                                    }">
-                                        {{ session.statut }}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="view-btn" (click)="selectSession(session)">Voir</button>
-                                        <button class="delete-btn"
-                                            (click)="deleteSession(session.id)">Supprimer</button>
-                                    </div>
-                                </td>
-                            </tr>
-
-                            <tr *ngIf="seances.length === 0">
-                                <td colspan="7">
-                                    <div class="empty-state">
-                                        <div class="empty-icon">📂</div>
-                                        <h3>Aucune séance trouvée</h3>
-                                        <p>Aucune donnée disponible pour ce coach.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="side-section">
-
-            <div class="side-card upcoming-card" *ngIf="nextSession">
-                <div class="card-top">
-                    <h3>Prochaine séance</h3>
-                    <span class="live-badge">À venir</span>
-                </div>
-
-                <div class="upcoming-body">
-                    <h2>{{ nextSession.theme }}</h2>
-                    <p>{{ nextSession.description }}</p>
-
-                    <div class="info-line">
-                        <span>📅</span>
-                        <span>{{ nextSession.dateSeance }}</span>
-                    </div>
-
-                    <div class="info-line">
-                        <span>⏰</span>
-                        <span>{{ nextSession.heureSeance }}</span>
-                    </div>
-
-                    <div class="info-line">
-                        <span>📍</span>
-                        <span>{{ nextSession.lieu }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="side-card details-card" *ngIf="selectedSession">
-                <div class="card-top">
-                    <h3>Détails séance</h3>
-                </div>
-
-                <div class="details-body">
-                    <h2>{{ selectedSession.theme }}</h2>
-                    <p>{{ selectedSession.description }}</p>
-
-                    <div class="detail-item">
-                        <strong>Date :</strong>
-                        <span>{{ selectedSession.dateSeance }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Heure :</strong>
-                        <span>{{ selectedSession.heureSeance }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Lieu :</strong>
-                        <span>{{ selectedSession.lieu }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Participants :</strong>
-                        <span>{{ selectedSession.nombreAthletes }} athlètes</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Durée :</strong>
-                        <span>{{ selectedSession.duree }}</span>
-                    </div>
-
-                    <div class="detail-item">
-                        <strong>Objectif :</strong>
-                        <span>{{ selectedSession.objectif }}</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
+</section>

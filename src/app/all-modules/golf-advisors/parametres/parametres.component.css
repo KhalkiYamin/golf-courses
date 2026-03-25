@@ -1,12 +1,26 @@
 .settings-page {
     padding: 30px;
+    background:
+        radial-gradient(circle at 10% -16%, rgba(0, 204, 231, 0.2), transparent 32%),
+        radial-gradient(circle at 95% 6%, rgba(4, 74, 83, 0.14), transparent 34%),
+        #edfcff;
+    min-height: 100vh;
+    font-family: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+    animation: pageIntro 0.7s cubic-bezier(0.2, 0.9, 0.25, 1) both;
 }
 
 .settings-card {
-    background: #ffffff;
+    background: linear-gradient(180deg, #ffffff 0%, #edfcff 100%);
     border-radius: 24px;
     padding: 30px;
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    border: 1px solid #b7f5ff;
+    box-shadow: 0 14px 34px rgba(4, 74, 83, 0.1);
+    transition: transform 0.32s ease, box-shadow 0.32s ease;
+}
+
+.settings-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 46px rgba(4, 74, 83, 0.18);
 }
 
 .settings-header {
@@ -16,29 +30,33 @@
 .settings-header h2 {
     margin: 0 0 8px;
     font-size: 34px;
-    font-weight: 700;
-    color: #0b1b3f;
+    font-weight: 800;
+    color: #044a53;
+    letter-spacing: -0.6px;
+    text-transform: uppercase;
 }
 
 .settings-header p {
     margin: 0;
-    color: #6c757d;
+    color: #2a8a96;
     font-size: 15px;
 }
 
 .settings-section {
-    background: #fbfcff;
-    border: 1px solid #edf0f6;
+    background: linear-gradient(180deg, #f3feff 0%, #e6fcff 100%);
+    border: 1px solid #b7f5ff;
     border-radius: 18px;
     padding: 24px;
     margin-bottom: 24px;
+    box-shadow: 0 6px 16px rgba(4, 74, 83, 0.07);
 }
 
 .settings-section h3 {
     margin-bottom: 20px;
     font-size: 22px;
-    font-weight: 700;
-    color: #102a56;
+    font-weight: 800;
+    color: #044a53;
+    letter-spacing: -0.3px;
 }
 
 .form-grid {
@@ -58,27 +76,29 @@
 
 .form-group label {
     margin-bottom: 8px;
-    font-weight: 600;
-    color: #1d2b53;
+    font-weight: 700;
+    color: #056472;
 }
 
 .form-group input {
     height: 48px;
-    border: 1px solid #d7dbe7;
+    border: 1px solid #b7f5ff;
     border-radius: 12px;
     padding: 0 14px;
     font-size: 15px;
     outline: none;
-    background: white;
+    background: #ffffff;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease;
 }
 
 .form-group input:focus {
-    border-color: #d7a928;
+    border-color: #00cce7;
+    box-shadow: 0 0 0 4px rgba(0, 204, 231, 0.18);
 }
 
 .form-group small {
     margin-top: 8px;
-    color: #6c757d;
+    color: #2a8a96;
 }
 
 .switch-row {
@@ -92,47 +112,53 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    background: white;
-    border: 1px solid #edf0f6;
+    background: #edfcff;
+    border: 1px solid #b7f5ff;
     border-radius: 14px;
     padding: 14px 18px;
 }
 
 .switch-item label {
     margin: 0;
-    font-weight: 600;
-    color: #1d2b53;
+    font-weight: 700;
+    color: #044a53;
 }
 
 .switch-item input[type="checkbox"] {
     width: 18px;
     height: 18px;
+    accent-color: #00cce7;
 }
 
 .save-btn {
-    background: #157a6e;
-    color: white;
+    background: linear-gradient(135deg, #079faf, #044a53);
+    color: #ffffff;
     border: none;
     border-radius: 14px;
-    padding: 12px 22px;
+    padding: 12px 24px;
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: 0.2s;
+    box-shadow: 0 12px 24px rgba(7, 159, 175, 0.32);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 .save-btn:hover {
-    background: #12675d;
+    background: linear-gradient(135deg, #00cce7, #044a53);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 28px rgba(0, 180, 200, 0.38);
+    filter: brightness(1.06);
 }
 
 .alert-success-box {
-    background: #e8f8ee;
-    color: #198754;
-    border: 1px solid #cfead8;
+    background: #d5fafc;
+    color: #03616e;
+    border: 1px solid #a8eef5;
     padding: 14px 16px;
     border-radius: 12px;
     margin-bottom: 20px;
-    font-weight: 600;
+    font-weight: 700;
+    box-shadow: 0 6px 14px rgba(4, 74, 83, 0.08);
 }
 
 @media (max-width: 768px) {
@@ -151,6 +177,18 @@
         padding: 14px 16px;
         border-radius: 12px;
         margin-bottom: 20px;
-        font-weight: 600;
+        font-weight: 700;
+    }
+}
+
+@keyframes pageIntro {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminUserService } from 'src/app/services/admin-user.service';
 import { CategoryService } from 'src/app/services/category.service';
+import { catchError } from 'rxjs/operators';
 import { AdminUser } from '../../models/admin-user';
 import { Category } from '../../models/category';
 
@@ -313,9 +314,11 @@ export class UsersComponent implements OnInit {
         const confirmation = confirm(`هل أنت متأكد من حذف ${user.prenom} ${user.nom} ؟`);
         if (!confirmation) return;
 
-        this.adminUserService.deleteUser(user.id).subscribe({
+        this.adminUserService.deleteUserWithFallback(user.id, user.role).pipe(
+            catchError(() => this.adminUserService.deactivateUser(user))
+        ).subscribe({
             next: () => {
-                this.successMessage = 'Utilisateur supprimé avec succès';
+                this.successMessage = 'Utilisateur supprimé/désactivé avec succès';
                 this.selectedUser = null;
                 this.loadUsers();
 
@@ -325,6 +328,7 @@ export class UsersComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Erreur suppression utilisateur', err);
+                alert(err?.error?.message || err?.message || 'Suppression impossible pour cet utilisateur.');
             }
         });
     }

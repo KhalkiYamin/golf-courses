@@ -10,7 +10,7 @@ import { AppComponent } from './app.component';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
-import { HashRedirectService } from './services/hash-redirect.service';
+
 
 @NgModule({
   declarations: [
@@ -28,12 +28,7 @@ import { HashRedirectService } from './services/hash-redirect.service';
     HttpClientModule
   ],
   providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: (hashRedirectService: HashRedirectService) => () => hashRedirectService.redirectToHashUrl(),
-      deps: [HashRedirectService],
-      multi: true
-    }
+
   ],
   bootstrap: [AppComponent]
 })

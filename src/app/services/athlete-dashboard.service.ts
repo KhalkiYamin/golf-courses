@@ -29,4 +29,25 @@ export class AthleteDashboardService {
             { headers: this.getHeaders() }
         );
     }
+
+    getPresenceSummary(): Observable<any> {
+        return this.http.get<any>(
+            `${this.apiUrl}/presences/summary`,
+            { headers: this.getHeaders() }
+        );
+    }
+
+    getAthleteProfile(): Observable<any> {
+        return this.http.get<any>(
+            `${this.apiUrl}/profile`,
+            { headers: this.getHeaders() }
+        );
+    }
+    updateAthleteProfile(profile: { nom: string; prenom: string; telephone: string; niveau: string }) {
+        return this.http.put<any>(
+            `${this.apiUrl}/profile`,
+            profile,
+            { headers: this.getHeaders() }
+        );
+    }
 }
