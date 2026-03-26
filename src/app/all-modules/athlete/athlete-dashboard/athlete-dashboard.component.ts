@@ -62,6 +62,7 @@ export class AthleteDashboardComponent implements OnInit {
     absentCount = 0;
     retardCount = 0;
     totalPresenceSeances = 0;
+    athleteSpecialite = '';
 
     constructor(
         private athleteDashboardService: AthleteDashboardService,
@@ -69,9 +70,34 @@ export class AthleteDashboardComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+        this.loadAthleteProfile();
         this.loadAvailableSeances();
         this.loadMyReservations();
         this.loadPresenceSummary();
+    }
+
+    loadAthleteProfile(): void {
+        this.athleteDashboardService.getAthleteProfile().subscribe({
+            next: (profile: any) => {
+                const rawSport = profile?.sport;
+
+                if (typeof rawSport === 'string') {
+                    this.athleteSpecialite = rawSport.trim();
+                    return;
+                }
+
+                if (rawSport && typeof rawSport === 'object') {
+                    this.athleteSpecialite = (rawSport.title || rawSport.nom || '').toString().trim();
+                    return;
+                }
+
+                this.athleteSpecialite = '';
+            },
+            error: (error: any) => {
+                console.error('Erreur chargement profil athlete', error);
+                this.athleteSpecialite = '';
+            }
+        });
     }
 
     get availableSeancesToReserve(): ReservationSeanceDto[] {

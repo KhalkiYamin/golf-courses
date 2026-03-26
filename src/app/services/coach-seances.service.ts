@@ -1,8 +1,8 @@
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { Seance } from '../all-modules/models/seance.model';
+import { Seance } from 'src/app/all-modules/models/seance.model';
 
 @Injectable({
     providedIn: 'root'
@@ -26,33 +26,27 @@ export class CoachSeancesService {
     }
 
     private getCoachId(): number {
-        const user = localStorage.getItem('user');
-        if (user) {
+        const storedCoachId = Number(localStorage.getItem('coachId'));
+        if (Number.isFinite(storedCoachId) && storedCoachId > 0) {
+            return storedCoachId;
+        }
+
+        const userRaw = localStorage.getItem('user');
+        if (userRaw) {
             try {
-                const parsed = JSON.parse(user);
-                const coachId = Number(parsed?.coachId);
-                if (Number.isFinite(coachId) && coachId > 0) {
-                    return coachId;
+                const user = JSON.parse(userRaw);
+                const rawId = user?.coachId ?? user?.id_utilisateur ?? user?.id;
+                const parsedId = Number(rawId);
+
+                if (Number.isFinite(parsedId) && parsedId > 0) {
+                    localStorage.setItem('coachId', String(parsedId));
+                    return parsedId;
                 }
             } catch {
             }
         }
 
         const token = localStorage.getItem('token');
-        const tokenCoachId = this.extractCoachIdFromJwt(token);
-        if (tokenCoachId > 0) {
-            return tokenCoachId;
-        }
-
-        const storedCoachId = Number(localStorage.getItem('coachId'));
-        if (Number.isFinite(storedCoachId) && storedCoachId > 0) {
-            return storedCoachId;
-        }
-
-        return 0;
-    }
-
-    private extractCoachIdFromJwt(token: string | null): number {
         if (!token) {
             return 0;
         }
@@ -80,6 +74,7 @@ export class CoachSeancesService {
 
     private resolveCoachId(): Observable<number> {
         const coachId = this.getCoachId();
+
         if (coachId > 0) {
             return of(coachId);
         }
@@ -117,9 +112,11 @@ export class CoachSeancesService {
 
     getMySeances(): Observable<Seance[]> {
         return this.resolveCoachId().pipe(
-            switchMap((coachId) => this.http.get<Seance[]>(`${this.apiUrl}/coach/${coachId}`, {
-                headers: this.getHeaders()
-            }))
+            switchMap((coachId) =>
+                this.http.get<Seance[]>(`${this.apiUrl}/coach/${coachId}`, {
+                    headers: this.getHeaders()
+                })
+            )
         );
     }
 

@@ -38,6 +38,8 @@ export class CoachAthletesComponent implements OnInit {
 
         this.coachDashboardService.getMyAthletes().subscribe({
             next: (data: CoachAthleteResponse[]) => {
+                console.log('Athlètes API:', data);
+
                 this.athletes = (data || []).map((athlete) => ({
                     id: athlete.id,
                     nom: athlete.nomComplet || 'Athlète',
@@ -46,6 +48,7 @@ export class CoachAthletesComponent implements OnInit {
                     progression: this.generateProgression(athlete.id)
                 }));
 
+                console.log('Athlètes affichés:', this.athletes);
                 this.isLoading = false;
             },
             error: (error) => {

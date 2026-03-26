@@ -88,7 +88,7 @@
             </div>
 
             <div *ngIf="loading" class="loading-box">
-                Chargement des séances...
+                Chargement des séances.
             </div>
 
             <div *ngIf="!loading && seances.length === 0" class="empty-box">
@@ -118,7 +118,7 @@
                             <td>{{ session.dateSeance }}</td>
                             <td>{{ session.heureSeance }}</td>
                             <td>{{ session.lieu }}</td>
-                            <td>{{ session.groupe }}</td>
+                            <td>{{ session.groupe || buildSessionGroupLabel(session) || '-' }}</td>
                             <td>
                                 <span class="status-badge" [ngClass]="session.statut.toLowerCase().replace(' ', '-')">
                                     {{ session.statut }}
@@ -129,6 +129,10 @@
                                 <div class="action-buttons">
                                     <button class="view-btn" (click)="selectSession(session)">
                                         Voir
+                                    </button>
+
+                                    <button class="edit-btn" (click)="openEditForm(session)">
+                                        Modifier
                                     </button>
 
                                     <button class="reservation-btn" (click)="goToReservations(session.id)">
@@ -155,72 +159,81 @@
             <div class="card-header">
                 <div>
                     <h3>Détails de la séance</h3>
-                    <p>Informations complètes de la séance sélectionnée</p>
+                    <p>{{ selectedSession.theme }}</p>
                 </div>
             </div>
 
             <div class="details-grid">
                 <div class="detail-item">
-                    <span class="detail-label">Thème</span>
-                    <span class="detail-value">{{ selectedSession.theme }}</span>
+                    <label>Description</label>
+                    <p>{{ selectedSession.description || '-' }}</p>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Description</span>
-                    <span class="detail-value">{{ selectedSession.description || '-' }}</span>
+                    <label>Date</label>
+                    <p>{{ selectedSession.dateSeance }}</p>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Date</span>
-                    <span class="detail-value">{{ selectedSession.dateSeance }}</span>
+                    <label>Heure</label>
+                    <p>{{ selectedSession.heureSeance }}</p>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Heure</span>
-                    <span class="detail-value">{{ selectedSession.heureSeance }}</span>
+                    <label>Lieu</label>
+                    <p>{{ selectedSession.lieu }}</p>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Lieu</span>
-                    <span class="detail-value">{{ selectedSession.lieu }}</span>
+                    <label>Groupe</label>
+                    <p>{{ selectedSession.groupe || buildSessionGroupLabel(selectedSession) || '-' }}</p>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Groupe</span>
-                    <span class="detail-value">{{ selectedSession.groupe }}</span>
+                    <label>Durée</label>
+                    <p>{{ selectedSession.duree || '-' }}</p>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Durée</span>
-                    <span class="detail-value">{{ selectedSession.duree || '-' }}</span>
+                    <label>Objectif</label>
+                    <p>{{ selectedSession.objectif || '-' }}</p>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Objectif</span>
-                    <span class="detail-value">{{ selectedSession.objectif || '-' }}</span>
-                </div>
-
-                <div class="detail-item">
-                    <span class="detail-label">Statut</span>
-                    <span class="detail-value">
-                        <span class="status-badge" [ngClass]="selectedSession.statut.toLowerCase().replace(' ', '-')">
-                            {{ selectedSession.statut }}
-                        </span>
+                    <label>Statut</label>
+                    <span class="status-badge" [ngClass]="selectedSession.statut.toLowerCase().replace(' ', '-')">
+                        {{ selectedSession.statut }}
                     </span>
                 </div>
 
                 <div class="detail-item">
-                    <span class="detail-label">Athlètes</span>
-                    <span class="detail-value">{{ selectedSession.nombreAthletes || 0 }}</span>
+                    <label>Athlètes</label>
+                    <p>{{ selectedSession.nombreAthletes || 0 }}</p>
+                </div>
+
+                <div class="detail-item">
+                    <label>Ressources sportives</label>
+
+                    <ng-container *ngIf="getSelectedSessionRessources().length > 0; else noRessources">
+                        <div class="resources-tags">
+                            <span class="resource-tag" *ngFor="let res of getSelectedSessionRessources()">
+                                {{ res }}
+                            </span>
+                        </div>
+                    </ng-container>
+
+                    <ng-template #noRessources>
+                        <p>-</p>
+                    </ng-template>
                 </div>
             </div>
 
             <div class="details-actions">
-                <button class="reservation-btn" (click)="goToReservations(selectedSession.id)">
+                <button class="reservation-btn large" (click)="goToReservations(selectedSession.id)">
                     Voir les réservations
                 </button>
 
-                <button class="presence-btn" (click)="goToPresences(selectedSession.id)">
+                <button class="presence-btn large" (click)="goToPresences(selectedSession.id)">
                     Gérer les présences
                 </button>
             </div>
@@ -322,6 +335,106 @@
                 </button>
                 <button class="btn-save" (click)="saveSeance()" [disabled]="saving">
                     {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" *ngIf="showEditForm">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Modifier la séance</h3>
+                <button class="close-btn" (click)="closeEditForm()">×</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Thème *</label>
+                        <input type="text" [(ngModel)]="editSeance.theme" placeholder="Thème de la séance" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" [(ngModel)]="editSeance.dateSeance" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Heure *</label>
+                        <input type="time" [(ngModel)]="editSeance.heureSeance" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Lieu *</label>
+                        <input type="text" [(ngModel)]="editSeance.lieu" placeholder="Lieu" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Durée</label>
+                        <input type="text" [(ngModel)]="editSeance.duree" placeholder="Ex: 01:30" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Statut</label>
+                        <select [(ngModel)]="editSeance.statut">
+                            <option value="Planifiée">Planifiée</option>
+                            <option value="Confirmée">Confirmée</option>
+                            <option value="En cours">En cours</option>
+                            <option value="Terminée">Terminée</option>
+                            <option value="Annulée">Annulée</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Sport *</label>
+                        <select [(ngModel)]="editSeance.sportId" (ngModelChange)="onEditSportChange($event)">
+                            <option [ngValue]="null">Sélectionner un sport</option>
+                            <option *ngFor="let sport of sports" [ngValue]="sport.id">
+                                {{ sport.title }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Groupe</label>
+                        <select [(ngModel)]="editSeance.groupe" (ngModelChange)="onEditGroupChange($event)">
+                            <option value="">Sélectionner un groupe</option>
+                            <option *ngFor="let groupe of groupes" [value]="groupe">
+                                {{ groupe }}
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Description</label>
+                        <textarea [(ngModel)]="editSeance.description" rows="3" placeholder="Description"></textarea>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label>Objectif</label>
+                        <textarea [(ngModel)]="editSeance.objectif" rows="3"
+                            placeholder="Objectif de la séance"></textarea>
+                    </div>
+
+                    <div class="form-group full-width" *ngIf="ressources.length > 0">
+                        <label>Ressources sportives</label>
+                        <div class="ressources-checkboxes">
+                            <label class="ressource-item" *ngFor="let r of ressources">
+                                <input type="checkbox" [checked]="isEditRessourceSelected(r.id!)"
+                                    (change)="toggleEditRessource(r.id!)" />
+                                <span>{{ r.nom }}</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-cancel" (click)="closeEditForm()" [disabled]="saving">
+                    Annuler
+                </button>
+                <button class="btn-save" (click)="updateSession()" [disabled]="saving">
+                    {{ saving ? 'Enregistrement...' : 'Modifier' }}
                 </button>
             </div>
         </div>

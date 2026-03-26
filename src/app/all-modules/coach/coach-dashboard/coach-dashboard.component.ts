@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import {
     CoachDashboardService,
     CoachProfileResponse,
     CoachAthleteResponse
 } from 'src/app/services/coach-dashboard.service';
+import { CoachSeancesService } from 'src/app/services/coach-seances.service';
+import { Seance } from 'src/app/all-modules/models/seance.model';
 
 interface DashboardLabels {
     heroWelcome: string;
@@ -234,11 +237,17 @@ export class CoachDashboardComponent implements OnInit {
         late: 2
     };
 
-    constructor(private coachDashboardService: CoachDashboardService) { }
+    constructor(
+        private coachDashboardService: CoachDashboardService,
+        private coachSeancesService: CoachSeancesService,
+        private router: Router
+    ) { }
 
     ngOnInit(): void {
         this.loadCoachProfile();
         this.loadMyAthletes();
+        this.loadSeances();
+        this.loadPresences();
     }
 
     onFileSelected(event: any): void {
@@ -364,5 +373,146 @@ export class CoachDashboardComponent implements OnInit {
         }
 
         return name.trim().charAt(0).toUpperCase();
+    }
+
+    private loadSeances(): void {
+        this.coachSeancesService.getMySeances().subscribe({
+            next: (seances: Seance[]) => {
+                if (seances && seances.length > 0) {
+                    // Mettre à jour prochaine séance
+                    const nextSession = seances[0];
+                    this.nextSession = {
+                        title: nextSession.theme || 'Séance',
+                        group: nextSession.groupe || nextSession.sportTitle || '-',
+                        time: nextSession.heureSeance || '--:--',
+                        location: nextSession.lieu || '-'
+                    };
+
+                    // Mettre à jour séances du jour
+                    const today = new Date().toISOString().split('T')[0];
+                    const todaySeances = seances.filter(s => s.dateSeance === today);
+
+                    this.todaySessions = todaySeances.map(s => ({
+                        time: s.heureSeance || '00:00',
+                        title: s.theme || 'Séance',
+                        group: s.groupe || s.sportTitle || '-',
+                        location: s.lieu || '-',
+                        status: s.statut || 'Planifiée',
+                        statusClass: this.mapStatusClass(s.statut)
+                    }));
+
+                    // Mettre à jour stat cartes
+                    const sessionCardIndex = this.statsCards.findIndex(card =>
+                        card.label.toLowerCase().includes('séances')
+                    );
+                    if (sessionCardIndex !== -1) {
+                        this.statsCards[sessionCardIndex].value = this.todaySessions.length;
+                    }
+                }
+            },
+            error: (err: any) => {
+                console.error('Erreur chargement séances:', err);
+            }
+        });
+    }
+
+    private loadPresences(): void {
+        this.coachDashboardService.getMyPresences().subscribe({
+            next: (presences: any[]) => {
+                if (presences && presences.length > 0) {
+                    const present = presences.filter(p =>
+                        (p.presence || '').toLowerCase().includes('présent')
+                    ).length;
+                    const absent = presences.filter(p =>
+                        (p.presence || '').toLowerCase().includes('absent')
+                    ).length;
+                    const late = presences.filter(p =>
+                        (p.presence || '').toLowerCase().includes('retard')
+                    ).length;
+
+                    this.presenceSummary = {
+                        present,
+                        absent,
+                        late
+                    };
+                }
+            },
+            error: (err: any) => {
+                console.error('Erreur chargement présences:', err);
+            }
+        });
+    }
+
+    private mapStatusClass(status: string): string {
+        const normalized = (status || '').toLowerCase();
+
+        if (normalized.includes('terminée') || normalized.includes('terminee')) {
+            return 'status-done';
+        }
+
+        if (normalized.includes('en cours')) {
+            return 'status-progress';
+        }
+
+        if (normalized.includes('planifiée') || normalized.includes('planifiee')) {
+            return 'status-soon';
+        }
+
+        return 'status-soon';
+    }
+
+    // Navigation et actions
+    goToCreateSession(): void {
+        this.router.navigate(['/dashboard/coach/sessions']);
+    }
+
+    goToViewPlanning(): void {
+        this.router.navigate(['/dashboard/coach/sessions']);
+    }
+
+    goToAthletes(): void {
+        this.router.navigate(['/dashboard/coach/athletes']);
+    }
+
+    goToPresences(): void {
+        this.router.navigate(['/dashboard/coach/presences']);
+    }
+
+    onQuickAction(action: string): void {
+        const normalized = action.toLowerCase();
+
+        if (normalized.includes('séance') || normalized.includes('seance')) {
+            this.goToCreateSession();
+        } else if (normalized.includes('athlète') || normalized.includes('athlete')) {
+            this.goToAthletes();
+        } else if (normalized.includes('planning')) {
+            this.goToViewPlanning();
+        } else if (normalized.includes('message')) {
+            console.log('Redirection vers messages...');
+        }
+    }
+
+    startSession(session: TodaySession): void {
+        console.log('Démarrer session:', session.title);
+        // Implémentation future
+    }
+
+    viewSessionDetails(session: TodaySession): void {
+        console.log('Voir détails:', session.title);
+        // Implémentation future
+    }
+
+    markSessionAttendance(session: TodaySession): void {
+        console.log('Marquer présence:', session.title);
+        // Implémentation future
+    }
+
+    viewAthleteProfile(athlete: Athlete): void {
+        console.log('Voir profil athlète:', athlete.name);
+        // Implémentation future
+    }
+
+    markPresence(): void {
+        this.router.navigate(['/dashboard/coach/presences']);
     }
 }

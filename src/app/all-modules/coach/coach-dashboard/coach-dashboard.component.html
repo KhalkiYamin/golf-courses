@@ -10,8 +10,8 @@
                 </p>
 
                 <div class="hero-actions">
-                    <button class="primary-btn">{{ labels.createSessionLabel }}</button>
-                    <button class="secondary-btn">{{ labels.viewPlanningLabel }}</button>
+                    <button class="primary-btn" (click)="goToCreateSession()">{{ labels.createSessionLabel }}</button>
+                    <button class="secondary-btn" (click)="goToViewPlanning()">{{ labels.viewPlanningLabel }}</button>
                 </div>
             </div>
 
@@ -80,9 +80,12 @@
                             </div>
 
                             <div class="session-actions">
-                                <button class="action-btn start-btn">{{ labels.startActionLabel }}</button>
-                                <button class="action-btn light-btn">{{ labels.detailsActionLabel }}</button>
-                                <button class="action-btn light-btn">{{ labels.attendanceActionLabel }}</button>
+                                <button class="action-btn start-btn" (click)="startSession(session)">{{
+                                    labels.startActionLabel }}</button>
+                                <button class="action-btn light-btn" (click)="viewSessionDetails(session)">{{
+                                    labels.detailsActionLabel }}</button>
+                                <button class="action-btn light-btn" (click)="markSessionAttendance(session)">{{
+                                    labels.attendanceActionLabel }}</button>
                             </div>
                         </div>
                     </div>
@@ -124,7 +127,8 @@
                                     </span>
                                 </div>
 
-                                <button class="profile-btn">{{ labels.profileActionLabel }}</button>
+                                <button class="profile-btn" (click)="viewAthleteProfile(athlete)">{{
+                                    labels.profileActionLabel }}</button>
                             </div>
 
                             <div class="empty-state" *ngIf="athletes.length === 0">
@@ -262,7 +266,7 @@
                         </div>
                     </div>
 
-                    <button class="full-btn">{{ labels.markAttendanceLabel }}</button>
+                    <button class="full-btn" (click)="markPresence()">{{ labels.markAttendanceLabel }}</button>
                 </div>
 
                 <div class="dashboard-card">
@@ -274,7 +278,8 @@
                     </div>
 
                     <div class="quick-actions">
-                        <button *ngFor="let action of labels.quickActions">{{ action }}</button>
+                        <button *ngFor="let action of labels.quickActions" (click)="onQuickAction(action)">{{ action
+                            }}</button>
                     </div>
                 </div>
 
