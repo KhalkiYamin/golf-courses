@@ -2,81 +2,283 @@
     display: block;
 }
 
-section {
+.sessions-page {
+    --ink-900: #0a2342;
+    --ink-700: #2f415f;
+    --ink-500: #5b6f8f;
+    --line-100: #dbe5f2;
+    --line-200: #c6d7ec;
+    --sky-50: #f3f8ff;
+    --sky-100: #e7f1ff;
+    --sky-200: #cde2ff;
+    --sky-500: #2f7fe6;
+    --mint-500: #0f9f8f;
+    --shadow-soft: 0 14px 36px rgba(10, 35, 66, 0.08);
+    --shadow-focus: 0 16px 30px rgba(47, 127, 230, 0.16);
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
     padding: 20px;
+    border-radius: 26px;
+    background:
+        radial-gradient(circle at 85% -10%, rgba(47, 127, 230, 0.2) 0, rgba(47, 127, 230, 0) 45%),
+        radial-gradient(circle at 5% 0%, rgba(15, 159, 143, 0.16) 0, rgba(15, 159, 143, 0) 35%),
+        linear-gradient(180deg, #f8fbff 0%, #eef4fd 100%);
+}
+
+.page-hero {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.hero-kicker {
+    margin: 0 0 4px;
+    color: var(--sky-500);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    font-weight: 700;
 }
 
 .page-title {
-    margin: 0 0 16px;
+    margin: 0;
+    color: var(--ink-900);
     font-size: 34px;
     font-weight: 800;
+    line-height: 1.08;
     letter-spacing: -0.02em;
-    color: #0f172a;
 }
 
-.card {
-    border: 1px solid #e2e8f0;
-    border-radius: 18px;
-    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
-    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+.page-subtitle {
+    margin: 8px 0 0;
+    color: var(--ink-500);
+    font-size: 14px;
+    max-width: 520px;
+}
+
+.hero-metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.metric-card {
+    min-width: 140px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid rgba(219, 229, 242, 0.85);
+    backdrop-filter: blur(3px);
+}
+
+.metric-card.accent {
+    border-color: rgba(47, 127, 230, 0.35);
+    background: linear-gradient(140deg, rgba(231, 241, 255, 0.9), rgba(255, 255, 255, 0.92));
+}
+
+.metric-label {
+    display: block;
+    color: var(--ink-500);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.metric-value {
+    color: var(--ink-900);
+    font-size: 28px;
+    line-height: 1;
+}
+
+.sessions-card {
+    border: 1px solid var(--line-100);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.93);
+    box-shadow: var(--shadow-soft);
     overflow: hidden;
 }
 
-.table {
+.table-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    border-bottom: 1px solid #e3ebf7;
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.toolbar-title {
     margin: 0;
+    color: var(--ink-900);
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.toolbar-subtitle {
+    margin: 2px 0 0;
+    color: var(--ink-500);
+    font-size: 13px;
+}
+
+.sessions-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #145fbe;
+    background: var(--sky-100);
+    border: 1px solid var(--sky-200);
+    white-space: nowrap;
+}
+
+.sessions-table {
+    width: 100%;
     border-collapse: separate;
     border-spacing: 0;
 }
 
-.table thead th {
-    background: #f1f5f9;
-    color: #1e293b;
-    font-size: 13px;
-    font-weight: 700;
+.sessions-table thead th {
+    padding: 14px 18px;
+    color: var(--ink-700);
+    font-size: 12px;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
-    border-bottom: 1px solid #dbe4ee;
-    padding: 14px 16px;
+    letter-spacing: 0.07em;
+    font-weight: 700;
+    border-bottom: 1px solid #dbe6f3;
+    background: #f8fbff;
     white-space: nowrap;
 }
 
-.table tbody td {
-    padding: 14px 16px;
-    border-bottom: 1px solid #eef2f7;
-    color: #334155;
-    font-weight: 500;
+.sessions-table tbody td {
+    padding: 15px 18px;
+    color: #243652;
+    font-size: 14px;
+    border-bottom: 1px solid #edf2f8;
     vertical-align: middle;
 }
 
-.table tbody tr:last-child td {
+.sessions-table tbody tr:hover td {
+    background: #f6faff;
+}
+
+.sessions-table tbody tr:last-child td {
     border-bottom: none;
 }
 
-.table tbody tr:nth-child(even) td {
-    background: #fbfdff;
+.theme-cell,
+.coach-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
 }
 
-.table tbody tr:hover td {
-    background: #f0f7ff;
+.theme-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0f9f8f, #2f7fe6);
+    box-shadow: 0 0 0 4px rgba(15, 159, 143, 0.14);
 }
 
-.table tbody td:last-child {
-    color: #1d4ed8;
+.date-chip,
+.time-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 94px;
+    padding: 6px 10px;
+    border-radius: 10px;
     font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.01em;
+}
+
+.date-chip {
+    color: #1d5ea8;
+    background: #edf5ff;
+    border: 1px solid #cfe3ff;
+}
+
+.time-chip {
+    color: #0d7f72;
+    background: #e6f9f6;
+    border: 1px solid #bcece6;
+}
+
+.coach-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(145deg, #2f7fe6, #1f5fb0);
+    box-shadow: var(--shadow-focus);
+}
+
+.empty-state {
+    padding: 36px 20px;
+    text-align: center;
+}
+
+.empty-state h5 {
+    margin: 0;
+    color: var(--ink-900);
+    font-size: 20px;
+}
+
+.empty-state p {
+    margin: 8px 0 0;
+    color: var(--ink-500);
+    font-size: 14px;
 }
 
 @media (max-width: 768px) {
-    section {
+    .sessions-page {
         padding: 12px;
+        border-radius: 18px;
+    }
+
+    .page-hero {
+        flex-direction: column;
     }
 
     .page-title {
-        font-size: 28px;
+        font-size: 29px;
     }
 
-    .table thead th,
-    .table tbody td {
+    .hero-metrics {
+        width: 100%;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .metric-value {
+        font-size: 24px;
+    }
+
+    .table-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 14px;
+    }
+
+    .sessions-table thead th,
+    .sessions-table tbody td {
         padding: 12px 10px;
         font-size: 13px;
+    }
+
+    .date-chip,
+    .time-chip {
+        min-width: auto;
     }
 }

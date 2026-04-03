@@ -1,27 +1,85 @@
 <div class="coach-layout">
     <aside class="sidebar">
-        <div class="sidebar-top">
+        <div class="sidebar-shell">
             <div class="brand">
-                <div class="brand-logo">
-                    <img src="assets/img/coaches/sport.png" alt="Sports logo" class="brand-logo-image" />
+                <div class="brand-logo-wrap">
+                    <img src="assets/img/coaches/aa.png" alt="Coach Admin logo" class="brand-logo" />
                 </div>
-                <div class="brand-text">
-                    <h2>Coach Space</h2>
-                    <p>Académie Sportive</p>
+                <div class="brand-copy">
+                    <h2>CoachAdmin</h2>
+                    <p>Workspace</p>
                 </div>
             </div>
 
             <nav class="nav-menu">
-                <a *ngFor="let item of menuItems" class="nav-item" [routerLink]="item.path" routerLinkActive="active"
+                <a class="nav-item" [routerLink]="'/dashboard/coach/dashboard'" routerLinkActive="active"
                     [routerLinkActiveOptions]="{ exact: true }">
-                    <span class="icon">{{ item.icon }}</span>
-                    <span>{{ item.label }}</span>
+                    <span class="material-symbols-rounded nav-icon">space_dashboard</span>
+                    <span class="nav-label">Dashboard</span>
+                    <span class="active-dot"></span>
                 </a>
-                <button type="button" class="nav-item nav-item-logout" (click)="logout()">
-                    <span class="icon">🚪</span>
-                    <span>Déconnexion</span>
-                </button>
+
+                <div class="menu-section" [class.active-parent]="hasActiveRoute(usersMenuPaths)">
+                    <button type="button" class="nav-item nav-toggle" (click)="toggleSection('users')"
+                        [class.active]="hasActiveRoute(usersMenuPaths)">
+                        <span class="material-symbols-rounded nav-icon">group</span>
+                        <span class="nav-label">Users</span>
+                        <span class="material-symbols-rounded chevron"
+                            [class.open]="isExpanded('users')">expand_more</span>
+                    </button>
+
+                    <div class="submenu" [class.open]="isExpanded('users')">
+                        <a *ngFor="let item of usersMenuItems" class="submenu-item" [routerLink]="item.path"
+                            routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                            <span class="submenu-dot"></span>
+                            <span>{{ item.label }}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="menu-section" [class.active-parent]="hasActiveRoute(enterprisesMenuPaths)">
+                    <button type="button" class="nav-item nav-toggle" (click)="toggleSection('enterprises')"
+                        [class.active]="hasActiveRoute(enterprisesMenuPaths)">
+                        <span class="material-symbols-rounded nav-icon">apartment</span>
+                        <span class="nav-label">Enterprises</span>
+                        <span class="material-symbols-rounded chevron"
+                            [class.open]="isExpanded('enterprises')">expand_more</span>
+                    </button>
+
+                    <div class="submenu" [class.open]="isExpanded('enterprises')">
+                        <a *ngFor="let item of enterprisesMenuItems" class="submenu-item" [routerLink]="item.path"
+                            routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                            <span class="submenu-dot"></span>
+                            <span>{{ item.label }}</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="menu-section" [class.active-parent]="hasActiveRoute(settingsMenuPaths)">
+                    <button type="button" class="nav-item nav-toggle" (click)="toggleSection('settings')"
+                        [class.active]="hasActiveRoute(settingsMenuPaths)">
+                        <span class="material-symbols-rounded nav-icon">settings</span>
+                        <span class="nav-label">Settings</span>
+                        <span class="material-symbols-rounded chevron"
+                            [class.open]="isExpanded('settings')">expand_more</span>
+                    </button>
+
+                    <div class="submenu" [class.open]="isExpanded('settings')">
+                        <a *ngFor="let item of settingsMenuItems" class="submenu-item" [routerLink]="item.path"
+                            routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+                            <span class="submenu-dot"></span>
+                            <span>{{ item.label }}</span>
+                        </a>
+                    </div>
+                </div>
             </nav>
+
+            <div class="sidebar-footer">
+                <button type="button" class="nav-item nav-item-logout" (click)="logout()">
+                    <span class="material-symbols-rounded nav-icon">logout</span>
+                    <span class="nav-label">Logout</span>
+                </button>
+            </div>
         </div>
     </aside>
 

@@ -1,126 +1,256 @@
 .athlete-layout {
+    --sidebar-bg-1: #202a45;
+    --sidebar-bg-2: #2a3252;
+    --sidebar-line: rgba(147, 165, 214, 0.2);
+    --sidebar-text: #f2f5ff;
+    --sidebar-muted: #a4b0cf;
+    --accent: #6478ff;
+    --accent-soft: rgba(100, 120, 255, 0.24);
+    --surface-white: rgba(255, 255, 255, 0.94);
     display: flex;
     min-height: 100vh;
-    background: linear-gradient(135deg, #f3fbf7, #eefbf4);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(140deg, #edf1ff 0%, #f5f8ff 55%, #eef5ff 100%);
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
 }
 
 .sidebar {
-    width: 280px;
-    background: linear-gradient(180deg, #12664f, #0d4a3a);
-    color: #fff;
+    width: 286px;
+    padding: 0;
+    color: #ffffff;
+}
+
+.sidebar-shell {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 24px 18px;
+    padding: 24px 16px;
+    background: linear-gradient(180deg, var(--sidebar-bg-1) 0%, var(--sidebar-bg-2) 100%);
+    border-right: 1px solid rgba(138, 157, 208, 0.24);
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 28px;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--sidebar-line);
 }
 
 .brand-logo {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #39c58d, #78e0b4);
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
-    font-weight: 800;
+    overflow: hidden;
+    box-shadow: none;
+}
+
+.brand-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .brand-text h2 {
     margin: 0;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 35px;
+    line-height: 0.85;
+    letter-spacing: -0.025em;
+    font-weight: 800;
+    color: var(--sidebar-text);
 }
 
 .brand-text p {
-    margin: 4px 0 0;
-    font-size: 13px;
-    opacity: 0.8;
-}
-
-.athlete-profile-card {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 28px;
-    padding: 14px;
-    border-radius: 18px;
-    background: rgba(255, 255, 255, 0.12);
-}
-
-.athlete-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #39c58d, #9cf0cc);
-    color: #083b2d;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    font-weight: 800;
-}
-
-.athlete-meta h3 {
-    margin: 0;
-    font-size: 15px;
-}
-
-.athlete-meta p {
-    margin: 3px 0 0;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.8);
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: var(--sidebar-muted);
 }
 
 .nav-menu {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
-.nav-item {
+.nav-item,
+.section-trigger,
+.secondary-item {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 16px;
-    color: #e9fff6;
+    gap: 10px;
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    color: #dce5ff;
     text-decoration: none;
-    font-weight: 600;
-    transition: all 0.25s ease;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 
-.nav-item:hover {
-    background: rgba(255, 255, 255, 0.12);
-    transform: translateX(4px);
+.nav-item:hover,
+.section-trigger:hover,
+.secondary-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(130, 149, 198, 0.26);
+    transform: translateX(2px);
 }
 
+.nav-item.standalone {
+    margin-bottom: 4px;
+}
+
+.menu-section {
+    border-left: 1px solid rgba(145, 161, 206, 0.24);
+    padding-left: 10px;
+}
+
+.icon {
+    width: 20px;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 15px;
+    color: #bfc9ea;
+    line-height: 1;
+}
+
+.nav-label {
+    flex: 1;
+}
+
+.section-label {
+    flex: 1;
+    text-align: left;
+}
+
+.chevron {
+    font-size: 16px;
+    line-height: 1;
+    color: #aebadd;
+    transition: transform 0.2s ease;
+}
+
+.section-trigger.open .chevron {
+    transform: rotate(180deg);
+}
+
+.section-trigger.active,
 .nav-item.active {
-    background: linear-gradient(135deg, #39c58d, #1fa873);
-    color: #fff;
+    color: #ffffff;
+    background: linear-gradient(150deg, rgba(95, 112, 191, 0.32), rgba(84, 102, 182, 0.18));
+    border-color: rgba(112, 132, 214, 0.48);
+    box-shadow: 0 8px 20px rgba(18, 30, 66, 0.35), 0 0 0 1px rgba(106, 126, 216, 0.22);
+}
+
+.section-trigger.active .icon,
+.nav-item.active .icon {
+    color: #7d90ff;
+}
+
+.section-body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.28s ease;
+}
+
+.section-body.open {
+    grid-template-rows: 1fr;
+}
+
+.section-links {
+    overflow: hidden;
+    padding-top: 8px;
+    padding-left: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.sub-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px;
+    border-radius: 8px;
+    color: var(--sidebar-muted);
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+
+.sub-item:hover {
+    color: #e8eeff;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.sub-item.active {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.sub-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #7b89bf;
+    box-shadow: 0 0 0 2px rgba(123, 137, 191, 0.15);
+}
+
+.sub-item.active .sub-dot {
+    background: var(--accent);
+    box-shadow: 0 0 12px rgba(100, 120, 255, 0.75);
 }
 
 .sidebar-footer {
-    margin-top: 30px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--sidebar-line);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.secondary-item {
+    color: var(--sidebar-muted);
+    justify-content: flex-start;
 }
 
 .logout-btn {
     width: 100%;
-    border: none;
-    padding: 14px;
-    border-radius: 16px;
-    background: #fff;
-    color: #12664f;
-    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 1px solid transparent;
+    padding: 11px 12px;
+    border-radius: 10px;
+    background: transparent;
+    color: #ced8f5;
+    font-size: 16px;
+    font-weight: 500;
     cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(130, 149, 198, 0.26);
+    transform: translateX(2px);
 }
 
 .main-content {
@@ -129,12 +259,12 @@
 }
 
 .content-card {
-    background: #fff;
+    background: var(--surface-white);
     border-radius: 24px;
     padding: 24px;
     min-height: calc(100vh - 56px);
-    box-shadow: 0 10px 28px rgba(18, 102, 79, 0.08);
-    border: 1px solid #def3e9;
+    box-shadow: 0 16px 30px rgba(35, 55, 101, 0.1);
+    border: 1px solid rgba(214, 225, 246, 0.8);
 }
 
 @media (max-width: 900px) {
@@ -145,10 +275,19 @@
     .sidebar {
         width: 100%;
     }
+
+    .sidebar-shell {
+        min-height: auto;
+        padding: 14px;
+    }
 }
 
 @media (max-width: 575px) {
     .main-content {
         padding: 16px;
+    }
+
+    .brand-text h2 {
+        font-size: 30px;
     }
 }

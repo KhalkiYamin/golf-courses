@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { AdminUser } from '../all-modules/models/admin-user';
 
 @Injectable({
@@ -55,45 +54,6 @@ export class AdminUserService {
         });
     }
 
-    deleteUser(id: number): Observable<string> {
-        return this.http.delete(`${this.apiUrl}/users/${id}`, {
-            headers: this.getHeaders(),
-            responseType: 'text'
-        });
-    }
-
-    deleteCoach(id: number): Observable<string> {
-        return this.http.delete(`${this.apiUrl}/coaches/${id}`, {
-            headers: this.getHeaders(),
-            responseType: 'text'
-        });
-    }
-
-    deleteAthlete(id: number): Observable<string> {
-        return this.http.delete(`${this.apiUrl}/athletes/${id}`, {
-            headers: this.getHeaders(),
-            responseType: 'text'
-        });
-    }
-
-    deleteUserWithFallback(id: number, role: string): Observable<string> {
-        const normalizedRole = (role || '').toUpperCase();
-
-        return this.deleteUser(id).pipe(
-            catchError(() => {
-                if (normalizedRole === 'COACH') {
-                    return this.deleteCoach(id);
-                }
-
-                if (normalizedRole === 'ATHLETE') {
-                    return this.deleteAthlete(id);
-                }
-
-                return throwError(() => new Error('Suppression utilisateur impossible: rôle inconnu.'));
-            })
-        );
-    }
-
     updateUser(id: number, user: any): Observable<string> {
         return this.http.put(`${this.apiUrl}/users/${id}`, user, {
             headers: this.getHeaders(),
@@ -101,26 +61,10 @@ export class AdminUserService {
         });
     }
 
-    deactivateUser(user: AdminUser): Observable<string> {
-        const payload: any = {
-            nom: user.nom,
-            prenom: user.prenom,
-            email: user.email,
-            telephone: user.telephone,
-            role: user.role,
-            enabled: false
-        };
-
-        if (user.role === 'ATHLETE') {
-            payload.sportId = (user as any).sport?.id;
-            payload.niveau = user.niveau;
-        }
-
-        if (user.role === 'COACH') {
-            payload.specialiteId = (user as any).specialite?.id;
-            payload.experience = (user as any).experience ?? 0;
-        }
-
-        return this.updateUser(user.id, payload);
+    updateUserStatus(id: number, enabled: boolean): Observable<string> {
+        return this.http.put(`${this.apiUrl}/users/${id}/status`, { enabled }, {
+            headers: this.getHeaders(),
+            responseType: 'text'
+        });
     }
 }

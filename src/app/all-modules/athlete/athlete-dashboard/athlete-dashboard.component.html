@@ -1,9 +1,18 @@
 <section class="athlete-dashboard">
+    <div class="toast-stack" *ngIf="toastVisible">
+        <div class="toast-card" [ngClass]="'toast-' + toastType">
+            <span class="toast-icon">{{ getToastIcon() }}</span>
+            <p>{{ toastMessage }}</p>
+        </div>
+    </div>
+
     <div class="dashboard-header">
         <div>
             <p class="dashboard-subtitle">Bienvenue 👋</p>
             <h2 class="page-title">Dashboard Athlète</h2>
-            <p class="dashboard-subtitle" *ngIf="athleteSpecialite">Spécialité: {{ athleteSpecialite }}</p>
+            <p class="dashboard-subtitle" *ngIf="athleteSpecialite">
+                Spécialité: {{ athleteSpecialite }}
+            </p>
         </div>
     </div>
 
@@ -46,26 +55,64 @@
             </div>
 
             <div *ngIf="!loading && !errorMessage && availableSeancesToReserve.length > 0" class="sessions-list">
-
-                <div class="session-item" *ngFor="let session of availableSeancesToReserve">
+                <div class="session-item" *ngFor="let session of availableSeancesToReserve"
+                    [class.cancelled-session]="isSessionCancelled(session)">
                     <div class="session-left">
-                        <div class="session-date">
+                        <div class="session-date" [class.cancelled-date]="isSessionCancelled(session)">
                             <span class="day">{{ session.dateSeance | date:'dd' }}</span>
                             <span class="month">{{ session.dateSeance | date:'MMM' }}</span>
                         </div>
 
                         <div class="session-info">
                             <h4>{{ session.theme }}</h4>
-                            <p *ngIf="getCoachDisplayName(session)">👨‍🏫 {{ getCoachDisplayName(session) }}</p>
+
+                            <p *ngIf="getCoachDisplayName(session)">
+                                👨‍🏫 {{ getCoachDisplayName(session) }}
+                            </p>
+
                             <p>📍 {{ session.lieu }}</p>
                             <p>🕒 {{ session.heureSeance }}</p>
+
+                            <p class="places-info" [class.full]="session.complet">
+                                👥 {{ session.nombreAthletesCoachEtSeance || 0 }}/20 athlètes
+                            </p>
+
+                            <p *ngIf="isSessionCancelled(session)" class="cancelled-message"
+                                [class.urgent-cancel]="isCancelledLessThan24h(session)">
+                                {{ getCancellationMessage(session) }}
+                            </p>
                         </div>
                     </div>
 
                     <div class="session-right athlete-actions">
-                        <span class="reservation-badge non_reservee">Disponible</span>
-                        <button class="reserve-btn" (click)="reserverSeance(getSeanceId(session))">
+                        <span class="reservation-badge" [ngClass]="
+                                isSessionCancelled(session)
+                                    ? 'cancelled-badge'
+                                    : (session.complet ? 'full-badge' : 'non_reservee')
+                            ">
+                            {{
+                            isSessionCancelled(session)
+                            ? 'ANNULÉE'
+                            : (session.complet ? 'COMPLET' : 'DISPONIBLE')
+                            }}
+                        </span>
+
+                        <p *ngIf="session.complet && !isSessionCancelled(session)" class="no-place-message">
+                            Aucune place disponible
+                        </p>
+
+                        <button *ngIf="!session.complet && !isSessionCancelled(session)" class="reserve-btn"
+                            (click)="reserverSeance(getSeanceId(session), session.coachId!)">
                             Réserver
+                        </button>
+
+                        <button *ngIf="session.complet && !isSessionCancelled(session)"
+                            class="reserve-btn reserve-btn-disabled" disabled>
+                            Complet
+                        </button>
+
+                        <button *ngIf="isSessionCancelled(session)" class="reserve-btn reserve-btn-cancelled" disabled>
+                            Annulée
                         </button>
                     </div>
                 </div>
@@ -142,26 +189,58 @@
         </div>
 
         <div *ngIf="!reservationsLoading && myReservations.length > 0" class="sessions-list">
-            <div class="session-item" *ngFor="let item of myReservations">
+            <div class="session-item" *ngFor="let item of myReservations"
+                [class.cancelled-session]="isSessionCancelled(item)">
                 <div class="session-left">
-                    <div class="session-date">
+                    <div class="session-date" [class.cancelled-date]="isSessionCancelled(item)">
                         <span class="day">{{ item.dateSeance | date:'dd' }}</span>
                         <span class="month">{{ item.dateSeance | date:'MMM' }}</span>
                     </div>
 
                     <div class="session-info">
                         <h4>{{ item.theme }}</h4>
+                        <p *ngIf="item.coachNomComplet">👨‍🏫 {{ item.coachNomComplet }}</p>
                         <p>📍 {{ item.lieu }}</p>
                         <p>🕒 {{ item.heureSeance }}</p>
+
+                        <p *ngIf="isSessionCancelled(item)" class="cancelled-message"
+                            [class.urgent-cancel]="isCancelledLessThan24h(item)">
+                            {{ getCancellationMessage(item) }}
+                        </p>
                     </div>
                 </div>
 
                 <div class="session-right athlete-actions">
-                    <span class="reservation-badge" [ngClass]="item.statut.toLowerCase()">
-                        {{ getReservationBadgeLabel(item.statut) }}
+                    <span class="reservation-badge" [ngClass]="
+                            isSessionCancelled(item)
+                                ? 'cancelled-badge'
+                                : item.statut.toLowerCase()
+                        ">
+                        {{
+                        isSessionCancelled(item)
+                        ? 'ANNULÉE'
+                        : getReservationBadgeLabel(item.statut)
+                        }}
                     </span>
+
+                    <button *ngIf="isSessionCancelled(item)" class="reserve-btn reserve-btn-cancelled" disabled>
+                        Annulée
+                    </button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="cancel-alert-overlay" *ngIf="showCancelledAlert" (click)="closeCancelledAlert()">
+        <div class="cancel-alert-modal" (click)="$event.stopPropagation()">
+            <div class="cancel-alert-head">
+                <span class="alert-dot"></span>
+                <h3>{{ cancelledAlertTitle }}</h3>
+            </div>
+            <p>{{ cancelledAlertMessage }}</p>
+            <button type="button" class="alert-btn" (click)="closeCancelledAlert()">
+                Compris
+            </button>
         </div>
     </div>
 </section>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,500,0,0');
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -7,158 +9,212 @@
 html,
 body {
     overflow-x: hidden;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Manrope', 'Segoe UI', sans-serif;
 }
 
 .coach-layout {
     display: flex;
     align-items: flex-start;
     height: 100vh;
-    background: linear-gradient(135deg, #f3fbf6, #ebf7f0);
+    background: #eff5f1;
     overflow: hidden;
 }
 
-/* Sidebar */
 .sidebar {
-    width: 242px;
-    background: linear-gradient(180deg, #14532d, #0f3f22);
-    color: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 20px 14px;
-    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
+    width: 252px;
+    height: 100vh;
+    padding: 18px 14px;
     flex-shrink: 0;
-    position: static !important;
-    overflow-y: hidden !important;
-    max-height: none !important;
-    height: 100vh !important;
+    background: #14261d;
+    border-right: 1px solid #1f3a2c;
 }
 
-.sidebar-top {
+.sidebar-shell {
+    height: 100%;
+    border-radius: 16px;
+    background: #1a3126;
+    border: 1px solid #284a39;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    padding: 14px 10px;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 14px;
-    margin-bottom: 8px;
+    gap: 11px;
+    padding: 6px 8px 14px;
+    border-bottom: 1px solid #2b4f3d;
+}
+
+.brand-logo-wrap {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
 }
 
 .brand-logo {
-    width: 112px;
-    height: 112px;
-    border-radius: 16px;
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 25px rgba(22, 163, 74, 0.35);
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
-.brand-logo-image {
-    width: 96px;
-    height: 96px;
-    object-fit: contain;
+.brand-copy h2 {
+    font-size: 17px;
+    color: #f0f7f3;
+    line-height: 1.2;
+    font-weight: 800;
 }
 
-.brand-text h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.brand-text p {
-    margin: 4px 0 0;
-    font-size: 13px;
-    opacity: 0.8;
+.brand-copy p {
+    margin-top: 2px;
+    font-size: 11px;
+    color: #9eb7aa;
 }
 
 .nav-menu {
+    margin-top: 12px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .nav-item {
+    width: 100%;
+    min-height: 44px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    background: transparent;
+    color: #c6d9cf;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 12px;
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    color: #eaf2ff;
-    text-decoration: none;
-    font-weight: 600;
-    font-size: 14px;
-    transition: all 0.25s ease;
-}
-
-.nav-item-logout {
-    width: 100%;
-    border: none;
-    background: transparent;
-    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.10);
-    transform: translateX(2px);
+    background: #234536;
+    border-color: #315b47;
+    color: #ebf7ef;
 }
 
-.nav-item.active {
-    background: rgba(255, 255, 255, 0.18);
-    color: #fff;
-    box-shadow: 0 4px 10px rgba(8, 37, 18, 0.24);
-    border-left: 4px solid #86efac;
-    padding-left: 8px;
+.nav-item.active,
+.menu-section.active-parent>.nav-toggle,
+.nav-item.router-link-active {
+    background: #2c5441;
+    border-color: #3f7159;
+    color: #f4fcf7;
 }
 
-.icon {
-    font-size: 18px;
+.nav-icon {
+    font-size: 19px;
+    line-height: 1;
+    opacity: 0.95;
 }
 
-/* Coach profile card in sidebar */
-.coach-profile-card {
+.nav-label {
+    flex: 1;
+    text-align: left;
+}
+
+.active-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: #95d3af;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.nav-item.active .active-dot,
+.nav-item.router-link-active .active-dot {
+    opacity: 1;
+}
+
+.nav-toggle {
+    text-align: left;
+}
+
+.chevron {
+    font-size: 17px;
+    color: #9db7aa;
+    transition: transform 0.2s ease;
+}
+
+.chevron.open {
+    transform: rotate(180deg);
+}
+
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    margin-top: 0;
+    padding-left: 12px;
+    transition: max-height 0.24s ease, margin-top 0.2s ease;
+}
+
+.submenu.open {
+    max-height: 240px;
+    margin-top: 4px;
+}
+
+.submenu-item {
+    min-height: 34px;
+    border-radius: 9px;
+    text-decoration: none;
+    color: #b2c8bd;
+    font-size: 13px;
+    font-weight: 600;
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.14);
+    gap: 9px;
+    padding: 7px 10px;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.coach-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #16a34a, #4ade80);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 800;
-    box-shadow: 0 8px 18px rgba(22, 163, 74, 0.25);
-    flex-shrink: 0;
+.submenu-item:hover {
+    background: #234536;
+    color: #e8f5ec;
 }
 
-.coach-meta h3 {
-    margin: 0;
-    font-size: 15px;
-    color: #fff;
+.submenu-item.active {
+    background: #315a47;
+    color: #f4fcf7;
 }
 
-.coach-meta p {
-    margin: 3px 0 0;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.8);
+.submenu-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #6f9b84;
 }
 
-/* Main content */
+.submenu-item.active .submenu-dot {
+    background: #b8e7cc;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid #2b4f3d;
+    padding-top: 9px;
+}
+
+.nav-item-logout {
+    color: #d6e6dc;
+}
+
 .main-content {
     flex: 1;
     min-width: 0;
@@ -171,31 +227,30 @@ body {
     overflow: hidden;
 }
 
-/* Topbar */
 .topbar {
     background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(14px);
-    border-radius: 18px;
-    padding: 16px 18px;
+    border-radius: 16px;
+    padding: 15px 18px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 14px;
-    box-shadow: 0 8px 22px rgba(15, 63, 34, 0.10);
-    border: 1px solid rgba(22, 101, 52, 0.14);
+    box-shadow: 0 8px 20px rgba(23, 56, 41, 0.08);
+    border: 1px solid #d6e3dc;
     flex-wrap: wrap;
 }
 
 .topbar-left h1 {
     margin: 0;
     font-size: 24px;
-    color: #14532d;
+    color: #1d3a2d;
     font-weight: 800;
 }
 
 .topbar-left p {
     margin: 6px 0 0;
-    color: #5f7c69;
+    color: #5f7d6d;
     font-size: 14px;
 }
 
@@ -210,44 +265,57 @@ body {
 .search-box input {
     width: 220px;
     max-width: 100%;
-    height: 42px;
-    border: 1px solid #cde8d6;
-    border-radius: 12px;
-    padding: 0 16px;
+    height: 40px;
+    border: 1px solid #d3e0d8;
+    border-radius: 11px;
+    padding: 0 14px;
     font-size: 14px;
     outline: none;
     background: #fff;
-    transition: 0.25s ease;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .search-box input:focus {
-    border-color: #16a34a;
-    box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.12);
+    border-color: #5b8f72;
+    box-shadow: 0 0 0 3px rgba(91, 143, 114, 0.16);
 }
 
 .coach-profile {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #f3fbf6;
+    background: #f2f8f4;
     padding: 8px 12px;
-    border-radius: 12px;
-    border: 1px solid #d9efdf;
+    border-radius: 11px;
+    border: 1px solid #d4e2da;
+}
+
+.coach-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #3b7358;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    font-weight: 800;
+    flex-shrink: 0;
 }
 
 .coach-info h4 {
     margin: 0;
     font-size: 15px;
-    color: #14532d;
+    color: #1d3b2d;
 }
 
 .coach-info p {
     margin: 3px 0 0;
     font-size: 12px;
-    color: #5f7c69;
+    color: #607b6d;
 }
 
-/* Content */
 .content-section {
     flex: 1;
     min-height: 0;
@@ -257,15 +325,14 @@ body {
 
 .content-card {
     background: #fff;
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 18px;
     min-height: 320px;
-    box-shadow: 0 12px 28px rgba(15, 63, 34, 0.12);
-    border: 1px solid #d9efdf;
+    box-shadow: 0 10px 24px rgba(22, 51, 37, 0.09);
+    border: 1px solid #d6e2db;
     overflow-x: hidden;
 }
 
-/* Logout modal */
 .logout-modal-overlay {
     position: fixed !important;
     inset: 0 !important;
@@ -311,11 +378,10 @@ body {
     line-height: 1 !important;
     color: #506080 !important;
     cursor: pointer !important;
-    transition: 0.2s ease;
+    transition: color 0.2s ease;
 }
 
 .close-modal-btn:hover {
-    transform: scale(1.06);
     color: #334155 !important;
 }
 
@@ -352,15 +418,14 @@ body {
 
 .confirm-btn-modal {
     border: none !important;
-    background: linear-gradient(135deg, #020817, #0f172a) !important;
+    background: linear-gradient(135deg, #1d4a36, #2e6a4e) !important;
     color: #ffffff !important;
     padding: 14px 26px !important;
     border-radius: 18px !important;
     font-size: 16px !important;
     font-weight: 800 !important;
     cursor: pointer !important;
-    box-shadow: 0 14px 24px rgba(15, 23, 42, 0.24) !important;
-    transition: 0.2s ease;
+    transition: transform 0.2s ease;
 }
 
 .confirm-btn-modal:hover {
@@ -379,10 +444,9 @@ body {
     }
 }
 
-/* Tablet */
 @media (max-width: 1200px) {
     .sidebar {
-        width: 216px;
+        width: 224px;
         padding: 16px 12px;
     }
 
@@ -408,10 +472,13 @@ body {
 
     .sidebar {
         width: 100%;
-        min-height: auto;
-        height: auto !important;
-        overflow: visible !important;
-        border-radius: 0 0 16px 16px;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid #1f3a2c;
+    }
+
+    .sidebar-shell {
+        height: auto;
     }
 
     .main-content {
@@ -492,7 +559,6 @@ body {
     }
 }
 
-/* Mobile */
 @media (max-width: 575px) {
     .main-content {
         padding: 16px;
@@ -510,17 +576,5 @@ body {
 
     .search-box input {
         width: 100%;
-    }
-
-    .brand-text h2 {
-        font-size: 18px;
-    }
-
-    .brand-text p {
-        font-size: 12px;
-    }
-
-    .coach-profile-card {
-        padding: 12px;
     }
 }

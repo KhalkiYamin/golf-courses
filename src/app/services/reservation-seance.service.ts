@@ -10,14 +10,25 @@ export interface ReservationSeanceDto {
     dateSeance: string;
     heureSeance: string;
     lieu: string;
+
     athleteId: number;
     athleteNomComplet: string;
     athleteEmail: string;
+
+    coachId?: number;
     coachNomComplet?: string;
     coachNom?: string;
     coachName?: string;
+
     statut: string;
     dateReservation: string | null;
+
+    nombreAthletesCoachEtSeance?: number;
+    complet?: boolean;
+
+    seanceStatut?: string;
+    annuleeMoinsDe24h?: boolean;
+    messageAnnulation?: string;
 }
 
 @Injectable({
@@ -44,9 +55,9 @@ export class ReservationSeanceService {
         );
     }
 
-    reserverSeance(seanceId: number): Observable<ReservationSeanceDto> {
+    reserverSeance(seanceId: number, coachId: number): Observable<ReservationSeanceDto> {
         return this.http.post<ReservationSeanceDto>(
-            `${this.apiUrl}/seance/${seanceId}`,
+            `${this.apiUrl}/seance/${seanceId}?coachId=${coachId}`,
             {},
             { headers: this.getHeaders() }
         );
@@ -67,6 +78,29 @@ export class ReservationSeanceService {
             { headers: this.getHeaders() }
         ).pipe(
             map((response) => this.normalizeCollection(response, 'EN_ATTENTE'))
+        );
+    }
+
+    getReservationsByCoachAndSeance(seanceId: number, coachId: number): Observable<ReservationSeanceDto[]> {
+        return this.http.get<any>(
+            `${this.apiUrl}/seance/${seanceId}/coach/${coachId}`,
+            { headers: this.getHeaders() }
+        ).pipe(
+            map((response) => this.normalizeCollection(response, 'EN_ATTENTE'))
+        );
+    }
+
+    getCount(seanceId: number, coachId: number): Observable<number> {
+        return this.http.get<number>(
+            `${this.apiUrl}/seance/${seanceId}/coach/${coachId}/count`,
+            { headers: this.getHeaders() }
+        );
+    }
+
+    isComplete(seanceId: number, coachId: number): Observable<boolean> {
+        return this.http.get<boolean>(
+            `${this.apiUrl}/seance/${seanceId}/coach/${coachId}/complete`,
+            { headers: this.getHeaders() }
         );
     }
 
@@ -140,11 +174,17 @@ export class ReservationSeanceService {
             athleteId: Number(item?.athleteId ?? item?.athlete?.id ?? 0) || 0,
             athleteNomComplet: item?.athleteNomComplet || item?.athlete?.nomComplet || item?.athleteName || '',
             athleteEmail: item?.athleteEmail || item?.athlete?.email || '',
+            coachId: Number(item?.coachId ?? item?.coach?.id ?? 0) || undefined,
             coachNomComplet: coachNomComplet || undefined,
             coachNom: coachNom || undefined,
             coachName: coachName || undefined,
             statut: normalizedStatus,
-            dateReservation: item?.dateReservation || item?.createdAt || null
+            dateReservation: item?.dateReservation || item?.createdAt || null,
+            nombreAthletesCoachEtSeance: Number(item?.nombreAthletesCoachEtSeance ?? 0),
+            complet: item?.complet ?? false,
+            seanceStatut: item?.seanceStatut ?? item?.seance?.statut ?? '',
+            annuleeMoinsDe24h: item?.annuleeMoinsDe24h ?? false,
+            messageAnnulation: item?.messageAnnulation ?? ''
         };
     }
 

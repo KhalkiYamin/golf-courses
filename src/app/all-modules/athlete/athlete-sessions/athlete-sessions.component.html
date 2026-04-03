@@ -1,23 +1,75 @@
-<section>
-    <h3 class="page-title">Mes Seances</h3>
-    <div class="card p-3 table-responsive">
-        <table class="table table-sm mb-0">
-            <thead>
-                <tr>
-                    <th>Theme</th>
-                    <th>Date</th>
-                    <th>Heure</th>
-                    <th>Coach</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let session of sessions">
-                    <td>{{ session.theme }}</td>
-                    <td>{{ session.date }}</td>
-                    <td>{{ session.heure }}</td>
-                    <td>{{ session.coach }}</td>
-                </tr>
-            </tbody>
-        </table>
+<section class="sessions-page">
+    <div class="page-hero">
+        <div class="hero-content">
+            <p class="hero-kicker">Athlete Dashboard</p>
+            <h3 class="page-title">Mes Seances</h3>
+            <p class="page-subtitle">
+                Une vue claire de votre planning d'entrainement pour rester organise et performant.
+            </p>
+        </div>
+        <div class="hero-metrics">
+            <article class="metric-card">
+                <span class="metric-label">Total seances</span>
+                <strong class="metric-value">{{ totalSessions }}</strong>
+            </article>
+            <article class="metric-card accent">
+                <span class="metric-label">Coachs mobilises</span>
+                <strong class="metric-value">{{ uniqueCoachesCount }}</strong>
+            </article>
+        </div>
+    </div>
+
+    <div class="sessions-card">
+        <div class="table-toolbar">
+            <div>
+                <h4 class="toolbar-title">Planning des seances</h4>
+                <p class="toolbar-subtitle">Sessions a venir et encadrement associe</p>
+            </div>
+            <span class="sessions-badge">{{ totalSessions }} seance{{ totalSessions > 1 ? 's' : '' }}</span>
+        </div>
+
+        <ng-container *ngIf="sessions.length; else emptyState">
+            <div class="table-responsive">
+                <table class="sessions-table">
+                    <thead>
+                        <tr>
+                            <th>Theme</th>
+                            <th>Date</th>
+                            <th>Heure</th>
+                            <th>Coach</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let session of sessions">
+                            <td>
+                                <div class="theme-cell">
+                                    <span class="theme-dot" aria-hidden="true"></span>
+                                    <span>{{ session.theme }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="date-chip">{{ session.date }}</span>
+                            </td>
+                            <td>
+                                <span class="time-chip">{{ session.heure }}</span>
+                            </td>
+                            <td>
+                                <div class="coach-cell">
+                                    <span class="coach-avatar">{{ session.coachInitials }}</span>
+                                    <span>{{ session.coach }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </ng-container>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <h5>Aucune seance planifiee</h5>
+                <p>Vos prochaines seances apparaitront ici des qu'elles seront programmees.</p>
+            </div>
+        </ng-template>
     </div>
 </section>

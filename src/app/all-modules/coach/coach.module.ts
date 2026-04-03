@@ -14,6 +14,7 @@ import { CoachEvaluationsComponent } from './coach-evaluations/coach-evaluations
 import { CoachNotificationsComponent } from './coach-notifications/coach-notifications.component';
 import { CoachResourcesComponent } from './coach-resources/coach-resources.component';
 import { CoachReservationsComponent } from './coach-reservations/coach-reservations.component';
+import { CoachPlanningComponent } from './coach-planning/coach-planning.component';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,8 @@ import { CoachReservationsComponent } from './coach-reservations/coach-reservati
         CoachEvaluationsComponent,
         CoachNotificationsComponent,
         CoachResourcesComponent,
-        CoachReservationsComponent
+        CoachReservationsComponent,
+        CoachPlanningComponent
     ],
     imports: [
         CommonModule,

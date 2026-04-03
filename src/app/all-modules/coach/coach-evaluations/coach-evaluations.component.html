@@ -1,35 +1,252 @@
-<section>
-    <h3 class="page-title">Évaluations</h3>
+<section class="coach-evaluations-page">
+    <header class="page-header">
+        <div>
+            <p class="page-kicker">Coach Control Room</p>
+            <h3 class="page-title">Evaluation Operations Hub</h3>
+            <p class="section-subtitle">
+                Prioriser, evaluer et transformer chaque analyse en action concrete dans un flux de travail unique.
+            </p>
+        </div>
 
-    <div class="empty-state" *ngIf="isLoading">
-        Chargement des évaluations...
-    </div>
+        <button type="button" class="refresh-btn" (click)="loadEvaluations()">Actualiser les donnees</button>
+    </header>
 
-    <div class="empty-state error-state" *ngIf="!isLoading && errorMessage">
-        {{ errorMessage }}
-    </div>
+    <div class="state-box" *ngIf="isLoading">Chargement du tableau de bord...</div>
+    <div class="state-box error" *ngIf="!isLoading && errorMessage">{{ errorMessage }}</div>
+    <div class="success-banner" *ngIf="successMessage">{{ successMessage }}</div>
 
-    <div class="card p-3 table-responsive" *ngIf="!isLoading && !errorMessage">
-        <table class="table table-sm mb-0">
-            <thead>
-                <tr>
-                    <th>Athlète</th>
-                    <th>Technique</th>
-                    <th>Physique</th>
-                    <th>Mental</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let evaluation of evaluations">
-                    <td>{{ evaluation.athlete }}</td>
-                    <td>{{ evaluation.technique }}/10</td>
-                    <td>{{ evaluation.physique }}/10</td>
-                    <td>{{ evaluation.mental }}/10</td>
-                </tr>
-                <tr *ngIf="evaluations.length === 0">
-                    <td colspan="4" class="text-center">Aucune évaluation trouvée.</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <ng-container *ngIf="!isLoading && !errorMessage">
+        <section class="command-strip" *ngIf="filteredEvaluations.length > 0">
+            <article class="command-card">
+                <p>Athletes suivis</p>
+                <strong>{{ filteredEvaluations.length }}</strong>
+            </article>
+
+            <article class="command-card">
+                <p>Score moyen</p>
+                <strong>{{ averageScore }}/10</strong>
+            </article>
+
+            <article class="command-card">
+                <p>Performing</p>
+                <strong>{{ performingCount }}</strong>
+            </article>
+
+            <article class="command-card">
+                <p>Urgent</p>
+                <strong>{{ urgentCount }}</strong>
+            </article>
+
+            <article class="command-card">
+                <p>Feedback a completer</p>
+                <strong>{{ followUpCount }}</strong>
+            </article>
+        </section>
+
+        <section class="triage-board">
+            <div class="triage-controls">
+                <input type="text" [(ngModel)]="searchTerm" placeholder="Rechercher un athlete, niveau ou sport" />
+
+                <div class="filter-row">
+                    <button type="button" [class.active]="focusFilter === 'all'"
+                        (click)="setFocusFilter('all')">Tous</button>
+                    <button type="button" [class.active]="focusFilter === 'urgent'"
+                        (click)="setFocusFilter('urgent')">Urgent</button>
+                    <button type="button" [class.active]="focusFilter === 'developing'"
+                        (click)="setFocusFilter('developing')">Developing</button>
+                    <button type="button" [class.active]="focusFilter === 'performing'"
+                        (click)="setFocusFilter('performing')">Performing</button>
+                </div>
+            </div>
+
+            <div class="lane-grid" *ngIf="filteredEvaluations.length > 0">
+                <article class="lane-card urgent-lane">
+                    <header>
+                        <h4>Urgent Queue</h4>
+                        <span>{{ urgentLane.length }}</span>
+                    </header>
+
+                    <div class="lane-items" *ngIf="urgentLane.length > 0; else emptyUrgent">
+                        <button type="button" class="lane-item" *ngFor="let evaluation of urgentLane"
+                            [class.selected]="selectedAthleteId === evaluation.athleteId"
+                            (click)="selectEvaluation(evaluation.athleteId)">
+                            <strong>{{ evaluation.athleteName }}</strong>
+                            <small>{{ evaluation.sport }} • {{ evaluation.niveau }}</small>
+                            <span>{{ overallScore(evaluation) }}/10</span>
+                        </button>
+                    </div>
+                    <ng-template #emptyUrgent>
+                        <p class="lane-empty">Aucun athlete critique.</p>
+                    </ng-template>
+                </article>
+
+                <article class="lane-card developing-lane">
+                    <header>
+                        <h4>Developing Queue</h4>
+                        <span>{{ developingLane.length }}</span>
+                    </header>
+
+                    <div class="lane-items" *ngIf="developingLane.length > 0; else emptyDeveloping">
+                        <button type="button" class="lane-item" *ngFor="let evaluation of developingLane"
+                            [class.selected]="selectedAthleteId === evaluation.athleteId"
+                            (click)="selectEvaluation(evaluation.athleteId)">
+                            <strong>{{ evaluation.athleteName }}</strong>
+                            <small>{{ evaluation.sport }} • {{ evaluation.niveau }}</small>
+                            <span>{{ overallScore(evaluation) }}/10</span>
+                        </button>
+                    </div>
+                    <ng-template #emptyDeveloping>
+                        <p class="lane-empty">Aucun athlete dans cette zone.</p>
+                    </ng-template>
+                </article>
+
+                <article class="lane-card performing-lane">
+                    <header>
+                        <h4>Performing Queue</h4>
+                        <span>{{ performingLane.length }}</span>
+                    </header>
+
+                    <div class="lane-items" *ngIf="performingLane.length > 0; else emptyPerforming">
+                        <button type="button" class="lane-item" *ngFor="let evaluation of performingLane"
+                            [class.selected]="selectedAthleteId === evaluation.athleteId"
+                            (click)="selectEvaluation(evaluation.athleteId)">
+                            <strong>{{ evaluation.athleteName }}</strong>
+                            <small>{{ evaluation.sport }} • {{ evaluation.niveau }}</small>
+                            <span>{{ overallScore(evaluation) }}/10</span>
+                        </button>
+                    </div>
+                    <ng-template #emptyPerforming>
+                        <p class="lane-empty">Aucun athlete performant pour le moment.</p>
+                    </ng-template>
+                </article>
+            </div>
+
+            <div class="state-box" *ngIf="filteredEvaluations.length === 0">Aucun athlete ne correspond aux filtres.
+            </div>
+        </section>
+
+        <section class="coach-workbench" *ngIf="selectedEvaluation as current; else selectState">
+            <header class="workbench-header">
+                <div>
+                    <p class="workbench-kicker">Athlete In Focus</p>
+                    <h4>{{ current.athleteName }}</h4>
+                    <p>{{ current.sport }} • {{ current.niveau }} • Maj {{ current.updatedAt }}</p>
+                </div>
+
+                <div class="workbench-actions">
+                    <button class="ghost-btn" (click)="selectNextAthlete()">Next Athlete</button>
+                    <button class="ghost-btn" (click)="resetEvaluation()">Reset</button>
+                    <button class="save-btn" (click)="saveEvaluation()">Save Review</button>
+                </div>
+            </header>
+
+            <div class="workbench-grid">
+                <article class="score-spotlight">
+                    <span>Global Coaching Score</span>
+                    <strong>{{ overallScore(current) }}/10</strong>
+                    <p>Mesure instantanee de la readiness sportive, mentale et disciplinaire.</p>
+                </article>
+
+                <section class="criteria-stack">
+                    <article class="rating-card">
+                        <div class="rating-head">
+                            <span>Technique</span>
+                            <strong>{{ current.technique }}/10</strong>
+                        </div>
+                        <div class="star-row">
+                            <button type="button" class="star-btn" *ngFor="let star of starOptions"
+                                [class.filled]="isStarFilled(current.technique, star)"
+                                (click)="setStarRating(current, 'technique', star)">&#9733;</button>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" [style.width.%]="scoreWidth(current.technique)"></div>
+                        </div>
+                    </article>
+
+                    <article class="rating-card">
+                        <div class="rating-head">
+                            <span>Condition physique</span>
+                            <strong>{{ current.physique }}/10</strong>
+                        </div>
+                        <div class="star-row">
+                            <button type="button" class="star-btn" *ngFor="let star of starOptions"
+                                [class.filled]="isStarFilled(current.physique, star)"
+                                (click)="setStarRating(current, 'physique', star)">&#9733;</button>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" [style.width.%]="scoreWidth(current.physique)"></div>
+                        </div>
+                    </article>
+
+                    <article class="rating-card">
+                        <div class="rating-head">
+                            <span>Mental</span>
+                            <strong>{{ current.mental }}/10</strong>
+                        </div>
+                        <div class="star-row">
+                            <button type="button" class="star-btn" *ngFor="let star of starOptions"
+                                [class.filled]="isStarFilled(current.mental, star)"
+                                (click)="setStarRating(current, 'mental', star)">&#9733;</button>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" [style.width.%]="scoreWidth(current.mental)"></div>
+                        </div>
+                    </article>
+
+                    <article class="rating-card">
+                        <div class="rating-head">
+                            <span>Discipline</span>
+                            <strong>{{ current.discipline }}/10</strong>
+                        </div>
+                        <div class="star-row">
+                            <button type="button" class="star-btn" *ngFor="let star of starOptions"
+                                [class.filled]="isStarFilled(current.discipline, star)"
+                                (click)="setStarRating(current, 'discipline', star)">&#9733;</button>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" [style.width.%]="scoreWidth(current.discipline)"></div>
+                        </div>
+                    </article>
+
+                    <article class="rating-card spotlight-card">
+                        <div class="rating-head">
+                            <span>Overall performance</span>
+                            <strong>{{ current.overallPerformance }}/10</strong>
+                        </div>
+                        <div class="star-row">
+                            <button type="button" class="star-btn" *ngFor="let star of starOptions"
+                                [class.filled]="isStarFilled(current.overallPerformance, star)"
+                                (click)="setStarRating(current, 'overallPerformance', star)">&#9733;</button>
+                        </div>
+                        <div class="bar-track">
+                            <div class="bar-fill" [style.width.%]="scoreWidth(current.overallPerformance)"></div>
+                        </div>
+                    </article>
+                </section>
+            </div>
+
+            <section class="notes-shell">
+                <article class="note-card feedback-card">
+                    <label for="coach-feedback">Coach Feedback</label>
+                    <p>Synthese claire: points forts, lacunes, priorites immediates.</p>
+                    <textarea id="coach-feedback" rows="6" [(ngModel)]="current.feedback"
+                        placeholder="Resume: points forts, priorites techniques, aspects mentaux a renforcer."></textarea>
+                </article>
+
+                <article class="note-card action-card">
+                    <label for="coach-action">Action Plan</label>
+                    <p>Plan concret avec objectifs de seance et suivi hebdomadaire.</p>
+                    <textarea id="coach-action" rows="6" [(ngModel)]="current.coachAction"
+                        placeholder="Definir les actions concretes de la semaine: seances cibles, objectifs et suivi."></textarea>
+                </article>
+            </section>
+        </section>
+
+        <ng-template #selectState>
+            <section class="coach-workbench">
+                <div class="state-box">Selectionnez un athlete dans les queues ci-dessus pour ouvrir le workbench d
+                    evaluation.</div>
+            </section>
+        </ng-template>
+    </ng-container>
 </section>

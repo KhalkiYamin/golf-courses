@@ -1,0 +1,1052 @@
+:host {
+    display: block;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PLANNING PAGE — Full Calendar Dashboard
+   ══════════════════════════════════════════════════════════ */
+.planning-page {
+    --blue: #3b6feb;
+    --blue-l: #e8effe;
+    --blue-m: #c2d4fc;
+    --green: #059669;
+    --green-l: #d1fae5;
+    --slate: #64748b;
+    --slate-l: #f1f5f9;
+    --amber: #b45309;
+    --amber-l: #fef3c7;
+    --ink-1: #0f172a;
+    --ink-2: #334155;
+    --ink-3: #94a3b8;
+    --border: #e2e8f0;
+    --surface: #ffffff;
+    --bg: #f8fafc;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(0, 0, 0, .06), 0 4px 16px rgba(0, 0, 0, .05);
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+    padding: 20px 24px;
+    background: var(--bg);
+    min-height: 100%;
+}
+
+/* ── TOP BAR ── */
+.planner-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+}
+
+.pt-brand {
+    flex: 0 0 auto;
+}
+
+.pt-kicker {
+    margin: 0 0 2px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    font-weight: 700;
+    color: var(--blue);
+}
+
+.pt-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ink-1);
+    line-height: 1.1;
+}
+
+/* Stat pills */
+.pt-stats {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.pstat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 18px;
+    border-radius: 10px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all .16s;
+    min-width: 76px;
+    text-align: center;
+    font-family: inherit;
+    gap: 1px;
+}
+
+.pstat strong {
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.pstat span {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ink-3);
+}
+
+.pstat-blue strong {
+    color: var(--blue);
+}
+
+.pstat-green strong {
+    color: var(--green);
+}
+
+.pstat-slate strong {
+    color: var(--slate);
+}
+
+.pstat-amber strong {
+    color: var(--amber);
+}
+
+.pstat-amber {
+    cursor: default;
+}
+
+.pstat-blue.pstat-on {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+}
+
+.pstat-green.pstat-on {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+}
+
+.pstat-slate.pstat-on {
+    background: var(--slate);
+    border-color: var(--slate);
+    color: #fff;
+}
+
+.pstat-blue.pstat-on strong,
+.pstat-green.pstat-on strong,
+.pstat-slate.pstat-on strong {
+    color: #fff;
+}
+
+.pstat-blue.pstat-on span,
+.pstat-green.pstat-on span,
+.pstat-slate.pstat-on span {
+    color: rgba(255, 255, 255, .8);
+}
+
+/* Actions */
+.pt-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.pt-select {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--surface);
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink-2);
+    outline: none;
+    cursor: pointer;
+    transition: border-color .15s;
+}
+
+.pt-select:focus {
+    border-color: var(--blue);
+}
+
+/* View switcher */
+.view-switcher {
+    display: flex;
+    background: var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+}
+
+.vsw {
+    padding: 5px 14px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    transition: all .15s;
+}
+
+.vsw.vsw-on {
+    background: var(--surface);
+    color: var(--blue);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .10);
+}
+
+/* ── NAVIGATION BAR ── */
+.planner-nav {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.pnav-period {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.pnav-arrow {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-2);
+    transition: all .15s;
+}
+
+.pnav-arrow:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+.pnav-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-1);
+    min-width: 200px;
+    text-align: center;
+}
+
+.pnav-today {
+    padding: 5px 14px;
+    border-radius: 7px;
+    border: 1.5px solid var(--blue);
+    background: var(--blue-l);
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+}
+
+.pnav-today:hover {
+    background: var(--blue);
+    color: #fff;
+}
+
+.pnav-chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-left: auto;
+}
+
+.pchip {
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1.5px solid var(--border);
+    background: var(--bg);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-2);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-family: inherit;
+    transition: all .14s;
+}
+
+.pchip:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+.pchip.pchip-on {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+}
+
+.pch-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.pchip-blue.pchip-on {
+    background: var(--blue);
+    border-color: var(--blue);
+}
+
+.pchip-green.pchip-on {
+    background: var(--green);
+    border-color: var(--green);
+}
+
+.pchip-slate.pchip-on {
+    background: var(--slate);
+    border-color: var(--slate);
+}
+
+.pchip-clear {
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1.5px solid #fca5a5;
+    background: #fef2f2;
+    color: #dc2626;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .14s;
+}
+
+.pchip-clear:hover {
+    background: #fca5a5;
+}
+
+/* ════════════════════════════════════════════════
+   WEEK VIEW — Time-slot calendar (Google-style)
+   ════════════════════════════════════════════════ */
+
+.week-planner {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sticky day header */
+.wp-header {
+    display: grid;
+    grid-template-columns: 60px repeat(7, 1fr);
+    border-bottom: 2px solid var(--border);
+    background: #fafbff;
+    position: sticky;
+    top: 0;
+    z-index: 4;
+}
+
+.wp-gutter {
+    border-right: 1px solid var(--border);
+    min-height: 56px;
+}
+
+.wp-dhead {
+    padding: 10px 6px 8px;
+    text-align: center;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.wpd-today {
+    background: var(--blue-l);
+}
+
+.wpd-name {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    font-weight: 700;
+    color: var(--ink-3);
+}
+
+.wpd-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ink-1);
+    line-height: 1;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.wpd-circle {
+    background: var(--blue);
+    color: #fff;
+}
+
+.wpd-today .wpd-name {
+    color: var(--blue);
+}
+
+.wpd-count {
+    font-size: 10px;
+    font-weight: 700;
+    background: var(--blue-m);
+    color: var(--blue);
+    padding: 1px 7px;
+    border-radius: 20px;
+}
+
+/* Scrollable body */
+.wp-body {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    overflow-y: auto;
+    max-height: 620px;
+}
+
+.wp-timecol {
+    border-right: 1px solid var(--border);
+    background: #fafbff;
+    display: flex;
+    flex-direction: column;
+}
+
+.wp-timelabel {
+    height: 72px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 6px 10px 0 0;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--border);
+}
+
+/* Day columns */
+.wp-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+}
+
+.wp-daycol {
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+}
+
+.wpdc-today {
+    background: rgba(59, 111, 235, 0.025);
+}
+
+/* Time slot row */
+.wp-slot {
+    height: 72px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--border);
+    padding: 3px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.wp-slot:last-child {
+    border-bottom: none;
+}
+
+/* Event card inside a slot */
+.wp-event {
+    border-radius: 7px;
+    padding: 5px 7px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    border-left: 3px solid currentColor;
+    font-size: 11px;
+    line-height: 1.3;
+    overflow: hidden;
+    cursor: default;
+    min-height: 0;
+}
+
+.wpe-upcoming {
+    background: #eff3ff;
+    color: var(--blue);
+}
+
+.wpe-today {
+    background: #d1fae5;
+    color: var(--green);
+}
+
+.wpe-past {
+    background: var(--slate-l);
+    color: var(--slate);
+    opacity: .85;
+}
+
+.wpe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+}
+
+.wpe-time {
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.wpe-sport {
+    font-size: 9px;
+    background: rgba(255, 255, 255, .65);
+    padding: 1px 5px;
+    border-radius: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+}
+
+.wpe-theme {
+    margin: 0;
+    font-weight: 700;
+    font-size: 11px;
+    color: var(--ink-1);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.wpe-footer {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: auto;
+}
+
+.wpe-av {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: currentColor;
+    color: #fff;
+    font-size: 7px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    opacity: .85;
+}
+
+.wpe-lieu {
+    font-size: 10px;
+    color: var(--ink-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ════════════════════════════════════════════════
+   MONTH VIEW — Big full-page calendar grid
+   ════════════════════════════════════════════════ */
+
+.month-planner {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.mp-wname {
+    padding: 10px 0;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ink-3);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    background: #f8fafc;
+    border-bottom: 2px solid var(--border);
+}
+
+.mp-day {
+    min-height: 130px;
+    padding: 8px 10px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    transition: background .14s;
+    position: relative;
+}
+
+.mp-day:nth-child(7n) {
+    border-right: none;
+}
+
+.mp-day:hover:not(.mp-empty) {
+    background: #f5f8ff;
+}
+
+.mp-empty {
+    background: var(--bg);
+    opacity: .45;
+    pointer-events: none;
+    cursor: default;
+}
+
+.mp-today {
+    background: var(--blue-l);
+}
+
+.mp-selected {
+    background: #dde8ff;
+    outline: 2px solid var(--blue);
+    outline-offset: -2px;
+}
+
+/* Day header inside cell */
+.mp-dhead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.mp-dnum {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--ink-1);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mp-today .mp-dnum {
+    background: var(--blue);
+    color: #fff;
+}
+
+.mp-badge {
+    font-size: 9px;
+    font-weight: 700;
+    background: var(--blue-m);
+    color: var(--blue);
+    padding: 1px 6px;
+    border-radius: 10px;
+}
+
+/* Session pill rows inside cell */
+.mp-events {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.mp-pill {
+    border-radius: 5px;
+    padding: 3px 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.mpp-upcoming {
+    background: #eff3ff;
+    color: var(--blue);
+}
+
+.mpp-today {
+    background: #d1fae5;
+    color: var(--green);
+}
+
+.mpp-past {
+    background: var(--slate-l);
+    color: var(--slate);
+}
+
+.mpp-time {
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+.mpp-theme {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mpp-av {
+    flex-shrink: 0;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    color: #fff;
+    font-size: 6px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .8;
+}
+
+.mp-more {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--ink-3);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: var(--border);
+    align-self: flex-start;
+}
+
+/* ── Detail Drawer (month view) ── */
+.detail-drawer {
+    margin-top: 14px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 18px 22px;
+    border-left: 4px solid var(--blue);
+    animation: ddSlideIn .2s ease;
+}
+
+@keyframes ddSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.dd-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.dd-date {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink-1);
+    text-transform: capitalize;
+}
+
+.dd-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    color: var(--ink-3);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .14s;
+}
+
+.dd-close:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+/* Rows inside drawer */
+.dd-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.dd-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 14px;
+    background: var(--bg);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.ddr-accent {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+}
+
+.ddr-upcoming .ddr-accent {
+    background: var(--blue);
+}
+
+.ddr-today .ddr-accent {
+    background: var(--green);
+}
+
+.ddr-past .ddr-accent {
+    background: var(--slate);
+}
+
+.ddr-time {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--blue);
+    min-width: 52px;
+    flex-shrink: 0;
+}
+
+.ddr-today .ddr-time {
+    color: var(--green);
+}
+
+.ddr-past .ddr-time {
+    color: var(--slate);
+}
+
+.ddr-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.ddr-theme {
+    margin: 0 0 4px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-1);
+}
+
+.ddr-meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-size: 12px;
+    color: var(--ink-3);
+    flex-wrap: wrap;
+}
+
+.ddr-sport {
+    background: var(--blue-l);
+    color: var(--blue);
+    padding: 1px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.ddr-coach {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+}
+
+.ddr-av {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--blue) 0%, #7c3aed 100%);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ddr-cname {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-2);
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ddr-badge {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.ddrbg-upcoming {
+    background: var(--blue-l);
+    color: var(--blue);
+}
+
+.ddrbg-today {
+    background: #d1fae5;
+    color: var(--green);
+}
+
+.ddrbg-past {
+    background: var(--slate-l);
+    color: var(--slate);
+}
+
+.dd-empty {
+    padding: 20px;
+    text-align: center;
+    color: var(--ink-3);
+    font-style: italic;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+    .wp-body {
+        max-height: 520px;
+    }
+
+    .mp-day {
+        min-height: 110px;
+    }
+}
+
+@media (max-width: 900px) {
+    .pt-stats {
+        display: none;
+    }
+
+    .mp-day {
+        min-height: 90px;
+        padding: 5px 6px;
+    }
+
+    .mp-pill {
+        font-size: 9px;
+    }
+
+    .dd-row {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+}
+
+@media (max-width: 768px) {
+    .planning-page {
+        padding: 12px 14px;
+    }
+
+    .planner-top {
+        gap: 10px;
+    }
+
+    .wp-header {
+        grid-template-columns: 44px repeat(7, 1fr);
+    }
+
+    .wp-body {
+        grid-template-columns: 44px 1fr;
+        max-height: 420px;
+    }
+
+    .wp-timelabel {
+        font-size: 9px;
+        padding: 4px 6px 0 0;
+    }
+
+    .pnav-chips {
+        display: none;
+    }
+
+    .pnav-label {
+        min-width: 150px;
+    }
+
+    .mp-day {
+        min-height: 80px;
+    }
+}
+
+@media (max-width: 540px) {
+    .view-switcher {
+        display: none;
+    }
+
+    .mp-day {
+        min-height: 60px;
+    }
+
+    .mp-pill {
+        display: none;
+    }
+
+    .mp-badge {
+        display: flex !important;
+    }
+
+    .wp-dhead {
+        padding: 6px 3px;
+    }
+
+    .wpd-num {
+        font-size: 15px;
+        width: 26px;
+        height: 26px;
+    }
+}

@@ -1,9 +1,83 @@
-<section>
-    <h3 class="page-title">Notifications</h3>
-    <div class="card p-3">
-        <div class="notification-item" *ngFor="let item of notifications">
-            <div>{{ item.message }}</div>
-            <small>{{ item.date }}</small>
+<div class="notifications-page">
+    <div class="notifications-header">
+        <div>
+            <h2>Notifications</h2>
+            <p class="subtitle">Consultez les dernières mises à jour de votre espace athlète.</p>
+        </div>
+
+        <div class="header-actions">
+            <div class="unread-badge" *ngIf="getUnreadCount() > 0">
+                {{ getUnreadCount() }} non lue<span *ngIf="getUnreadCount() > 1">s</span>
+            </div>
+
+            <button class="mark-all-btn" (click)="markAllAsRead()" [disabled]="getUnreadCount() === 0">
+                Tout marquer comme lu
+            </button>
         </div>
     </div>
-</section>
+
+    <div class="filter-tabs">
+        <button type="button" [class.active]="selectedFilter === 'all'" (click)="setFilter('all')">
+            Toutes
+        </button>
+
+        <button type="button" [class.active]="selectedFilter === 'unread'" (click)="setFilter('unread')">
+            Non lues
+        </button>
+
+        <button type="button" [class.active]="selectedFilter === 'read'" (click)="setFilter('read')">
+            Lues
+        </button>
+    </div>
+
+    <div class="notifications-list" *ngIf="filteredNotifications.length > 0; else emptyState">
+        <div class="notification-card"
+            *ngFor="let notification of filteredNotifications; trackBy: trackByNotificationId"
+            [class.unread]="!notification.read">
+
+            <div class="notification-icon">
+                <i [class]="getIcon(notification.type)"></i>
+            </div>
+
+            <div class="notification-content">
+                <div class="notification-top">
+                    <h4>{{ notification.title }}</h4>
+                    <span class="notification-time">{{ notification.time }}</span>
+                </div>
+
+                <p>{{ notification.message }}</p>
+
+                <div class="notification-status">
+                    <span class="status-badge unread-status" *ngIf="!notification.read">Nouvelle</span>
+                    <span class="status-badge read-status" *ngIf="notification.read">Lue</span>
+                </div>
+            </div>
+
+            <div class="notification-actions">
+                <button type="button" class="action-btn read-btn" *ngIf="!notification.read"
+                    (click)="markAsRead(notification)">
+                    Marquer comme lu
+                </button>
+
+                <button type="button" class="action-btn unread-btn" *ngIf="notification.read"
+                    (click)="markAsUnread(notification)">
+                    Marquer non lu
+                </button>
+
+                <button type="button" class="action-btn delete-btn" (click)="deleteNotification(notification.id)">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #emptyState>
+        <div class="empty-state">
+            <div class="empty-icon">
+                <i class="fas fa-bell-slash"></i>
+            </div>
+            <h3>Aucune notification</h3>
+            <p>Vous n’avez aucune notification pour le moment.</p>
+        </div>
+    </ng-template>
+</div>

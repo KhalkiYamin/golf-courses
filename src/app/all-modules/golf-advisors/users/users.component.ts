@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminUserService } from 'src/app/services/admin-user.service';
 import { CategoryService } from 'src/app/services/category.service';
-import { catchError } from 'rxjs/operators';
 import { AdminUser } from '../../models/admin-user';
 import { Category } from '../../models/category';
 
@@ -20,7 +19,7 @@ export class UsersComponent implements OnInit {
     selectedTab: 'ATHLETE' | 'COACH' = 'ATHLETE';
 
     searchTerm = '';
-    coachFilter: 'TOUS' | 'VALIDÉ' | 'EN ATTENTE' = 'TOUS';
+    coachFilter: 'TOUS' | 'VALIDÉ' | 'EN ATTENTE' | 'DÉSACTIVÉ' = 'TOUS';
 
     currentPage = 1;
     pageSize = 4;
@@ -155,7 +154,7 @@ export class UsersComponent implements OnInit {
         this.selectedUser = null;
     }
 
-    setCoachFilter(filter: 'TOUS' | 'VALIDÉ' | 'EN ATTENTE'): void {
+    setCoachFilter(filter: 'TOUS' | 'VALIDÉ' | 'EN ATTENTE' | 'DÉSACTIVÉ'): void {
         this.coachFilter = filter;
         this.currentPage = 1;
     }
@@ -310,15 +309,20 @@ export class UsersComponent implements OnInit {
         }
     }
 
-    confirmDelete(user: AdminUser): void {
-        const confirmation = confirm(`هل أنت متأكد من حذف ${user.prenom} ${user.nom} ؟`);
-        if (!confirmation) return;
+    toggleUserStatus(user: AdminUser): void {
+        const action = user.enabled ? 'désactiver' : 'activer';
+        const confirmation = confirm(`Êtes-vous sûr de vouloir ${action} ${user.prenom} ${user.nom} ?`);
 
-        this.adminUserService.deleteUserWithFallback(user.id, user.role).pipe(
-            catchError(() => this.adminUserService.deactivateUser(user))
-        ).subscribe({
+        if (!confirmation) {
+            return;
+        }
+
+        this.adminUserService.updateUserStatus(user.id, !user.enabled).subscribe({
             next: () => {
-                this.successMessage = 'Utilisateur supprimé/désactivé avec succès';
+                this.successMessage = user.enabled
+                    ? 'Utilisateur désactivé avec succès'
+                    : 'Utilisateur activé avec succès';
+
                 this.selectedUser = null;
                 this.loadUsers();
 
@@ -327,8 +331,8 @@ export class UsersComponent implements OnInit {
                 }, 3000);
             },
             error: (err) => {
-                console.error('Erreur suppression utilisateur', err);
-                alert(err?.error?.message || err?.message || 'Suppression impossible pour cet utilisateur.');
+                console.error('Erreur changement statut utilisateur', err);
+                alert(err?.error?.message || err?.message || 'Impossible de modifier le statut de cet utilisateur.');
             }
         });
     }
@@ -358,7 +362,11 @@ export class UsersComponent implements OnInit {
     }
 
     getUserStatus(user: AdminUser): string {
-        return user.statut || (user.enabled ? 'VALIDÉ' : 'EN ATTENTE');
+        if (user.enabled === false) {
+            return 'DÉSACTIVÉ';
+        }
+
+        return user.statut || 'VALIDÉ';
     }
 
     getSpecialiteLabel(user: AdminUser): string {

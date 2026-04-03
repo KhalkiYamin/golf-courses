@@ -11,6 +11,7 @@ import { CoachEvaluationsComponent } from './coach-evaluations/coach-evaluations
 import { CoachNotificationsComponent } from './coach-notifications/coach-notifications.component';
 import { CoachResourcesComponent } from './coach-resources/coach-resources.component';
 import { CoachReservationsComponent } from './coach-reservations/coach-reservations.component';
+import { CoachPlanningComponent } from './coach-planning/coach-planning.component';
 
 const routes: Routes = [
     {
@@ -28,6 +29,7 @@ const routes: Routes = [
             { path: 'dashboard/coach/presences/:seanceId', component: CoachPresenceComponent },
             { path: 'dashboard/coach/presences/:seanceId', component: CoachPresenceComponent },
 
+            { path: 'planning', component: CoachPlanningComponent },
             { path: 'resources', component: CoachResourcesComponent },
             { path: 'reservations/:seanceId', component: CoachReservationsComponent },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }

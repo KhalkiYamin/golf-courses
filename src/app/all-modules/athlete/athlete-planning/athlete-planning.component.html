@@ -1,0 +1,184 @@
+﻿    <section class="planning-page">
+
+        <!-- ═══════════════════ TOP BAR ═══════════════════ -->
+        <div class="planner-top">
+            <div class="pt-brand">
+                <span class="pt-kicker">Athlete Dashboard</span>
+                <h2 class="pt-title">Mon Planning</h2>
+            </div>
+            <div class="pt-stats">
+                <button class="pstat pstat-blue" [class.pstat-on]="filterStatus === 'upcoming'"
+                    (click)="setQuickFilter('upcoming')" type="button">
+                    <strong>{{ upcomingCount }}</strong><span>Planifiees</span>
+                </button>
+                <button class="pstat pstat-green" [class.pstat-on]="filterStatus === 'today'"
+                    (click)="setQuickFilter('today')" type="button">
+                    <strong>{{ todayCount }}</strong><span>Confirmees</span>
+                </button>
+                <button class="pstat pstat-slate" [class.pstat-on]="filterStatus === 'past'"
+                    (click)="setQuickFilter('past')" type="button">
+                    <strong>{{ pastCount }}</strong><span>Terminees</span>
+                </button>
+                <div class="pstat pstat-amber">
+                    <strong>{{ uniqueCoachesCount }}</strong><span>Coachs</span>
+                </div>
+            </div>
+            <div class="pt-actions">
+                <select class="pt-select" [(ngModel)]="filterSport" (change)="applyFilters()">
+                    <option value="">Tous sports</option>
+                    <option *ngFor="let sport of availableSports" [value]="sport">{{ sport }}</option>
+                </select>
+                <div class="view-switcher">
+                    <button class="vsw" [class.vsw-on]="viewMode === 'week'" (click)="viewMode = 'week'" type="button">
+                        <svg viewBox="0 0 18 18" fill="currentColor" width="13" height="13">
+                            <rect x="1" y="1" width="4" height="16" rx="1" />
+                            <rect x="7" y="1" width="4" height="16" rx="1" />
+                            <rect x="13" y="1" width="4" height="16" rx="1" />
+                        </svg>
+                        Semaine
+                    </button>
+                    <button class="vsw" [class.vsw-on]="viewMode === 'month'"
+                        (click)="viewMode = 'month'; buildCalendar()" type="button">
+                        <svg viewBox="0 0 18 18" fill="currentColor" width="13" height="13">
+                            <rect x="1" y="1" width="7" height="7" rx="1" />
+                            <rect x="10" y="1" width="7" height="7" rx="1" />
+                            <rect x="1" y="10" width="7" height="7" rx="1" />
+                            <rect x="10" y="10" width="7" height="7" rx="1" />
+                        </svg>
+                        Mois
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════════════ NAVIGATION BAR ═══════════════════ -->
+        <div class="planner-nav">
+            <div class="pnav-period">
+                <button class="pnav-arrow" (click)="viewMode === 'week' ? prevWeek() : prevMonth()"
+                    type="button">&#8249;</button>
+                <span class="pnav-label">
+                    <ng-container *ngIf="viewMode === 'week'">{{ currentWeekLabel }}</ng-container>
+                    <ng-container *ngIf="viewMode === 'month'">{{ calendarMonthLabel | titlecase }}</ng-container>
+                </span>
+                <button class="pnav-arrow" (click)="viewMode === 'week' ? nextWeek() : nextMonth()"
+                    type="button">&#8250;</button>
+                <button class="pnav-today" (click)="viewMode === 'week' ? goToCurrentWeek() : goToToday()"
+                    type="button">Aujourd'hui</button>
+            </div>
+            <div class="pnav-chips">
+                <button class="pchip" [class.pchip-on]="filterStatus === 'all'" (click)="setQuickFilter('all')"
+                    type="button">Tous</button>
+                <button class="pchip pchip-blue" [class.pchip-on]="filterStatus === 'upcoming'"
+                    (click)="setQuickFilter('upcoming')" type="button"><span class="pch-dot"></span>Planifiees</button>
+                <button class="pchip pchip-green" [class.pchip-on]="filterStatus === 'today'"
+                    (click)="setQuickFilter('today')" type="button"><span class="pch-dot"></span>Confirmees</button>
+                <button class="pchip pchip-slate" [class.pchip-on]="filterStatus === 'past'"
+                    (click)="setQuickFilter('past')" type="button"><span class="pch-dot"></span>Terminees</button>
+                <button *ngIf="hasActiveFilters" class="pchip-clear" (click)="clearFilters()" type="button">&#x2715;
+                    Reset</button>
+            </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════
+             WEEK VIEW — Time-slot calendar
+        ═══════════════════════════════════════════ -->
+        <ng-container *ngIf="viewMode === 'week'">
+            <div class="week-planner">
+
+                <!-- Day header row -->
+                <div class="wp-header">
+                    <div class="wp-gutter"></div>
+                    <div class="wp-dhead" *ngFor="let day of currentWeekDays" [class.wpd-today]="day.isToday">
+                        <span class="wpd-name">{{ day.label }}</span>
+                        <span class="wpd-num" [class.wpd-circle]="day.isToday">{{ day.dayNum }}</span>
+                        <span class="wpd-count" *ngIf="day.sessions.length">{{ day.sessions.length }}</span>
+                    </div>
+                </div>
+
+                <!-- Scrollable body: time labels + event grid -->
+                <div class="wp-body">
+                    <div class="wp-timecol">
+                        <div class="wp-timelabel" *ngFor="let h of timeSlots">{{ h }}:00</div>
+                    </div>
+                    <div class="wp-grid">
+                        <div class="wp-daycol" *ngFor="let day of currentWeekDays" [class.wpdc-today]="day.isToday">
+                            <div class="wp-slot" *ngFor="let h of timeSlots">
+                                <div class="wp-event" *ngFor="let s of getSessionsForDayAndHour(day, h)"
+                                    [class]="'wpe-' + s.status">
+                                    <div class="wpe-header">
+                                        <span class="wpe-time">{{ s.heure }}</span>
+                                        <span class="wpe-sport">{{ s.specialite }}</span>
+                                    </div>
+                                    <p class="wpe-theme">{{ s.theme }}</p>
+                                    <div class="wpe-footer">
+                                        <span class="wpe-av">{{ s.coachInitials }}</span>
+                                        <span class="wpe-lieu">{{ s.lieu }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </ng-container>
+
+        <!-- ═══════════════════════════════════════════
+             MONTH VIEW — Big calendar grid
+        ═══════════════════════════════════════════ -->
+        <ng-container *ngIf="viewMode === 'month'">
+            <div class="month-planner">
+                <div class="mp-wname" *ngFor="let wd of weekDayNames">{{ wd }}</div>
+                <div class="mp-day" *ngFor="let day of calendarDays" [class.mp-empty]="!day.date"
+                    [class.mp-today]="day.isToday" [class.mp-has]="day.sessions.length > 0"
+                    [class.mp-selected]="selectedCalendarDay?.date?.toDateString() === day.date?.toDateString()"
+                    (click)="selectCalendarDay(day)">
+                    <div class="mp-dhead" *ngIf="day.date">
+                        <span class="mp-dnum">{{ day.date.getDate() }}</span>
+                        <span class="mp-badge" *ngIf="day.sessions.length">{{ day.sessions.length }}</span>
+                    </div>
+                    <div class="mp-events">
+                        <div class="mp-pill" *ngFor="let s of day.sessions.slice(0,3)" [class]="'mpp-' + s.status">
+                            <span class="mpp-time">{{ s.heure }}</span>
+                            <span class="mpp-theme">{{ s.theme | slice:0:14 }}</span>
+                            <span class="mpp-av">{{ s.coachInitials }}</span>
+                        </div>
+                        <div class="mp-more" *ngIf="day.sessions.length > 3">+{{ day.sessions.length - 3 }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detail drawer — slides in when a day is selected -->
+            <div class="detail-drawer" *ngIf="selectedCalendarDay">
+                <div class="dd-bar">
+                    <h4 class="dd-date">{{ selectedCalendarDay.date | date:'EEEE d MMMM yyyy' }}</h4>
+                    <button class="dd-close" (click)="selectedCalendarDay = null" type="button">&#10005;</button>
+                </div>
+                <ng-container *ngIf="selectedCalendarDay.sessions.length; else ddEmpty">
+                    <div class="dd-list">
+                        <div class="dd-row" *ngFor="let s of selectedCalendarDay.sessions" [class]="'ddr-' + s.status">
+                            <div class="ddr-accent"></div>
+                            <div class="ddr-time">{{ s.heure }}</div>
+                            <div class="ddr-body">
+                                <p class="ddr-theme">{{ s.theme }}</p>
+                                <div class="ddr-meta">
+                                    <span class="ddr-sport">{{ s.specialite }}</span>
+                                    <span>&#183;</span>
+                                    <span class="ddr-lieu">{{ s.lieu }}</span>
+                                </div>
+                            </div>
+                            <div class="ddr-coach">
+                                <span class="ddr-av">{{ s.coachInitials }}</span>
+                                <span class="ddr-cname">{{ s.coach }}</span>
+                            </div>
+                            <span class="ddr-badge" [class]="'ddrbg-' + s.status">{{ getStatusLabel(s.status) }}</span>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-template #ddEmpty>
+                    <p class="dd-empty">Aucune seance ce jour.</p>
+                </ng-template>
+            </div>
+        </ng-container>
+
+    </section>

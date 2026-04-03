@@ -1,56 +1,202 @@
 <section class="coach-athletes-section">
     <div class="section-header">
         <div>
-            <h3 class="page-title">Mes Athlètes</h3>
-            <p class="section-subtitle">Liste des athlètes suivis par le coach</p>
+            <span class="page-kicker">Evaluation Performance</span>
+            <h3 class="page-title">Suivi des Athletes</h3>
+            <p class="section-subtitle">Attribuez des notes precises, laissez un retour professionnel et pilotez la
+                progression individuelle.</p>
         </div>
     </div>
 
-    <div class="athletes-card">
+    <div class="summary-grid" *ngIf="!isLoading && !errorMessage && athletes.length > 0">
+        <article class="summary-card accent-green">
+            <span>Effectif suivi</span>
+            <strong>{{ athletes.length }}</strong>
+        </article>
 
-        <div class="empty-state" *ngIf="isLoading">
-            Chargement des athlètes...
+        <article class="summary-card accent-blue">
+            <span>Moyenne generale</span>
+            <strong>{{ averageScore }}/10</strong>
+        </article>
+
+        <article class="summary-card accent-gold">
+            <span>Athletes prets</span>
+            <strong>{{ readyCount }}</strong>
+        </article>
+
+        <article class="summary-card accent-dark" *ngIf="topAthlete as leader">
+            <span>Top performer</span>
+            <strong>{{ leader.nom }}</strong>
+            <small>{{ leader.sport }} • {{ overallScore(leader) }}/10</small>
+        </article>
+    </div>
+
+    <div class="feedback-banner" *ngIf="successMessage">
+        {{ successMessage }}
+    </div>
+
+    <div class="athletes-workspace">
+        <div class="state-card" *ngIf="isLoading">
+            Chargement des athletes...
         </div>
 
-        <div class="empty-state error-state" *ngIf="!isLoading && errorMessage">
+        <div class="state-card error-state" *ngIf="!isLoading && errorMessage">
             {{ errorMessage }}
         </div>
 
         <ng-container *ngIf="!isLoading && !errorMessage">
-            <div class="athlete-row" *ngFor="let athlete of athletes">
-                <div class="athlete-left">
-                    <div class="athlete-avatar">
-                        {{ athlete.nom?.charAt(0) || 'A' }}
+            <aside class="athletes-panel">
+                <div class="panel-top">
+                    <div>
+                        <h4>Liste des athletes</h4>
+                        <p>Selectionnez un profil pour modifier son evaluation.</p>
                     </div>
-
-                    <div class="athlete-info">
-                        <strong>{{ athlete.nom }}</strong>
-                        <small>{{ athlete.niveau }}</small>
-                    </div>
+                    <span class="panel-count">{{ athletes.length }}</span>
                 </div>
 
-                <div class="athlete-center">
-                    <span class="sport-badge">{{ athlete.sport }}</span>
-                </div>
+                <div class="athlete-list" *ngIf="athletes.length > 0; else emptyAthletesState">
+                    <button type="button" class="athlete-card" *ngFor="let athlete of athletes"
+                        [class.active]="selectedAthleteId === athlete.id" (click)="selectAthlete(athlete.id)">
+                        <div class="athlete-card-head">
+                            <div class="athlete-avatar">
+                                {{ athlete.nom.charAt(0) || 'A' }}
+                            </div>
 
-                <div class="progress-wrapper">
-                    <div class="progress">
-                        <div class="progress-bar" [style.width.%]="athlete.progression"></div>
-                    </div>
-                    <small>{{ athlete.progression }}%</small>
-                </div>
+                            <div class="athlete-identity">
+                                <strong>{{ athlete.nom }}</strong>
+                                <small>{{ athlete.niveau }}</small>
+                            </div>
+                        </div>
 
-                <div class="athlete-actions">
-                    <button class="profile-btn" (click)="viewProfile(athlete.id)">
-                        Voir profil
+                        <div class="athlete-meta-row">
+                            <span class="sport-badge">{{ athlete.sport }}</span>
+                            <span class="score-badge">{{ overallScore(athlete) }}/10</span>
+                        </div>
+
+                        <div class="progress-header">
+                            <span class="progress-level">{{ getProgressLabel(athlete.niveau) }}</span>
+                            <span class="progress-value">{{ athlete.progression }}%</span>
+                        </div>
+
+                        <div class="progress-wrapper">
+                            <div class="progress">
+                                <div class="progress-bar" [ngClass]="getProgressBarClass(athlete.niveau)"
+                                    [style.width.%]="athlete.progression"></div>
+                            </div>
+                        </div>
                     </button>
                 </div>
-            </div>
+            </aside>
 
-            <div class="empty-state" *ngIf="athletes.length === 0">
-                Aucun athlète trouvé.
-            </div>
+            <section class="evaluation-panel" *ngIf="selectedAthlete as athlete; else selectAthleteState">
+                <div class="panel-top evaluation-top">
+                    <div>
+                        <h4>{{ athlete.nom }}</h4>
+                        <p>{{ athlete.sport }} • {{ athlete.niveau }}</p>
+                    </div>
+
+                    <div class="top-actions">
+                        <button class="ghost-btn" (click)="viewProfile(athlete.id)">Voir profil</button>
+                        <button class="ghost-btn secondary" (click)="resetEvaluation()">Reinitialiser</button>
+                        <button class="save-btn" (click)="saveEvaluation()">Enregistrer</button>
+                    </div>
+                </div>
+
+                <div class="insight-banner">
+                    <div>
+                        <span class="banner-label">Lecture coach</span>
+                        <p>{{ athlete.coachInsight }}</p>
+                    </div>
+                    <span class="updated-at">Maj: {{ athlete.lastUpdated }}</span>
+                </div>
+
+                <div class="criteria-grid">
+                    <article class="criterion-card">
+                        <div class="criterion-head">
+                            <div>
+                                <span>Technique</span>
+                                <strong>{{ athlete.technique }}/10</strong>
+                            </div>
+                            <small>Qualite gestuelle</small>
+                        </div>
+                        <input type="range" min="1" max="10" [ngModel]="athlete.technique"
+                            (ngModelChange)="setScore(athlete, 'technique', $event)" />
+                        <div class="criterion-bar">
+                            <div class="fill technique" [style.width.%]="scoreWidth(athlete.technique)"></div>
+                        </div>
+                    </article>
+
+                    <article class="criterion-card">
+                        <div class="criterion-head">
+                            <div>
+                                <span>Physique</span>
+                                <strong>{{ athlete.physique }}/10</strong>
+                            </div>
+                            <small>Condition et endurance</small>
+                        </div>
+                        <input type="range" min="1" max="10" [ngModel]="athlete.physique"
+                            (ngModelChange)="setScore(athlete, 'physique', $event)" />
+                        <div class="criterion-bar">
+                            <div class="fill physique" [style.width.%]="scoreWidth(athlete.physique)"></div>
+                        </div>
+                    </article>
+
+                    <article class="criterion-card">
+                        <div class="criterion-head">
+                            <div>
+                                <span>Mental</span>
+                                <strong>{{ athlete.mental }}/10</strong>
+                            </div>
+                            <small>Confiance et concentration</small>
+                        </div>
+                        <input type="range" min="1" max="10" [ngModel]="athlete.mental"
+                            (ngModelChange)="setScore(athlete, 'mental', $event)" />
+                        <div class="criterion-bar">
+                            <div class="fill mental" [style.width.%]="scoreWidth(athlete.mental)"></div>
+                        </div>
+                    </article>
+
+                    <article class="criterion-card">
+                        <div class="criterion-head">
+                            <div>
+                                <span>Discipline</span>
+                                <strong>{{ athlete.discipline }}/10</strong>
+                            </div>
+                            <small>Engagement et regularite</small>
+                        </div>
+                        <input type="range" min="1" max="10" [ngModel]="athlete.discipline"
+                            (ngModelChange)="setScore(athlete, 'discipline', $event)" />
+                        <div class="criterion-bar">
+                            <div class="fill discipline" [style.width.%]="scoreWidth(athlete.discipline)"></div>
+                        </div>
+                    </article>
+                </div>
+
+                <div class="evaluation-summary-card">
+                    <div>
+                        <span class="summary-label">Note globale</span>
+                        <strong>{{ overallScore(athlete) }}/10</strong>
+                    </div>
+                    <p>Cette synthese combine technique, physique, mental et discipline pour vous aider a piloter les
+                        decisions de progression.</p>
+                </div>
+
+                <div class="comment-card">
+                    <label for="coach-commentaire">Commentaire coach</label>
+                    <textarea id="coach-commentaire" rows="6" [(ngModel)]="athlete.commentaire"
+                        placeholder="Ajoutez une appreciation detaillee sur les points forts, les axes de progression et les objectifs a court terme."></textarea>
+                </div>
+            </section>
+
+            <ng-template #emptyAthletesState>
+                <div class="state-card">Aucun athlete trouve.</div>
+            </ng-template>
+
+            <ng-template #selectAthleteState>
+                <section class="evaluation-panel empty-evaluation">
+                    <div class="state-card">Selectionnez un athlete pour commencer son evaluation.</div>
+                </section>
+            </ng-template>
         </ng-container>
-
     </div>
 </section>

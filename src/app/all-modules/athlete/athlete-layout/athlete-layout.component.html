@@ -1,32 +1,55 @@
 <div class="athlete-layout">
     <aside class="sidebar">
-        <div>
-            <div class="brand">
-                <div class="brand-logo">A</div>
-                <div class="brand-text">
-                    <h2>Athlete Space</h2>
-                    <p>Progression et suivi</p>
+        <div class="sidebar-shell">
+            <div>
+                <div class="brand">
+                    <div class="brand-logo">
+                        <img src="assets/img/athlethe.png" alt="Athlete logo" class="brand-logo-img">
+                    </div>
+                    <div class="brand-text">
+                        <h2>Athlete</h2>
+                        <p>Dashboard sportif</p>
+                    </div>
                 </div>
+
+                <nav class="nav-menu">
+                    <a *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active"
+                        [routerLinkActiveOptions]="{ exact: true }" class="nav-item standalone">
+                        <span class="icon">{{ item.icon }}</span>
+                        <span class="nav-label">{{ item.label }}</span>
+                    </a>
+
+                    <div class="menu-section" *ngFor="let section of menuSections">
+                        <button type="button" class="section-trigger" [class.active]="isSectionActive(section)"
+                            [class.open]="isSectionOpen(section.id)" (click)="toggleSection(section.id)">
+                            <span class="icon">{{ section.icon }}</span>
+                            <span class="section-label">{{ section.label }}</span>
+                            <span class="chevron">⌄</span>
+                        </button>
+
+                        <div class="section-body" [class.open]="isSectionOpen(section.id)">
+                            <div class="section-links">
+                                <a *ngFor="let child of section.children" [routerLink]="child.path"
+                                    routerLinkActive="active" class="sub-item">
+                                    <span class="sub-dot" aria-hidden="true"></span>
+                                    <span>{{ child.label }}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
             </div>
 
-            <div class="athlete-profile-card">
-                <div class="athlete-avatar">{{ athleteProfile.initials }}</div>
-                <div class="athlete-meta">
-                    <h3>{{ athleteProfile.name }}</h3>
-                    <p>{{ athleteProfile.level }}</p>
-                </div>
+            <div class="sidebar-footer">
+                <button type="button" class="secondary-item">
+                    <span class="icon">⚙</span>
+                    <span>Parametres</span>
+                </button>
+                <button class="logout-btn" (click)="logout()">
+                    <span class="icon">⇠</span>
+                    <span>Deconnexion</span>
+                </button>
             </div>
-
-            <nav class="nav-menu">
-                <a *ngFor="let item of menuItems" [routerLink]="item.path" routerLinkActive="active" class="nav-item">
-                    <span class="icon">{{ item.icon }}</span>
-                    <span>{{ item.label }}</span>
-                </a>
-            </nav>
-        </div>
-
-        <div class="sidebar-footer">
-            <button class="logout-btn" (click)="logout()">Deconnexion</button>
         </div>
     </aside>
 

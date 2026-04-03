@@ -7,6 +7,7 @@ import { AthleteProfileComponent } from './athlete-profile/athlete-profile.compo
 import { AthleteSessionsComponent } from './athlete-sessions/athlete-sessions.component';
 import { AthleteResourcesComponent } from './athlete-resources/athlete-resources.component';
 import { AthleteNotificationsComponent } from './athlete-notifications/athlete-notifications.component';
+import { AthletePlanningComponent } from './athlete-planning/athlete-planning.component';
 
 const routes: Routes = [
     {
@@ -18,6 +19,7 @@ const routes: Routes = [
             { path: 'sessions', component: AthleteSessionsComponent },
             { path: 'resources', component: AthleteResourcesComponent },
             { path: 'notifications', component: AthleteNotificationsComponent },
+            { path: 'planning', component: AthletePlanningComponent },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     }
