@@ -1,50 +1,28 @@
-<section class="coach-sessions-page">
-    <div class="sessions-header">
-        <div class="header-left">
-            <h2>Gestion des séances</h2>
-            <p>Consultez, filtrez et gérez vos séances programmées.</p>
+<section class="sessions-page">
+
+    <div class="page-header">
+        <div>
+            <h1>Mes séances</h1>
+            <p>Gérez vos séances, réservations et présences</p>
         </div>
 
-        <div class="header-right">
-            <button class="add-btn" (click)="openAddForm()">
-                + Ajouter une séance
-            </button>
-        </div>
+        <button class="btn-add" (click)="openAddForm()">
+            + Ajouter une séance
+        </button>
     </div>
 
-    <div *ngIf="successMessage" class="alert alert-success">
+    <div *ngIf="successMessage" class="alert success-alert">
         {{ successMessage }}
     </div>
 
-    <div *ngIf="errorMessage" class="alert alert-error">
+    <div *ngIf="errorMessage" class="alert error-alert">
         {{ errorMessage }}
     </div>
 
-    <div class="stats-grid">
-        <div class="stat-card total">
-            <div class="stat-value">{{ totalSessions }}</div>
-            <div class="stat-label">Total séances</div>
-        </div>
-
-        <div class="stat-card completed">
-            <div class="stat-value">{{ completedSessions }}</div>
-            <div class="stat-label">Séances terminées</div>
-        </div>
-
-        <div class="stat-card today">
-            <div class="stat-value">{{ todaySessions }}</div>
-            <div class="stat-label">Séances aujourd’hui</div>
-        </div>
-
-        <div class="stat-card athletes">
-            <div class="stat-value">{{ totalAthletes }}</div>
-            <div class="stat-label">Total athlètes</div>
-        </div>
-    </div>
-
-    <div class="filter-card">
-        <div class="filter-row">
-            <div class="filter-group">
+    <!-- FILTERS -->
+    <div class="filters-card">
+        <div class="filters-grid">
+            <div class="filter-item">
                 <label>Statut</label>
                 <select [(ngModel)]="selectedStatus">
                     <option value="">Tous</option>
@@ -56,19 +34,17 @@
                 </select>
             </div>
 
-            <div class="filter-group">
+            <div class="filter-item">
+                <label>Date</label>
+                <input type="date" [(ngModel)]="selectedDate">
+            </div>
+
+            <div class="filter-item">
                 <label>Groupe</label>
                 <select [(ngModel)]="selectedGroup">
                     <option value="">Tous</option>
-                    <option *ngFor="let groupe of groupes" [value]="groupe">
-                        {{ groupe }}
-                    </option>
+                    <option *ngFor="let g of allGroups" [value]="g">{{ g }}</option>
                 </select>
-            </div>
-
-            <div class="filter-group">
-                <label>Date</label>
-                <input type="date" [(ngModel)]="selectedDate" />
             </div>
         </div>
 
@@ -78,168 +54,161 @@
         </div>
     </div>
 
-    <div class="sessions-content">
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-title">Total séances</span>
+            <h3>{{ totalSessions }}</h3>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-title">Séances terminées</span>
+            <h3>{{ completedSessions }}</h3>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-title">Séances aujourd’hui</span>
+            <h3>{{ todaySessions }}</h3>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-title">Athlètes</span>
+            <h3>{{ totalAthletes }}</h3>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="sessions-layout">
+
+        <!-- LEFT LIST -->
         <div class="sessions-list-card">
             <div class="card-header">
-                <div>
-                    <h3>Liste des séances</h3>
-                    <p>Consultez et gérez vos séances programmées</p>
-                </div>
+                <h3>Liste des séances</h3>
             </div>
 
             <div *ngIf="loading" class="loading-box">
-                Chargement des séances.
+                Chargement...
             </div>
 
             <div *ngIf="!loading && seances.length === 0" class="empty-box">
                 Aucune séance trouvée.
             </div>
 
-            <div class="sessions-table-wrapper" *ngIf="!loading && seances.length > 0">
-                <table class="sessions-table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Thème</th>
-                            <th>Date</th>
-                            <th>Heure</th>
-                            <th>Lieu</th>
-                            <th>Groupe</th>
-                            <th>Statut</th>
-                            <th>Nombre athlètes</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
+            <div *ngIf="!loading && seances.length > 0" class="sessions-list">
+                <div class="session-item" *ngFor="let session of seances"
+                    [class.active]="selectedSession?.id === session.id" (click)="selectSession(session)">
 
-                    <tbody>
-                        <tr *ngFor="let session of seances" [class.active-row]="selectedSession?.id === session.id">
-                            <td>#{{ session.id }}</td>
-                            <td>{{ session.theme }}</td>
-                            <td>{{ session.dateSeance }}</td>
-                            <td>{{ session.heureSeance }}</td>
-                            <td>{{ session.lieu }}</td>
-                            <td>{{ session.groupe || buildSessionGroupLabel(session) || '-' }}</td>
-                            <td>
-                                <span class="status-badge" [ngClass]="session.statut.toLowerCase().replace(' ', '-')">
-                                    {{ session.statut }}
-                                </span>
-                            </td>
-                            <td>{{ session.nombreAthletes || 0 }}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="view-btn" (click)="selectSession(session)">
-                                        Voir
-                                    </button>
+                    <div class="session-main">
+                        <h4>{{ session.theme }}</h4>
+                        <p>📅 {{ session.dateSeance }} - 🕒 {{ session.heureSeance }}</p>
+                        <p>📍 {{ session.lieu }}</p>
+                        <p *ngIf="buildSessionGroupLabel(session)">👥 {{ buildSessionGroupLabel(session) }}</p>
+                    </div>
 
-                                    <button class="edit-btn" (click)="openEditForm(session)">
-                                        Modifier
-                                    </button>
-
-                                    <button class="reservation-btn" (click)="goToReservations(session.id)">
-                                        Réservations
-                                    </button>
-
-                                    <button class="presence-btn" (click)="goToPresences(session.id)">
-                                        Présences
-                                    </button>
-
-                                    <button class="delete-btn" (click)="deleteSession(session.id)"
-                                        [disabled]="deletingSessionId === session.id">
-                                        {{ deletingSessionId === session.id ? 'Suppression...' : 'Supprimer' }}
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                    <div class="session-status">
+                        <span class="badge" [ngClass]="{
+                                'badge-planifiee': session.statut === 'Planifiée',
+                                'badge-confirmee': session.statut === 'Confirmée',
+                                'badge-encours': session.statut === 'En cours',
+                                'badge-terminee': session.statut === 'Terminée',
+                                'badge-annulee': session.statut === 'Annulée'
+                              }">
+                            {{ session.statut }}
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="session-details-card" *ngIf="selectedSession">
+        <!-- RIGHT DETAILS -->
+        <div class="session-details-card" *ngIf="selectedSession as session">
             <div class="card-header">
-                <div>
-                    <h3>Détails de la séance</h3>
-                    <p>{{ selectedSession.theme }}</p>
-                </div>
+                <h3>Détails de la séance</h3>
             </div>
 
             <div class="details-grid">
                 <div class="detail-item">
-                    <label>Description</label>
-                    <p>{{ selectedSession.description || '-' }}</p>
+                    <span class="label">Thème</span>
+                    <strong>{{ session.theme }}</strong>
                 </div>
 
                 <div class="detail-item">
-                    <label>Date</label>
-                    <p>{{ selectedSession.dateSeance }}</p>
+                    <span class="label">Date</span>
+                    <strong>{{ session.dateSeance }}</strong>
                 </div>
 
                 <div class="detail-item">
-                    <label>Heure</label>
-                    <p>{{ selectedSession.heureSeance }}</p>
+                    <span class="label">Heure</span>
+                    <strong>{{ session.heureSeance }}</strong>
                 </div>
 
                 <div class="detail-item">
-                    <label>Lieu</label>
-                    <p>{{ selectedSession.lieu }}</p>
+                    <span class="label">Lieu</span>
+                    <strong>{{ session.lieu }}</strong>
                 </div>
 
                 <div class="detail-item">
-                    <label>Groupe</label>
-                    <p>{{ selectedSession.groupe || buildSessionGroupLabel(selectedSession) || '-' }}</p>
+                    <span class="label">Statut</span>
+                    <strong>{{ session.statut }}</strong>
                 </div>
 
                 <div class="detail-item">
-                    <label>Durée</label>
-                    <p>{{ selectedSession.duree || '-' }}</p>
+                    <span class="label">Groupe</span>
+                    <strong>{{ buildSessionGroupLabel(session) || '-' }}</strong>
                 </div>
 
                 <div class="detail-item">
-                    <label>Objectif</label>
-                    <p>{{ selectedSession.objectif || '-' }}</p>
+                    <span class="label">Durée</span>
+                    <strong>{{ session.duree || '-' }}</strong>
                 </div>
 
                 <div class="detail-item">
-                    <label>Statut</label>
-                    <span class="status-badge" [ngClass]="selectedSession.statut.toLowerCase().replace(' ', '-')">
-                        {{ selectedSession.statut }}
-                    </span>
+                    <span class="label">Objectif</span>
+                    <strong>{{ session.objectif || '-' }}</strong>
                 </div>
 
-                <div class="detail-item">
-                    <label>Athlètes</label>
-                    <p>{{ selectedSession.nombreAthletes || 0 }}</p>
+                <div class="detail-item full-width">
+                    <span class="label">Description</span>
+                    <p>{{ session.description || '-' }}</p>
                 </div>
 
-                <div class="detail-item">
-                    <label>Ressources sportives</label>
-
-                    <ng-container *ngIf="getSelectedSessionRessources().length > 0; else noRessources">
-                        <div class="resources-tags">
-                            <span class="resource-tag" *ngFor="let res of getSelectedSessionRessources()">
-                                {{ res }}
-                            </span>
-                        </div>
-                    </ng-container>
-
-                    <ng-template #noRessources>
-                        <p>-</p>
-                    </ng-template>
+                <div class="detail-item full-width">
+                    <span class="label">Ressources</span>
+                    <p *ngIf="getSelectedSessionRessources().length > 0; else noRes">
+                        {{ getSelectedSessionRessources().join(', ') }}
+                    </p>
+                    <ng-template #noRes>-</ng-template>
                 </div>
             </div>
 
             <div class="details-actions">
-                <button class="reservation-btn large" (click)="goToReservations(selectedSession.id)">
-                    Voir les réservations
+                <button class="btn-edit" (click)="openEditForm(session); $event.stopPropagation()">
+                    Modifier
                 </button>
 
-                <button class="presence-btn large" (click)="goToPresences(selectedSession.id)">
-                    Gérer les présences
+                <button class="btn-annuler" *ngIf="session.statut !== 'Annulée'"
+                    (click)="annulerSeance(session); $event.stopPropagation()">
+                    Annuler
+                </button>
+
+                <button class="btn-presence" (click)="goToPresences(session.id); $event.stopPropagation()">
+                    Présences
+                </button>
+
+                <button class="btn-reservations" (click)="goToReservations(session.id); $event.stopPropagation()">
+                    Réservations
+                </button>
+
+                <button class="btn-delete" [disabled]="deletingSessionId === session.id"
+                    (click)="deleteSession(session.id); $event.stopPropagation()">
+                    {{ deletingSessionId === session.id ? 'Suppression...' : 'Supprimer' }}
                 </button>
             </div>
         </div>
+
     </div>
 
+    <!-- ADD FORM -->
     <div class="modal-backdrop" *ngIf="showAddForm">
         <div class="modal-card">
             <div class="modal-header">
@@ -247,99 +216,56 @@
                 <button class="close-btn" (click)="closeAddForm()">×</button>
             </div>
 
-            <div class="modal-body">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Thème *</label>
-                        <input type="text" [(ngModel)]="newSeance.theme" placeholder="Thème de la séance" />
-                    </div>
+            <div class="form-grid">
+                <input type="text" [(ngModel)]="newSeance.theme" placeholder="Thème">
+                <input type="text" [(ngModel)]="newSeance.lieu" placeholder="Lieu">
+                <input type="date" [(ngModel)]="newSeance.dateSeance">
+                <input type="time" [(ngModel)]="newSeance.heureSeance">
 
-                    <div class="form-group">
-                        <label>Date *</label>
-                        <input type="date" [(ngModel)]="newSeance.dateSeance" />
-                    </div>
+                <select [(ngModel)]="newSeance.sportId" (change)="onSportChange(newSeance.sportId!)">
+                    <option [ngValue]="null">Choisir un sport</option>
+                    <option *ngFor="let sport of sports" [ngValue]="sport.id">{{ sport.title }}</option>
+                </select>
 
-                    <div class="form-group">
-                        <label>Heure *</label>
-                        <input type="time" [(ngModel)]="newSeance.heureSeance" />
-                    </div>
+                <select [(ngModel)]="newSeance.groupe" (change)="onGroupChange(newSeance.groupe)">
+                    <option value="">Choisir un groupe</option>
+                    <option *ngFor="let g of groupes" [value]="g">{{ g }}</option>
+                </select>
 
-                    <div class="form-group">
-                        <label>Lieu *</label>
-                        <input type="text" [(ngModel)]="newSeance.lieu" placeholder="Lieu" />
-                    </div>
+                <input type="text" [(ngModel)]="newSeance.duree" placeholder="Durée">
+                <input type="text" [(ngModel)]="newSeance.objectif" placeholder="Objectif">
 
-                    <div class="form-group">
-                        <label>Durée</label>
-                        <input type="text" [(ngModel)]="newSeance.duree" placeholder="Ex: 01:30" />
-                    </div>
+                <select [(ngModel)]="newSeance.statut">
+                    <option value="Planifiée">Planifiée</option>
+                    <option value="Confirmée">Confirmée</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Terminée">Terminée</option>
+                    <option value="Annulée">Annulée</option>
+                </select>
 
-                    <div class="form-group">
-                        <label>Statut</label>
-                        <select [(ngModel)]="newSeance.statut">
-                            <option value="Planifiée">Planifiée</option>
-                            <option value="Confirmée">Confirmée</option>
-                            <option value="En cours">En cours</option>
-                            <option value="Terminée">Terminée</option>
-                            <option value="Annulée">Annulée</option>
-                        </select>
-                    </div>
+                <textarea [(ngModel)]="newSeance.description" placeholder="Description"></textarea>
+            </div>
 
-                    <div class="form-group full-width">
-                        <label>Sport *</label>
-                        <select [(ngModel)]="newSeance.sportId" (ngModelChange)="onSportChange($event)">
-                            <option [ngValue]="null">Sélectionner un sport</option>
-                            <option *ngFor="let sport of sports" [ngValue]="sport.id">
-                                {{ sport.title }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Groupe</label>
-                        <select [(ngModel)]="newSeance.groupe" (ngModelChange)="onGroupChange($event)">
-                            <option value="">Sélectionner un groupe</option>
-                            <option *ngFor="let groupe of groupes" [value]="groupe">
-                                {{ groupe }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Description</label>
-                        <textarea [(ngModel)]="newSeance.description" rows="3" placeholder="Description"></textarea>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Objectif</label>
-                        <textarea [(ngModel)]="newSeance.objectif" rows="3"
-                            placeholder="Objectif de la séance"></textarea>
-                    </div>
-
-                    <div class="form-group full-width" *ngIf="ressources.length > 0">
-                        <label>Ressources sportives</label>
-                        <div class="ressources-checkboxes">
-                            <label class="ressource-item" *ngFor="let r of ressources">
-                                <input type="checkbox" [checked]="isRessourceSelected(r.id!)"
-                                    (change)="toggleRessource(r.id!)" />
-                                <span>{{ r.nom }}</span>
-                            </label>
-                        </div>
-                    </div>
+            <div class="ressources-box">
+                <h4>Ressources disponibles</h4>
+                <div class="ressources-list">
+                    <label *ngFor="let r of ressources" class="ressource-chip">
+                        <input type="checkbox" [checked]="isRessourceSelected(r.id!)" (change)="toggleRessource(r.id!)">
+                        <span>{{ r.nom }}</span>
+                    </label>
                 </div>
             </div>
 
             <div class="modal-actions">
-                <button class="btn-cancel" (click)="closeAddForm()" [disabled]="saving">
-                    Annuler
-                </button>
-                <button class="btn-save" (click)="saveSeance()" [disabled]="saving">
+                <button class="btn-cancel" (click)="closeAddForm()">Annuler</button>
+                <button class="btn-save" [disabled]="saving" (click)="saveSeance()">
                     {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- EDIT FORM -->
     <div class="modal-backdrop" *ngIf="showEditForm">
         <div class="modal-card">
             <div class="modal-header">
@@ -347,96 +273,54 @@
                 <button class="close-btn" (click)="closeEditForm()">×</button>
             </div>
 
-            <div class="modal-body">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Thème *</label>
-                        <input type="text" [(ngModel)]="editSeance.theme" placeholder="Thème de la séance" />
-                    </div>
+            <div class="form-grid">
+                <input type="text" [(ngModel)]="editSeance.theme" placeholder="Thème">
+                <input type="text" [(ngModel)]="editSeance.lieu" placeholder="Lieu">
+                <input type="date" [(ngModel)]="editSeance.dateSeance">
+                <input type="time" [(ngModel)]="editSeance.heureSeance">
 
-                    <div class="form-group">
-                        <label>Date *</label>
-                        <input type="date" [(ngModel)]="editSeance.dateSeance" />
-                    </div>
+                <select [(ngModel)]="editSeance.sportId" (change)="onEditSportChange(editSeance.sportId!)">
+                    <option [ngValue]="null">Choisir un sport</option>
+                    <option *ngFor="let sport of sports" [ngValue]="sport.id">{{ sport.title }}</option>
+                </select>
 
-                    <div class="form-group">
-                        <label>Heure *</label>
-                        <input type="time" [(ngModel)]="editSeance.heureSeance" />
-                    </div>
+                <select [(ngModel)]="editSeance.groupe" (change)="onEditGroupChange(editSeance.groupe)">
+                    <option value="">Choisir un groupe</option>
+                    <option *ngFor="let g of groupes" [value]="g">{{ g }}</option>
+                </select>
 
-                    <div class="form-group">
-                        <label>Lieu *</label>
-                        <input type="text" [(ngModel)]="editSeance.lieu" placeholder="Lieu" />
-                    </div>
+                <input type="text" [(ngModel)]="editSeance.duree" placeholder="Durée">
+                <input type="text" [(ngModel)]="editSeance.objectif" placeholder="Objectif">
 
-                    <div class="form-group">
-                        <label>Durée</label>
-                        <input type="text" [(ngModel)]="editSeance.duree" placeholder="Ex: 01:30" />
-                    </div>
+                <select [(ngModel)]="editSeance.statut">
+                    <option value="Planifiée">Planifiée</option>
+                    <option value="Confirmée">Confirmée</option>
+                    <option value="En cours">En cours</option>
+                    <option value="Terminée">Terminée</option>
+                    <option value="Annulée">Annulée</option>
+                </select>
 
-                    <div class="form-group">
-                        <label>Statut</label>
-                        <select [(ngModel)]="editSeance.statut">
-                            <option value="Planifiée">Planifiée</option>
-                            <option value="Confirmée">Confirmée</option>
-                            <option value="En cours">En cours</option>
-                            <option value="Terminée">Terminée</option>
-                            <option value="Annulée">Annulée</option>
-                        </select>
-                    </div>
+                <textarea [(ngModel)]="editSeance.description" placeholder="Description"></textarea>
+            </div>
 
-                    <div class="form-group full-width">
-                        <label>Sport *</label>
-                        <select [(ngModel)]="editSeance.sportId" (ngModelChange)="onEditSportChange($event)">
-                            <option [ngValue]="null">Sélectionner un sport</option>
-                            <option *ngFor="let sport of sports" [ngValue]="sport.id">
-                                {{ sport.title }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Groupe</label>
-                        <select [(ngModel)]="editSeance.groupe" (ngModelChange)="onEditGroupChange($event)">
-                            <option value="">Sélectionner un groupe</option>
-                            <option *ngFor="let groupe of groupes" [value]="groupe">
-                                {{ groupe }}
-                            </option>
-                        </select>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Description</label>
-                        <textarea [(ngModel)]="editSeance.description" rows="3" placeholder="Description"></textarea>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label>Objectif</label>
-                        <textarea [(ngModel)]="editSeance.objectif" rows="3"
-                            placeholder="Objectif de la séance"></textarea>
-                    </div>
-
-                    <div class="form-group full-width" *ngIf="ressources.length > 0">
-                        <label>Ressources sportives</label>
-                        <div class="ressources-checkboxes">
-                            <label class="ressource-item" *ngFor="let r of ressources">
-                                <input type="checkbox" [checked]="isEditRessourceSelected(r.id!)"
-                                    (change)="toggleEditRessource(r.id!)" />
-                                <span>{{ r.nom }}</span>
-                            </label>
-                        </div>
-                    </div>
+            <div class="ressources-box">
+                <h4>Ressources disponibles</h4>
+                <div class="ressources-list">
+                    <label *ngFor="let r of ressources" class="ressource-chip">
+                        <input type="checkbox" [checked]="isEditRessourceSelected(r.id!)"
+                            (change)="toggleEditRessource(r.id!)">
+                        <span>{{ r.nom }}</span>
+                    </label>
                 </div>
             </div>
 
             <div class="modal-actions">
-                <button class="btn-cancel" (click)="closeEditForm()" [disabled]="saving">
-                    Annuler
-                </button>
-                <button class="btn-save" (click)="updateSession()" [disabled]="saving">
-                    {{ saving ? 'Enregistrement...' : 'Modifier' }}
+                <button class="btn-cancel" (click)="closeEditForm()">Annuler</button>
+                <button class="btn-save" [disabled]="saving" (click)="updateSession()">
+                    {{ saving ? 'Modification...' : 'Mettre à jour' }}
                 </button>
             </div>
         </div>
     </div>
+
 </section>

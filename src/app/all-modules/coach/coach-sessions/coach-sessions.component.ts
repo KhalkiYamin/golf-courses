@@ -229,7 +229,7 @@ export class CoachSessionsComponent implements OnInit {
         });
     }
 
-    onGroupChange(groupValue: string): void {
+    onGroupChange(groupValue?: string): void {
         const group = (groupValue || '').trim();
         if (!group) {
             this.newSeance.niveau = '';
@@ -455,7 +455,7 @@ export class CoachSessionsComponent implements OnInit {
         this.refreshGroupsForEdit();
     }
 
-    onEditGroupChange(groupValue: string): void {
+    onEditGroupChange(groupValue?: string): void {
         const group = (groupValue || '').trim();
         if (!group) {
             this.editSeance.niveau = '';
@@ -812,5 +812,27 @@ export class CoachSessionsComponent implements OnInit {
 
     get totalAthletes(): number {
         return this.seances.reduce((sum, s) => sum + (s.nombreAthletes || 0), 0);
+    }
+    annulerSeance(session: Seance): void {
+        if (!session.id) return;
+
+        const confirmed = confirm("Annuler cette séance ?");
+        if (!confirmed) return;
+
+        const payload: Seance = {
+            ...session,
+            statut: 'Annulée' // 🔥 المهم
+        };
+
+        this.coachSeancesService.updateSeance(session.id, payload).subscribe({
+            next: () => {
+                this.successMessage = 'Séance annulée';
+                this.loadSeances();
+            },
+            error: (err: any) => {
+                console.error(err);
+                this.errorMessage = 'Erreur annulation';
+            }
+        });
     }
 }
