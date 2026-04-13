@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { AthleteSeance } from '../all-modules/models/athlete-seance.model';
@@ -40,6 +40,11 @@ export class AthleteDashboardService {
         return headers;
     }
 
+    private isAdminRole(): boolean {
+        const role = (localStorage.getItem('role') || '').toUpperCase();
+        return role === 'ADMIN' || role === 'ROLE_ADMIN';
+    }
+
     getAthleteSeances(): Observable<AthleteSeance[]> {
         return this.http.get<AthleteSeance[]>(
             `${this.apiUrl}/seances`,
@@ -76,10 +81,18 @@ export class AthleteDashboardService {
     }
 
     getCoachDirectory(): Observable<any[]> {
+        const canUseAdminEndpoints = this.isAdminRole();
+
         return this.fetchCoachList(`${this.apiUrl}/coaches`).pipe(
             switchMap((athleteRows) => {
                 if (athleteRows.length) {
                     return of(athleteRows);
+                }
+
+                if (!canUseAdminEndpoints) {
+                    return this.fetchCoachList('http://localhost:8081/api/coaches/approved').pipe(
+                        catchError(() => of([]))
+                    );
                 }
 
                 return this.fetchCoachList(this.adminApprovedCoachApiUrl).pipe(
@@ -108,14 +121,21 @@ export class AthleteDashboardService {
             return of(null);
         }
 
+        const canUseAdminEndpoints = this.isAdminRole();
+
         return this.http.get<any>(`${this.apiUrl}/coaches/${coachId}`, {
             headers: this.getHeaders()
         }).pipe(
             map((response) => this.extractObject(response)),
             catchError(() =>
-                this.http.get<any>(`${this.adminCoachApiUrl}/${coachId}`, {
-                    headers: this.getHeaders()
-                }).pipe(
+                (canUseAdminEndpoints
+                    ? this.http.get<any>(`${this.adminCoachApiUrl}/${coachId}`, {
+                        headers: this.getHeaders()
+                    })
+                    : this.http.get<any>(`${this.coachProfileApiUrl}/${coachId}`, {
+                        headers: this.getHeaders()
+                    })
+                ).pipe(
                     map((response) => this.extractObject(response)),
                     catchError(() =>
                         this.http.get<any>(`${this.coachProfileApiUrl}/${coachId}`, {
@@ -128,9 +148,14 @@ export class AthleteDashboardService {
                                 }).pipe(
                                     map((response) => this.extractObject(response)),
                                     catchError(() =>
-                                        this.http.get<any>(`${this.adminCoachApiUrl}/${coachId}/profile`, {
-                                            headers: this.getHeaders()
-                                        }).pipe(
+                                        (canUseAdminEndpoints
+                                            ? this.http.get<any>(`${this.adminCoachApiUrl}/${coachId}/profile`, {
+                                                headers: this.getHeaders()
+                                            })
+                                            : this.http.get<any>(`${this.coachProfileApiUrl}/coach/${coachId}`, {
+                                                headers: this.getHeaders()
+                                            })
+                                        ).pipe(
                                             map((response) => this.extractObject(response)),
                                             catchError(() =>
                                                 this.http.get<any>(`${this.coachProfileApiUrl}/coach/${coachId}`, {
